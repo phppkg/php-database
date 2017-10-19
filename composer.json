@@ -1,0 +1,32 @@
+{
+  "name": "inhere/simple-activeRecord",
+  "type": "library",
+  "description": "a simple activeRecord library of the php",
+  "keywords": ["library", "tool", "php", "pdo", "activeRecord"],
+  "homepage": "https://github.com/inhere/php-simple-activeRecord",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "inhere",
+      "email": "in.798@qq.com",
+      "homepage": "http://www.yzone.net/"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "inhere/php-validate": "^2.0",
+    "windwalker/query": "^3.0",
+    "windwalker/compare": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SimpleAR\\" : "src/"
+    }
+  },
+  "suggest": {
+    "inhere/sroute": "Very fast php router",
+    "inhere/php-validate": "Very lightweight data validate tool",
+    "inhere/http": "Very lightweight PSR-7 implements http message component",
+    "inhere/console": "a lightweight php console application library."
+  }
+}
