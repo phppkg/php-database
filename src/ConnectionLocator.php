@@ -7,7 +7,7 @@
  * @referrer https://github.com/auraphp/Aura.Sql
  */
 
-namespace slimExt\database;
+namespace SimpleAR;
 
 /**
  * $connections = new ConnectionLocator;

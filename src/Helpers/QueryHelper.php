@@ -1,8 +1,14 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Inhere
+ * Date: 2016/3/2 0002
+ * Time: 22:33
+ */
 
-namespace slimExt\database\helpers;
+namespace SimpleAR\Helpers;
 
-use slimExt\database\DbFactory;
+use SimpleAR\Database\DbFactory;
 use Windwalker\Query\QueryElement;
 use Windwalker\Compare\Compare;
 use Windwalker\Query\Query;

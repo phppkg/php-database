@@ -1,16 +1,22 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: inhere
+ * Date: 16/9/1
+ * Time: 下午4:13
+ */
 
-namespace slimExt\base;
+namespace SimpleAR\Model;
 
-use slimExt\helpers\ModelHelper;
+use SimpleAR\Helpers\ModelHelper;
 
 /**
  * Class RecordModelExtraTrait
  * @package slimExt\base
  *
  * @method static RecordModel load()
- * @method static \slimExt\database\AbstractDriver getDb()
- * @method static \slimExt\database\AbstractDriver setQuery()
+ * @method static \SimpleAR\Database\AbstractDriver getDb()
+ * @method static \SimpleAR\Database\AbstractDriver setQuery()
  */
 trait RecordModelExtraTrait
 {

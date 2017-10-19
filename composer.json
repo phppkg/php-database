@@ -15,6 +15,7 @@
   "require": {
     "php": ">=7.0.0",
     "inhere/php-validate": "^2.0",
+    "psr/log": "~1.0",
     "windwalker/query": "^3.0",
     "windwalker/compare": "^3.0"
   },
@@ -25,7 +26,7 @@
   },
   "suggest": {
     "inhere/sroute": "Very fast php router",
-    "inhere/php-validate": "Very lightweight data validate tool",
+    "inhere/event": "event manager",
     "inhere/http": "Very lightweight PSR-7 implements http message component",
     "inhere/console": "a lightweight php console application library."
   }

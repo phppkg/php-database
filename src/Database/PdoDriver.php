@@ -6,13 +6,13 @@
  * Time: 22:33
  */
 
-namespace slimExt\database;
+namespace SimpleAR\Database;
 
 use Windwalker\Query\Query;
 
 /**
  * Class PdoDriver
- * @package slimExt\database
+ * @package SimpleAR\Database
  */
 class PdoDriver extends AbstractDriver
 {
@@ -36,7 +36,7 @@ class PdoDriver extends AbstractDriver
 
         // add sql log
         if ($this->debug) {
-            $this->dbLogger()->debug($statement . ';');
+            $this->getLogger()->debug($statement . ';');
         }
 
         $this->lastQuery = $statement;
@@ -63,7 +63,7 @@ class PdoDriver extends AbstractDriver
 
         // add sql log
         if ($this->debug) {
-            $this->dbLogger()->debug($statement . '; ');
+            $this->getLogger()->debug($statement . '; ');
         }
 
         $this->prepared = true;
@@ -127,7 +127,7 @@ class PdoDriver extends AbstractDriver
 
         // add sql log
         if ($this->debug) {
-            $this->dbLogger()->debug($statement);
+            $this->getLogger()->debug($statement);
         }
 
         $this->lastQuery = $statement;

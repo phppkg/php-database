@@ -6,21 +6,21 @@
  * Time: 22:33
  */
 
-namespace slimExt\database;
+namespace SimpleAR\Database;
 
-use inhere\exceptions\InvalidArgumentException;
-use inhere\library\traits\LiteEventTrait;
-use inhere\library\traits\LiteOptionsTrait;
-use Slim;
+use InvalidArgumentException;
+use Inhere\Library\Traits\LiteEventTrait;
+use Inhere\Library\Traits\LiteOptionsTrait;
+use Psr\Log\LoggerAwareTrait;
 use PDO;
 use PDOStatement;
-use slimExt\database\helpers\QueryHelper;
-use slimExt\database\helpers\DsnHelper;
+use SimpleAR\Helpers\QueryHelper;
+use SimpleAR\Helpers\DsnHelper;
 use Windwalker\Query\Query;
 
 /**
  * Class AbstractDriver
- * @package slimExt\database
+ * @package SimpleAR\Database
  * @link https://github.com/ventoviro/windwalker-database
  */
 abstract class AbstractDriver implements InterfaceDriver
@@ -28,12 +28,13 @@ abstract class AbstractDriver implements InterfaceDriver
     use LiteEventTrait;
     use LiteOptionsTrait;
     use LoadResultSetTrait;
+    use LoggerAwareTrait;
 
     const CONNECT = 'connect';
     const DISCONNECT = 'disconnect';
     const EXECUTE = 'execute';
     const BEFORE_EXECUTE = 'beforeExecute';
-    const AFTER_EXECUTE  = 'afterExecute';
+    const AFTER_EXECUTE = 'afterExecute';
 
     protected $name = '';
 
@@ -549,14 +550,6 @@ abstract class AbstractDriver implements InterfaceDriver
         }
 
         return self::$newQueryCache;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function dbLogger()
-    {
-        return Slim::get('dbLogger');
     }
 
     /**

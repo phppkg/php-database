@@ -6,11 +6,11 @@
  * Time: 下午11:32
  */
 
-namespace slimExt\database;
+namespace SimpleAR\Database;
 
 /**
  * Class LoadResultSetTrait
- * @package slimExt\database
+ * @package SimpleAR\Database
  *
  * @property \PDOStatement $cursor
  */

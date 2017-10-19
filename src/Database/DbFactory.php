@@ -6,11 +6,11 @@
  * Time: 23:35
  */
 
-namespace slimExt\database;
+namespace SimpleAR\Database;
 
 /**
  * Class DbFactory
- * @package slimExt\database
+ * @package SimpleAR\Database
  *
  * @referrer Windwalker\Database\DatabaseFactory
  */

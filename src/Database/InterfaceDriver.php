@@ -6,16 +6,18 @@
  * Time: 下午9:56
  */
 
-namespace slimExt\database;
+namespace SimpleAR\Database;
 
 /**
  * Interface InterfaceDriver
- * @package slimExt\database
+ * @package SimpleAR\Database
  */
 interface InterfaceDriver
 {
     public function connect();
+
     public function ping($pdo);
+
     public function disconnect();
 
     /**
@@ -25,15 +27,21 @@ interface InterfaceDriver
      * @return array|bool|int
      */
     public function insert($table, $data, $priKey = '');
+
     public function update($table, $data, $key = 'id', $updateNulls = false);
 
     public function prepare($statement = null, array $driverOptions = []);
+
     public function execute(array $bindParams = []);
+
     public function freeResult($cursor = null);
 
     public function beginTrans($throwException = true);
+
     public function commit($throwException = true);
+
     public function rollBack($throwException = true);
+
     /**
      * @return bool
      */

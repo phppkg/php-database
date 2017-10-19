@@ -6,14 +6,14 @@
  * Time: 22:33
  */
 
-namespace slimExt\database\helpers;
+namespace SimpleAR\Helpers;
 
 /**
  * Class DsnHelper
  * @see http://php.net/manual/en/pdo.drivers.php
  * @link https://github.com/ventoviro/windwalker-database
  */
-abstract class DsnHelper
+final class DsnHelper
 {
     /**
      * Property options.

@@ -6,14 +6,14 @@
  * Time: 下午4:13
  */
 
-namespace slimExt\base;
+namespace SimpleAR\Model;
 
-use inhere\exceptions\InvalidArgumentException;
-use inhere\exceptions\InvalidConfigException;
-use inhere\exceptions\UnknownMethodException;
-use inhere\library\helpers\Arr;
-use slimExt\database\AbstractDriver;
-use slimExt\helpers\ModelHelper;
+use Inhere\Exceptions\InvalidArgumentException;
+use Inhere\Exceptions\InvalidConfigException;
+use Inhere\Exceptions\UnknownMethodException;
+use Inhere\Library\Helpers\Arr;
+use SimpleAR\Database\AbstractDriver;
+use SimpleAR\Helpers\ModelHelper;
 use Windwalker\Query\Query;
 
 /**
