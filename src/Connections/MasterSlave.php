@@ -37,7 +37,7 @@ namespace SimpleAR\Connections;
  * ```
  *
  */
-class MasterSlave extends AbstractConnection
+class MasterSlave extends Connections
 {
     const MODE = 'master-slave';
 
@@ -143,7 +143,7 @@ class MasterSlave extends AbstractConnection
      */
     public function master()
     {
-        return $this->writer('master');
+        return $this->getWriter('master');
     }
 
     /**
@@ -152,14 +152,14 @@ class MasterSlave extends AbstractConnection
      */
     public function slave($name = null)
     {
-        return $this->reader($name);
+        return $this->getReader($name);
     }
 
     /**
      * @param null $name
      * @return \PDO
      */
-    public function reader($name = null)
+    public function getReader($name = null)
     {
         if (!($typeNames = $this->typeNames[self::TYPE_READER])) {
             throw new \RuntimeException('Without any reader(slave) database config!');
@@ -178,7 +178,7 @@ class MasterSlave extends AbstractConnection
      * @param null|string $name
      * @return \PDO
      */
-    public function writer($name = null)
+    public function getWriter($name = null)
     {
         if (null === $name) {
             $name = 'master';

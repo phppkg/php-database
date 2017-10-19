@@ -18,9 +18,9 @@ use Windwalker\Query\Query;
 
 /**
  * Class RecordModel
- * @package slimExt\base
+ * @package SimpleAR\Model
  */
-abstract class RecordModel extends Model
+abstract class RecordModel extends BaseModel
 {
     use RecordModelExtraTrait;
 

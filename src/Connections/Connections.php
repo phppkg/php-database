@@ -11,11 +11,22 @@ namespace SimpleAR\Connections;
 use Inhere\Exceptions\UnknownMethodException;
 
 /**
- * Class AbstractConnection
+ * Class AbstractConnections
  * @package SimpleAR\Connections
  */
-abstract class AbstractConnection implements ConnectionInterface
+abstract class Connections implements ConnectionManagerInterface
 {
+    // mode: singleton master-slave cluster
+    const MODE_SINGLETON = 1;
+    const MODE_MASTER_SLAVE = 2;
+    const MODE_CLUSTER = 3;
+
+    const READER = 'reader';
+    const WRITER = 'writer';
+
+    /** @var int  */
+    private $mode = self::MODE_SINGLETON;
+
     /**
      * connection names
      * if value is TRUE, has been connected
@@ -84,7 +95,7 @@ abstract class AbstractConnection implements ConnectionInterface
      * @param null $name
      * @return \PDO
      */
-    public function reader($name = null)
+    public function getReader($name = null)
     {
         // return a random connection
         if (null === $name) {
@@ -97,7 +108,7 @@ abstract class AbstractConnection implements ConnectionInterface
     /**
      * @inheritdoc
      */
-    public function writer($name = null)
+    public function getWriter($name = null)
     {
         // return a random connection
         if (null === $name) {
@@ -174,6 +185,14 @@ abstract class AbstractConnection implements ConnectionInterface
         }
 
         return true;
+    }
+
+    /**
+     * @param int $mode
+     */
+    public function setMode(int $mode)
+    {
+        $this->mode = $mode;
     }
 
     /**
@@ -259,11 +278,11 @@ abstract class AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getMode()
     {
-        return static::MODE;
+        return $this->mode;
     }
 
     /**
@@ -370,7 +389,7 @@ abstract class AbstractConnection implements ConnectionInterface
         // trigger before event
         $this->fireEvent(self::BEFORE_EXECUTE, [$sql, 'insert', ['params' => $params]]);
 
-        $db = $this->writer();
+        $db = $this->getWriter();
 
         if (false === $db->exec($sql)) {
             throw new \RuntimeException('Insert data to the database failed.');
@@ -395,13 +414,13 @@ abstract class AbstractConnection implements ConnectionInterface
         $this->fireEvent(self::BEFORE_EXECUTE, [$sql, 'update', ['params' => $params]]);
 
         if ($params) {
-            $st = $this->writer()->prepare($sql);
+            $st = $this->getWriter()->prepare($sql);
             $st->execute($params);
 
             $affected = $st->rowCount();
             $st->closeCursor();
         } else {
-            $affected = $this->writer()->exec($sql);
+            $affected = $this->getWriter()->exec($sql);
         }
 
         // trigger after event
@@ -421,13 +440,13 @@ abstract class AbstractConnection implements ConnectionInterface
         $this->fireEvent(self::BEFORE_EXECUTE, [$sql, 'delete', ['params' => $params]]);
 
         if ($params) {
-            $st = $this->writer()->prepare($sql);
+            $st = $this->getWriter()->prepare($sql);
             $st->execute($params);
 
             $affected = $st->rowCount();
             $st->closeCursor();
         } else {
-            $affected = $this->writer()->exec($sql);
+            $affected = $this->getWriter()->exec($sql);
         }
 
         // trigger after event
@@ -842,7 +861,7 @@ abstract class AbstractConnection implements ConnectionInterface
     public function beginTrans($throwException = true)
     {
         $this->openTransaction = true;
-        $result = $this->writer()->beginTransaction();
+        $result = $this->getWriter()->beginTransaction();
 
         if ($throwException && false === $result) {
             // clear
@@ -867,7 +886,7 @@ abstract class AbstractConnection implements ConnectionInterface
             throw new \LogicException('Transaction must be turned on before committing a transaction!!');
         }
 
-        $result = $this->writer()->commit();
+        $result = $this->getWriter()->commit();
 
         // clear
         $this->clearTransaction();
@@ -892,7 +911,7 @@ abstract class AbstractConnection implements ConnectionInterface
             throw new \LogicException('Transaction must be turned on before rolls back a transaction!!');
         }
 
-        $result = $this->writer()->rollBack();
+        $result = $this->getWriter()->rollBack();
 
         // clear
         $this->clearTransaction();
@@ -919,7 +938,7 @@ abstract class AbstractConnection implements ConnectionInterface
             return false;
         }
 
-        return $this->writer()->inTransaction();
+        return $this->getWriter()->inTransaction();
     }
 
     protected function clearTransaction()

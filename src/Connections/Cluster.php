@@ -29,7 +29,7 @@ use Inhere\Exceptions\UnknownMethodException;
  * ```
  *
  */
-class Cluster extends AbstractConnection
+class Cluster extends Connections
 {
     const MODE = 'cluster';
 
@@ -42,14 +42,14 @@ class Cluster extends AbstractConnection
     /**
      * @inheritdoc
      */
-    public function writer($name = null)
+    public function getWriter($name = null)
     {
         // in Transaction, return the fixed connection
         if ($this->fixedWriter) {
             return $this->fixedWriter;
         }
 
-        $writer = parent::writer($name);
+        $writer = parent::getWriter($name);
 
         // When open Transaction, will fixed the writer until close the transaction(commit/rollback).
         if ($this->openTransaction) {

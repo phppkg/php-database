@@ -14,7 +14,7 @@ use Inhere\Validate\ValidationTrait;
 
 /**
  * Class BaseModel
- * @package slimExt
+ * @package SimpleAR\Model
  */
 abstract class BaseModel extends SimpleCollection
 {
@@ -135,5 +135,21 @@ abstract class BaseModel extends SimpleCollection
         }
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableValidate(): bool
+    {
+        return $this->enableValidate;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOnlySaveSafeData(): bool
+    {
+        return $this->onlySaveSafeData;
     }
 }

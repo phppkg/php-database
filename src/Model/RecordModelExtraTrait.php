@@ -8,15 +8,16 @@
 
 namespace SimpleAR\Model;
 
+use SimpleAR\Database\AbstractDriver;
 use SimpleAR\Helpers\ModelHelper;
 
 /**
  * Class RecordModelExtraTrait
- * @package slimExt\base
+ * @package SimpleAR\Model
  *
  * @method static RecordModel load()
- * @method static \SimpleAR\Database\AbstractDriver getDb()
- * @method static \SimpleAR\Database\AbstractDriver setQuery()
+ * @method static AbstractDriver getDb()
+ * @method static AbstractDriver setQuery()
  */
 trait RecordModelExtraTrait
 {
@@ -69,9 +70,9 @@ trait RecordModelExtraTrait
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @param array $conditions
-     * @return bool
+     * @return int
      */
     public static function updateBatch($data, array $conditions = [])
     {

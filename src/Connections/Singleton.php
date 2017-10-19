@@ -18,7 +18,7 @@ use Inhere\Exceptions\UnknownCalledException;
  * $client = new Singleton($config);
  * ```
  */
-class Singleton extends AbstractConnection
+class Singleton extends Connections
 {
     const MODE = 'singleton';
 

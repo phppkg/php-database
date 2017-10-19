@@ -6,7 +6,7 @@
  * Time: 21:35
  */
 
-namespace micro\db;
+namespace SimpleAR;
 
 /**
  * Class SimpleDb
@@ -15,20 +15,20 @@ namespace micro\db;
 class SimpleDb
 {
     // mode: singleton master-slave cluster
-    const MODE_SINGLETON    = 1;
+    const MODE_SINGLETON = 1;
     const MODE_MASTER_SLAVE = 2;
-    const MODE_CLUSTER      = 3;
+    const MODE_CLUSTER = 3;
 
     /**
      * createClient
-     * @param  array   $config
+     * @param  array $config
      * @return AbstractClient
      */
     public static function createClient(array $config)
     {
         $mode = self::MODE_SINGLETON;
 
-        if ( isset($config['mode']) ) {
+        if (isset($config['mode'])) {
             $mode = self::isSupportedMode($config['mode']) ? $config['mode'] : self::MODE_SINGLETON;
             unset($config['mode']);
         }

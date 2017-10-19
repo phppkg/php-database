@@ -9,6 +9,8 @@
 
 namespace SimpleAR;
 
+use SimpleAR\Database\AbstractDriver;
+
 /**
  * $connections = new ConnectionLocator;
  * $connections->setDefault(function () {
@@ -21,35 +23,23 @@ namespace SimpleAR;
  */
 class ConnectionLocator
 {
-    const DEFAULT_KEY = '__default';
-    const TYPE_READER = 'reader';
-    const TYPE_WRITER = 'writer';
+    const READER = 'reader';
+    const WRITER = 'writer';
 
     /**
-     * connection callback list
+     * @var \Closure|AbstractDriver|null
+     */
+    private $default;
+
+    /**
      * @var array
      */
-    private $values = [
-        '__default' => null,
-        // 'reader.slave1' => function(){},
-        // 'writer.master' => function(){},
-    ];
+    private $readers = [];
 
     /**
-     * instanced connections
-     * @var AbstractDriver[]
+     * @var array
      */
-    private $connections = [
-        '__default' => null,
-        // 'writer.master' => Object (slimExt\database\AbstractDriver),
-    ];
-
-    private $keys = [
-        'readers' => [
-            // 'slave1' => flase, // if it is in the $this->connections,  'slave1' => true
-        ],
-        'writers' => [],
-    ];
+    private $writers = [];
 
     public function __construct(callable $default = null, $readers = [], $writers = [])
     {
@@ -64,15 +54,8 @@ class ConnectionLocator
         foreach ($writers as $name => $writer) {
             $this->setWriter($name, $writer);
         }
-    }
-
-    /**
-     * get default connection instance
-     * @param callable $cb
-     */
-    public function setDefault(callable $cb)
-    {
-        $this->connections[self::DEFAULT_KEY] = $cb;
+        $this->readers = $readers;
+        $this->writers = $writers;
     }
 
     /**
@@ -81,26 +64,29 @@ class ConnectionLocator
      */
     public function getDefault()
     {
-        if (!$this->values[self::DEFAULT_KEY]) {
-            throw new \InvalidArgumentException("The default connection don't setting!");
+        if ($this->default instanceof \Closure) {
+            $this->default = ($this->default)();
         }
 
-        if (!isset($this->connections[self::DEFAULT_KEY])) {
-            $this->connections[self::DEFAULT_KEY] = $this->values[self::DEFAULT_KEY]();
-        }
+        return $this->default;
+    }
 
-        return $this->connections[self::DEFAULT_KEY];
+    /**
+     * @param \Closure $default
+     */
+    public function setDefault(\Closure $default)
+    {
+        $this->default = $default;
     }
 
     /**
      * set Writer
      * @param string $name
-     * @param callable $cb
+     * @param callable|\Closure  $cb
      */
-    public function setWriter($name, callable $cb)
+    public function setWriter($name, \Closure $cb)
     {
-        $this->keys['writers'][$name] = false;
-        $this->values['writer.' . $name] = $cb;
+        $this->writers[$name] = $cb;
     }
 
     /**
@@ -108,20 +94,28 @@ class ConnectionLocator
      * @param  string $name
      * @return AbstractDriver
      */
-    public function getWriter($name = 'master')
+    public function getWriter($name = null)
     {
-        return $this->getConnection(self::TYPE_WRITER, $name);
+        return $this->getConnection(self::WRITER, $name);
+    }
+
+    /**
+     * get master Writer
+     * @return AbstractDriver
+     */
+    public function getMaster()
+    {
+        return $this->getConnection(self::WRITER, 'master');
     }
 
     /**
      * [setReader
      * @param string $name
-     * @param callable $cb
+     * @param callable|\Closure  $cb
      */
-    public function setReader($name, callable $cb)
+    public function setReader($name, \Closure $cb)
     {
-        $this->keys['readers'][$name] = false;
-        $this->values['reader.' . $name] = $cb;
+        $this->readers[$name] = $cb;
     }
 
     /**
@@ -131,7 +125,44 @@ class ConnectionLocator
      */
     public function getReader($name = null)
     {
-        return $this->getConnection(self::TYPE_READER, $name);
+        return $this->getConnection(self::READER, $name);
+    }
+
+
+    /**
+     * @param array $readers
+     */
+    public function setReaders(array $readers)
+    {
+        foreach ($readers as $name => $cb) {
+            $this->setReader($name, $cb);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getReaders(): array
+    {
+        return $this->readers;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWriters(): array
+    {
+        return $this->writers;
+    }
+
+    /**
+     * @param array $writers
+     */
+    public function setWriters(array $writers)
+    {
+        foreach ($writers as $name => $cb) {
+            $this->setWriter($name, $cb);
+        }
     }
 
     /**
@@ -143,35 +174,30 @@ class ConnectionLocator
     protected function getConnection($type, $name)
     {
         // no reader/writer, return default
-        if (!$this->keys[$type]) {
+        if (!in_array($type, [self::WRITER, self::READER], true)) {
             return $this->getDefault();
         }
 
-        if (!$name) {
-            // return a random reader
-            $name = array_rand($this->keys[$type]);
+        if ($type === self::READER) {
+            $connections = &$this->readers;
+        } else {
+            $connections = &$this->writers;
         }
 
-        $key = $type . '.' . $name;
+        if (!$name) {
+            // return a random key
+            $name = array_rand($connections);
+        }
 
-        if (!isset($this->keys[$type][$name])) {
-            throw new \InvalidArgumentException("The connection [$type: $name] don't exists!");
+        if (!isset($connections[$name])) {
+            throw new \InvalidArgumentException("The connection '{$type}.{$name}' is not exists!");
         }
 
         // if not be instanced.
-        if (!$this->keys[$type][$name]) {
-            $this->connections[$key] = $instance = $this->values[$key]();
+        if ($connections[$name] instanceof \Closure) {
+            $connections[$name] = $connections[$name]();
         }
 
-        return $this->connections[$key];
-    }
-
-    public function getValue($name, $type = self::TYPE_READER)
-    {
-        if (!isset($this->keys[$type][$name])) {
-            throw new \InvalidArgumentException("The connection [$type: $name] don't exists!");
-        }
-
-        return $this->values[$type][$name];
+        return $connections[$name];
     }
 }
