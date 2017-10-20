@@ -1,5 +1,5 @@
 {
-  "name": "inhere/simple-activeRecord",
+  "name": "inhere/simple-active-record",
   "type": "library",
   "description": "a simple activeRecord library of the php",
   "keywords": ["library", "tool", "php", "pdo", "activeRecord"],
@@ -26,7 +26,7 @@
   },
   "suggest": {
     "inhere/sroute": "Very fast php router",
-    "inhere/event": "event manager",
+    "inhere/event": "the event manager",
     "inhere/http": "Very lightweight PSR-7 implements http message component",
     "inhere/console": "a lightweight php console application library."
   }
