@@ -14,7 +14,7 @@ use Inhere\Exceptions\UnknownMethodException;
  * Class AbstractConnections
  * @package SimpleAR\Connections
  */
-abstract class Connections implements ConnectionManagerInterface
+abstract class Connections implements ManagerInterface
 {
     // mode: singleton master-slave cluster
     const MODE_SINGLETON = 1;
@@ -167,25 +167,6 @@ abstract class Connections implements ConnectionManagerInterface
         return ($this->activated = $this->connections[$name]);
     }
 
-    /**
-     * Check whether the connection is available
-     * @param  \PDO $pdo
-     * @return Boolean
-     */
-    public function ping($pdo)
-    {
-        try {
-            // mysql will return: "5.6.32-log"
-            // $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
-            $pdo->query('select 1')->fetchColumn();
-        } catch (\PDOException $e) {
-            if (strpos($e->getMessage(), 'server has gone away') !== false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     /**
      * @param int $mode
@@ -314,57 +295,12 @@ abstract class Connections implements ConnectionManagerInterface
     }
 
     /**
-     * add a event handler
-     * @param $event
-     * @param callable $handler
-     */
-    public function on($event, callable $handler)
-    {
-        if (self::isSupportedEvent($event)) {
-            $this->eventCallbacks[$event][] = $handler;
-        }
-    }
-
-    /**
-     * trigger event
-     * @param $event
-     * @param array $args
-     */
-    public function fireEvent($event, array $args = [])
-    {
-        if (isset($this->eventCallbacks[$event])) {
-            foreach ($this->eventCallbacks[$event] as $cb) {
-                call_user_func_array($cb, $args);
-            }
-        }
-    }
-
-    /**
      * disconnect
      */
-    public function disconnect()
+    public function clear()
     {
         $this->activated = null;
         $this->connections = [];
-
-        $this->fireEvent(self::DISCONNECT);
-    }
-
-    /**
-     * @return array
-     */
-    public static function supportedEvents()
-    {
-        return [self::CONNECT, self::DISCONNECT, self::BEFORE_EXECUTE, self::AFTER_EXECUTE];
-    }
-
-    /**
-     * @param $name
-     * @return array
-     */
-    public static function isSupportedEvent($name)
-    {
-        return in_array($name, static::supportedEvents(), true);
     }
 
     /**
@@ -375,7 +311,7 @@ abstract class Connections implements ConnectionManagerInterface
         throw new UnknownMethodException("Call the method $method don't exists!");
     }
 
-/////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
     //// basic database operate
     /////////////////////////////////////////////////////////////////////////////////////
 

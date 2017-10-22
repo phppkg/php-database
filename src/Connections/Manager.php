@@ -1,19 +1,16 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Inhere
- * Date: 2016/3/2 0002
- * Time: 22:33
- * @referrer https://github.com/auraphp/Aura.Sql
+ * User: inhere
+ * Date: 2017/10/22
+ * Time: 下午6:21
  */
 
-namespace SimpleAR;
-
-use SimpleAR\Database\AbstractDriver;
+namespace SimpleAR\Connections;
 
 /**
- * $connections = new ConnectionLocator;
- * $connections->setDefault(function () {
+ * $mgr = new Manager;
+ * $mr->setDefault(function () {
  *     return DbFactory::getDbo([
  *         'dsn' => 'mysql:host=default.db.localhost;dbname=database',
  *         'user' => 'username',
@@ -21,13 +18,13 @@ use SimpleAR\Database\AbstractDriver;
  *     ]);
  * });
  */
-class ConnectionLocator
+class Manager
 {
     const READER = 'reader';
     const WRITER = 'writer';
 
     /**
-     * @var \Closure|AbstractDriver|null
+     * @var \Closure|Connection
      */
     private $default;
 
@@ -64,7 +61,7 @@ class ConnectionLocator
 
     /**
      * get default connection instance
-     * @return AbstractDriver
+     * @return Connection
      */
     public function getDefault()
     {
@@ -96,7 +93,7 @@ class ConnectionLocator
     /**
      * get Writer
      * @param  string $name
-     * @return AbstractDriver
+     * @return Connection
      */
     public function getWriter($name = null)
     {
@@ -105,7 +102,7 @@ class ConnectionLocator
 
     /**
      * get master Writer
-     * @return AbstractDriver
+     * @return Connection
      */
     public function getMaster()
     {
@@ -125,7 +122,7 @@ class ConnectionLocator
     /**
      * get Reader
      * @param  string $name
-     * @return AbstractDriver
+     * @return Connection
      */
     public function getReader($name = null)
     {
@@ -173,7 +170,7 @@ class ConnectionLocator
      * getConnection
      * @param  string $type
      * @param  string $name
-     * @return AbstractDriver
+     * @return Connection
      */
     protected function getConnection($type, $name)
     {

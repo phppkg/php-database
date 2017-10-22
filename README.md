@@ -6,6 +6,11 @@
 
 - todo ...
 
+参考：
+
+- https://github.com/illuminate/database
+- https://github.com/ventoviro/windwalker-query
+
 ## 项目地址
 
 - **git@osc** https://git.oschina.net/inhere/php-simple-activeRecord.git

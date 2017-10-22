@@ -7,7 +7,7 @@
  *
  */
 
-namespace SimpleAR;
+namespace SimpleAR\Connections;
 
 use PDO;
 
@@ -18,7 +18,7 @@ use PDO;
  * @package Aura.Sql
  *
  */
-interface PDOInterface
+interface PdoInterface
 {
     /**
      *

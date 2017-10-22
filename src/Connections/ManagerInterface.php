@@ -9,10 +9,10 @@
 namespace SimpleAR\Connections;
 
 /**
- * Interface ConnectionInterface
+ * Interface ManagerInterface
  * @package SimpleAR\Connections
  */
-interface ConnectionManagerInterface
+interface ManagerInterface
 {
     // mode: singleton master-slave cluster
     const MODE = '';

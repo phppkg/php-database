@@ -13,13 +13,13 @@ namespace SimpleAR\Helpers;
  * @see http://php.net/manual/en/pdo.drivers.php
  * @link https://github.com/ventoviro/windwalker-database
  */
-final class DsnHelper
+class DsnHelper
 {
     /**
      * Property options.
      * @var  array
      */
-    private static $options = array();
+    private static $options = [];
 
     /**
      * extractDsn
@@ -38,15 +38,23 @@ final class DsnHelper
      * getDsn
      * @param string $driver
      * @param array $options
-     * @throws  \DomainException
+     * @throws  \RuntimeException
      * @return  string
      */
-    public static function getDsn($driver, array $options = [])
+    public static function getDsn(array $options = [], $driver = null)
     {
         self::$options = $options;
 
+        if (!$driver) {
+            $driver = $options['driver'] ?? null;
+        }
+
+        if (!$driver) {
+            throw new \LogicException('The driver name is required.');
+        }
+
         if (!is_callable([static::class, $driver])) {
-            throw new \DomainException('The ' . $driver . ' driver is not supported.');
+            throw new \RuntimeException('The ' . $driver . ' driver is not supported.');
         }
 
         list($dsn, $replace) = static::$driver();
@@ -56,6 +64,23 @@ final class DsnHelper
         self::$options = [];
 
         return $dsn;
+    }
+
+    /**
+     * mysql
+     * @return  array
+     */
+    private static function mysql()
+    {
+        return [
+            'mysql:host={HOST};port={PORT};dbname={DBNAME};charset={CHARSET}',
+            [
+                '{HOST}' => static::getOption('host', 'localhost'),
+                '{PORT}' => static::getOption('port', 3306),
+                '{DBNAME}' => static::getOption('database'),
+                '{CHARSET}' => static::getOption('charset', 'utf8')
+            ]
+        ];
     }
 
     /**
@@ -168,23 +193,6 @@ final class DsnHelper
                 '{HOST}' => static::getOption('host', 'localhost'),
                 '{PORT}' => static::getOption('port', 1433),
                 '{DBNAME}' => static::getOption('database')
-            ]
-        ];
-    }
-
-    /**
-     * mysql
-     * @return  array
-     */
-    protected static function mysql()
-    {
-        return [
-            'mysql:host={HOST};port={PORT};dbname={DBNAME};charset={CHARSET}',
-            [
-                '{HOST}' => static::getOption('host', 'localhost'),
-                '{PORT}' => static::getOption('port', 3306),
-                '{DBNAME}' => static::getOption('database'),
-                '{CHARSET}' => static::getOption('charset', 'utf8')
             ]
         ];
     }

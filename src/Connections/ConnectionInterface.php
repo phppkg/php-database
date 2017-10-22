@@ -9,13 +9,12 @@
 
 namespace SimpleAR\Connections;
 
-use SimpleAR\PDOInterface;
-
 /**
  * Interface ConnectionInterface
  * @package SimpleAR\Connections
+ * @from https://github.com/auraphp/Aura.Sql
  */
-interface ConnectionInterface extends PDOInterface
+interface ConnectionInterface extends PdoInterface
 {
     /**
      *
@@ -33,7 +32,7 @@ interface ConnectionInterface extends PDOInterface
 
     /**
      *
-     * Performs a statement and returns the number of affected rows.
+     * Execute a statement and returns the number of affected rows.
      *
      * @param string $statement The SQL statement to prepare and execute.
      *
@@ -370,7 +369,7 @@ interface ConnectionInterface extends PDOInterface
 
     /**
      *
-     * Performs a query after preparing the statement with bound values, then
+     * Execute a query after preparing the statement with bound values, then
      * returns the result as a PDOStatement.
      *
      * @param string $statement The SQL statement to prepare and execute.
@@ -380,7 +379,7 @@ interface ConnectionInterface extends PDOInterface
      * @return \PDOStatement
      *
      */
-    public function perform($statement, array $values = []);
+    public function execute($statement, array $values = []);
 
     /**
      *
@@ -405,3 +404,4 @@ interface ConnectionInterface extends PDOInterface
      *
      */
     public function prepareWithValues($statement, array $values = []);
+}
