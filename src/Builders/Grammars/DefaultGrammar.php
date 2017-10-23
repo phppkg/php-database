@@ -9,7 +9,7 @@
 namespace SimpleAR\Builders\Grammars;
 
 use Inhere\Library\Helpers\Arr;
-use SimpleAR\Builders\Builder;
+use SimpleAR\Builders\QueryBuilder;
 
 /**
  * Class DefaultGrammar
@@ -44,10 +44,10 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a select query into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return string
      */
-    public function compileSelect(Builder $query)
+    public function compileSelect(QueryBuilder $query)
     {
         // If the query does not have any columns set, we'll set the columns to the
         // * character to just get all of the columns from the database. Then we
@@ -70,10 +70,10 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the components necessary for a select clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return array
      */
-    protected function compileComponents(Builder $query)
+    protected function compileComponents(QueryBuilder $query)
     {
         $sql = [];
 
@@ -92,11 +92,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an aggregated select clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $aggregate
      * @return string
      */
-    protected function compileAggregate(Builder $query, $aggregate)
+    protected function compileAggregate(QueryBuilder $query, $aggregate)
     {
         $column = $this->columnize($aggregate['columns']);
         // If the query has a "distinct" constraint and we're not asking for all columns
@@ -111,11 +111,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "select *" portion of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $columns
      * @return string|null
      */
-    protected function compileColumns(Builder $query, $columns)
+    protected function compileColumns(QueryBuilder $query, $columns)
     {
         // If the query is actually performing an aggregating select, we will let that
         // compiler handle the building of the select clauses, as it will need some
@@ -131,22 +131,22 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "from" portion of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  string $table
      * @return string
      */
-    protected function compileFrom(Builder $query, $table)
+    protected function compileFrom(QueryBuilder $query, $table)
     {
         return 'from ' . $this->wrapTable($table);
     }
 
     /**
      * Compile the "join" portions of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $joins
      * @return string
      */
-    protected function compileJoins(Builder $query, $joins)
+    protected function compileJoins(QueryBuilder $query, $joins)
     {
         return collect($joins)->map(function ($join) use ($query) {
             $table = $this->wrapTable($join->table);
@@ -157,10 +157,10 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "where" portions of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return string
      */
-    protected function compileWheres(Builder $query)
+    protected function compileWheres(QueryBuilder $query)
     {
         // Each type of where clauses has its own compiler function which is responsible
         // for actually creating the where clauses SQL. This helps keep the code nice
@@ -181,7 +181,7 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Get an array of all the where clauses for the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return array
      */
     protected function compileWheresToArray($query)
@@ -193,7 +193,7 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Format the where clause statements into one string.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $sql
      * @return string
      */
@@ -206,22 +206,22 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a raw where clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereRaw(Builder $query, $where)
+    protected function whereRaw(QueryBuilder $query, $where)
     {
         return $where['sql'];
     }
 
     /**
      * Compile a basic where clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereBasic(Builder $query, $where)
+    protected function whereBasic(QueryBuilder $query, $where)
     {
         $value = $this->parameter($where['value']);
 
@@ -230,11 +230,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where in" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereIn(Builder $query, $where)
+    protected function whereIn(QueryBuilder $query, $where)
     {
         if (!empty($where['values'])) {
             return $this->wrap($where['column']) . ' in (' . $this->parameterize($where['values']) . ')';
@@ -245,11 +245,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where not in" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereNotIn(Builder $query, $where)
+    protected function whereNotIn(QueryBuilder $query, $where)
     {
         if (!empty($where['values'])) {
             return $this->wrap($where['column']) . ' not in (' . $this->parameterize($where['values']) . ')';
@@ -260,55 +260,55 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a where in sub-select clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereInSub(Builder $query, $where)
+    protected function whereInSub(QueryBuilder $query, $where)
     {
         return $this->wrap($where['column']) . ' in (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
      * Compile a where not in sub-select clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereNotInSub(Builder $query, $where)
+    protected function whereNotInSub(QueryBuilder $query, $where)
     {
         return $this->wrap($where['column']) . ' not in (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
      * Compile a "where null" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereNull(Builder $query, $where)
+    protected function whereNull(QueryBuilder $query, $where)
     {
         return $this->wrap($where['column']) . ' is null';
     }
 
     /**
      * Compile a "where not null" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereNotNull(Builder $query, $where)
+    protected function whereNotNull(QueryBuilder $query, $where)
     {
         return $this->wrap($where['column']) . ' is not null';
     }
 
     /**
      * Compile a "between" where clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereBetween(Builder $query, $where)
+    protected function whereBetween(QueryBuilder $query, $where)
     {
         $between = $where['not'] ? 'not between' : 'between';
 
@@ -317,55 +317,55 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where date" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereDate(Builder $query, $where)
+    protected function whereDate(QueryBuilder $query, $where)
     {
         return $this->dateBasedWhere('date', $query, $where);
     }
 
     /**
      * Compile a "where time" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereTime(Builder $query, $where)
+    protected function whereTime(QueryBuilder $query, $where)
     {
         return $this->dateBasedWhere('time', $query, $where);
     }
 
     /**
      * Compile a "where day" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereDay(Builder $query, $where)
+    protected function whereDay(QueryBuilder $query, $where)
     {
         return $this->dateBasedWhere('day', $query, $where);
     }
 
     /**
      * Compile a "where month" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereMonth(Builder $query, $where)
+    protected function whereMonth(QueryBuilder $query, $where)
     {
         return $this->dateBasedWhere('month', $query, $where);
     }
 
     /**
      * Compile a "where year" clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereYear(Builder $query, $where)
+    protected function whereYear(QueryBuilder $query, $where)
     {
         return $this->dateBasedWhere('year', $query, $where);
     }
@@ -373,11 +373,11 @@ class DefaultGrammar extends AbstractGrammar
     /**
      * Compile a date based where clause.
      * @param  string $type
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function dateBasedWhere($type, Builder $query, $where)
+    protected function dateBasedWhere($type, QueryBuilder $query, $where)
     {
         $value = $this->parameter($where['value']);
 
@@ -386,22 +386,22 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a where clause comparing two columns..
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereColumn(Builder $query, $where)
+    protected function whereColumn(QueryBuilder $query, $where)
     {
         return $this->wrap($where['first']) . ' ' . $where['operator'] . ' ' . $this->wrap($where['second']);
     }
 
     /**
      * Compile a nested where clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereNested(Builder $query, $where)
+    protected function whereNested(QueryBuilder $query, $where)
     {
         // Here we will calculate what portion of the string we need to remove. If this
         // is a join clause query, we need to remove the "on" portion of the SQL and
@@ -413,11 +413,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a where condition with a sub-select.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereSub(Builder $query, $where)
+    protected function whereSub(QueryBuilder $query, $where)
     {
         $select = $this->compileSelect($where['query']);
 
@@ -426,44 +426,44 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a where exists clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereExists(Builder $query, $where)
+    protected function whereExists(QueryBuilder $query, $where)
     {
         return 'exists (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
      * Compile a where exists clause.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $where
      * @return string
      */
-    protected function whereNotExists(Builder $query, $where)
+    protected function whereNotExists(QueryBuilder $query, $where)
     {
         return 'not exists (' . $this->compileSelect($where['query']) . ')';
     }
 
     /**
      * Compile the "group by" portions of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $groups
      * @return string
      */
-    protected function compileGroups(Builder $query, $groups)
+    protected function compileGroups(QueryBuilder $query, $groups)
     {
         return 'group by ' . $this->columnize($groups);
     }
 
     /**
      * Compile the "having" portions of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $havings
      * @return string
      */
-    protected function compileHavings(Builder $query, $havings)
+    protected function compileHavings(QueryBuilder $query, $havings)
     {
         $sql = implode(' ', array_map([$this, 'compileHaving'], $havings));
 
@@ -502,11 +502,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "order by" portions of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $orders
      * @return string
      */
-    protected function compileOrders(Builder $query, $orders)
+    protected function compileOrders(QueryBuilder $query, $orders)
     {
         if (!empty($orders)) {
             return 'order by ' . implode(', ', $this->compileOrdersToArray($query, $orders));
@@ -517,11 +517,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the query orders to an array.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $orders
      * @return array
      */
-    protected function compileOrdersToArray(Builder $query, $orders)
+    protected function compileOrdersToArray(QueryBuilder $query, $orders)
     {
         return array_map(function ($order) {
 //            return !isset($order['sql'])
@@ -543,32 +543,32 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "limit" portions of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  int $limit
      * @return string
      */
-    protected function compileLimit(Builder $query, $limit)
+    protected function compileLimit(QueryBuilder $query, $limit)
     {
         return 'limit ' . (int)$limit;
     }
 
     /**
      * Compile the "offset" portions of the query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  int $offset
      * @return string
      */
-    protected function compileOffset(Builder $query, $offset)
+    protected function compileOffset(QueryBuilder $query, $offset)
     {
         return 'offset ' . (int)$offset;
     }
 
     /**
      * Compile the "union" queries attached to the main query.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return string
      */
-    protected function compileUnions(Builder $query)
+    protected function compileUnions(QueryBuilder $query)
     {
         $sql = '';
         foreach ($query->unions as $union) {
@@ -604,10 +604,10 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an exists statement into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return string
      */
-    public function compileExists(Builder $query)
+    public function compileExists(QueryBuilder $query)
     {
         $select = $this->compileSelect($query);
 
@@ -616,11 +616,11 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an insert statement into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $values
      * @return string
      */
-    public function compileInsert(Builder $query, array $values)
+    public function compileInsert(QueryBuilder $query, array $values)
     {
         // Essentially we will force every insert to be treated as a batch insert which
         // simply makes creating the SQL easier for us since we can utilize the same
@@ -645,23 +645,23 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an insert and get ID statement into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $values
      * @param  string $sequence
      * @return string
      */
-    public function compileInsertGetId(Builder $query, $values, $sequence)
+    public function compileInsertGetId(QueryBuilder $query, $values, $sequence)
     {
         return $this->compileInsert($query, $values);
     }
 
     /**
      * Compile an update statement into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  array $values
      * @return string
      */
-    public function compileUpdate(Builder $query, $values)
+    public function compileUpdate(QueryBuilder $query, $values)
     {
         $table = $this->wrapTable($query->from);
 
@@ -706,10 +706,10 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a delete statement into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return string
      */
-    public function compileDelete(Builder $query)
+    public function compileDelete(QueryBuilder $query)
     {
         $wheres = is_array($query->wheres) ? $this->compileWheres($query) : '';
 
@@ -718,21 +718,21 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a truncate table statement into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @return array
      */
-    public function compileTruncate(Builder $query)
+    public function compileTruncate(QueryBuilder $query)
     {
         return ['truncate ' . $this->wrapTable($query->from) => []];
     }
 
     /**
      * Compile the lock into SQL.
-     * @param  Builder $query
+     * @param  QueryBuilder $query
      * @param  bool|string $value
      * @return string
      */
-    protected function compileLock(Builder $query, $value)
+    protected function compileLock(QueryBuilder $query, $value)
     {
         return is_string($value) ? $value : '';
     }

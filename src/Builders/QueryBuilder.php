@@ -15,11 +15,11 @@ use SimpleAR\Connections\Connection;
 use SimpleAR\Builders\Grammars\DefaultGrammar;
 
 /**
- * Class Query
+ * Class QueryBuilder
  * @package SimpleAR
  * @link https://github.com/illuminate/database/blob/master/Query/Builder.php
  */
-class Builder extends BaseQuery
+class QueryBuilder extends BaseQuery
 {
     /**
      * Sort directions.
@@ -29,6 +29,16 @@ class Builder extends BaseQuery
 
     /** @var Connection */
     public $connection;
+
+    /**
+     * @var DefaultGrammar
+     */
+    private $grammar;
+
+    /**
+     * @var QueryCompiler
+     */
+    private $compiler;
 
     /**
      * The current query value bindings.
@@ -189,11 +199,6 @@ class Builder extends BaseQuery
     private $values;
 
     private $sql;
-
-    /**
-     * @var DefaultGrammar
-     */
-    private $grammar;
 
     public function __construct(Connection $connection, DefaultGrammar $grammar = null)
     {
@@ -1128,5 +1133,21 @@ class Builder extends BaseQuery
     public function e($text, $extra = false)
     {
         return $this->escape($text, $extra);
+    }
+
+    /**
+     * @return QueryCompiler
+     */
+    public function getCompiler(): QueryCompiler
+    {
+        return $this->compiler;
+    }
+
+    /**
+     * @param QueryCompiler $compiler
+     */
+    public function setCompiler(QueryCompiler $compiler)
+    {
+        $this->compiler = $compiler;
     }
 }

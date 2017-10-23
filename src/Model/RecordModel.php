@@ -29,6 +29,12 @@ abstract class RecordModel extends BaseModel
      */
     private $_backup = [];
 
+    /**
+     * 发生改变的数据
+     * @var array
+     */
+    private $changes = [];
+
     const SCENE_DEFAULT = 'default';
     const SCENE_CREATE = 'create';
     const SCENE_UPDATE = 'update';
@@ -149,7 +155,7 @@ abstract class RecordModel extends BaseModel
         // if no table prefix
         // return 'articles';
 
-        return '@@' . $className;
+        return '{pfx}' . $className;
     }
 
     /**

@@ -76,10 +76,12 @@ class QueryCompiler
     protected function prepareUpdates(array $updates)
     {
 
+        return '';
     }
 
     protected function compileWhere(array $wheres)
     {
 
+        return '';
     }
 }
