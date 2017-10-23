@@ -6,13 +6,13 @@
  * Time: 下午11:33
  */
 
-namespace SimpleAR\Query\Grammars;
+namespace SimpleAR\Builders\Grammars;
 
-use SimpleAR\Query\Expression;
+use SimpleAR\Builders\Expression;
 
 /**
  * Class AbstractGrammar
- * @package SimpleAR\Query\Grammars
+ * @package SimpleAR\Builders\Grammars
  */
 abstract class AbstractGrammar
 {

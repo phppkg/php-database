@@ -6,9 +6,8 @@
  * Time: 下午9:17
  */
 
-namespace SimpleAR\Query;
+namespace SimpleAR\Builders;
 
-use SimpleAR\Base\BaseQuery;
 
 class MysqlQuery extends BaseQuery
 {

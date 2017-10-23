@@ -9,7 +9,7 @@
 namespace SimpleAR\Connections;
 
 use Inhere\Library\Traits\LiteEventTrait;
-use SimpleAR\Query\Grammars\DefaultGrammar;
+use SimpleAR\Builders\Grammars\DefaultGrammar;
 
 /**
  * Class Connection
@@ -48,7 +48,7 @@ abstract class Connection implements PdoInterface
 
         'options' => [],
 
-        'tblPrefix' => '',
+        'tablePrefix' => '',
 
         // retry times.
         'retry' => 0,
@@ -58,6 +58,7 @@ abstract class Connection implements PdoInterface
         self::CONNECT, self::DISCONNECT, self::BEFORE_EXECUTE, self::AFTER_EXECUTE
     ];
 
+    /** @var array */
     protected $config = [];
 
     /**
@@ -68,6 +69,9 @@ abstract class Connection implements PdoInterface
 
     /** @var string */
     protected $tablePrefix;
+
+    /** @var string  */
+    protected $prefixPlaceholder = '{pfx}';
 
     /**
      * @var DefaultGrammar
@@ -97,4 +101,44 @@ abstract class Connection implements PdoInterface
      * @return bool
      */
     abstract public function isConnected(): bool;
+
+    /**
+     * @param $sql
+     * @return mixed
+     */
+    public function replaceTablePrefix($sql)
+    {
+        return str_replace($this->prefixPlaceholder, $this->tablePrefix, (string)$sql);
+    }
+
+    /**
+     * @return array
+     */
+    public function getQueryLog(): array
+    {
+        return $this->queryLog;
+    }
+
+    /**
+     * @param string $name
+     * @param null|mixed $default
+     * @return array|mixed
+     */
+    public function getConfig($name = null, $default = null)
+    {
+        if (!$name) {
+            return $this->config;
+        }
+
+        return $this->config[$name] ?? $default;
+    }
+
+    /**
+     * @param array $config
+     */
+    public function setConfig(array $config)
+    {
+        $this->config = $config;
+    }
+
 }

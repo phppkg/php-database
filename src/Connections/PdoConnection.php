@@ -20,6 +20,8 @@ use SimpleAR\Helpers\DsnHelper;
  */
 class PdoConnection extends Connection
 {
+    const DATETIME = 'Y-m-d H:i:s';
+
     /**
      * @var PDO|\Closure
      */
@@ -45,6 +47,7 @@ class PdoConnection extends Connection
         PDO::ATTR_CASE => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES "UTF8"',
         PDO::ATTR_STRINGIFY_FETCHES => false,
         PDO::ATTR_EMULATE_PREPARES => false,
     ];

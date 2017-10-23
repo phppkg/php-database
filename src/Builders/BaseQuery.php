@@ -6,7 +6,7 @@
  * Time: 上午10:35
  */
 
-namespace SimpleAR\Base;
+namespace SimpleAR\Builders;
 
 /**
  * Class BaseQuery

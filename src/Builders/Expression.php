@@ -6,11 +6,11 @@
  * Time: 下午11:26
  */
 
-namespace SimpleAR\Query;
+namespace SimpleAR\Builders;
 
 /**
  * Class Expression
- * @package SimpleAR\Query
+ * @package SimpleAR\Builders
  */
 class Expression
 {

@@ -6,14 +6,13 @@
  * Time: 下午2:57
  */
 
-namespace SimpleAR;
+namespace SimpleAR\Builders;
 
 use Closure;
 use Inhere\Library\Helpers\Arr;
 use Inhere\Library\Helpers\Str;
-use SimpleAR\Base\BaseQuery;
 use SimpleAR\Connections\Connection;
-use SimpleAR\Query\Grammars\DefaultGrammar;
+use SimpleAR\Builders\Grammars\DefaultGrammar;
 
 /**
  * Class Query
@@ -22,6 +21,12 @@ use SimpleAR\Query\Grammars\DefaultGrammar;
  */
 class Builder extends BaseQuery
 {
+    /**
+     * Sort directions.
+     */
+    const SORT_ASC  = 'ASC';
+    const SORT_DESC = 'DESC';
+
     /** @var Connection */
     public $connection;
 
@@ -322,11 +327,12 @@ class Builder extends BaseQuery
 
     /**
      * Force the query to only return distinct results.
+     * @param bool $value
      * @return $this
      */
-    public function distinct()
+    public function distinct($value = true)
     {
-        $this->distinct = true;
+        $this->distinct = (bool)$value;
 
         return $this;
     }
@@ -574,7 +580,7 @@ class Builder extends BaseQuery
     /**
      * Handles dynamic "where" clauses to the query.
      * @param  string $method
-     * @param  string $parameters
+     * @param  string|array $parameters
      * @return $this
      */
     public function dynamicWhere($method, $parameters)
@@ -608,7 +614,6 @@ class Builder extends BaseQuery
         return $this;
     }
 
-
     /**
      * Add a single dynamic where clause statement to the query.
      * @param  string $segment
@@ -624,7 +629,7 @@ class Builder extends BaseQuery
         // clause on the query. Then we'll increment the parameter index values.
         $bool = strtolower($connector);
 
-        $this->where(Str::toSnakeCase($segment), '=', $parameters[$index], $bool);
+        $this->where(Str::toSnake($segment, ' '), '=', $parameters[$index], $bool);
     }
 
 
@@ -976,7 +981,7 @@ class Builder extends BaseQuery
     public function setBindings(array $bindings, $type = 'where')
     {
         if (!array_key_exists($type, $this->bindings)) {
-            throw new InvalidArgumentException("Invalid binding type: {$type}.");
+            throw new \InvalidArgumentException("Invalid binding type: {$type}.");
         }
         $this->bindings[$type] = $bindings;
 

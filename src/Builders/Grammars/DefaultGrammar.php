@@ -6,10 +6,10 @@
  * Time: 下午11:42
  */
 
-namespace SimpleAR\Query\Grammars;
+namespace SimpleAR\Builders\Grammars;
 
 use Inhere\Library\Helpers\Arr;
-use SimpleAR\Builder;
+use SimpleAR\Builders\Builder;
 
 /**
  * Class DefaultGrammar
