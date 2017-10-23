@@ -62,12 +62,11 @@ abstract class Connection implements PdoInterface
 
     /**
      * All of the queries run against the connection.
-     *
      * @var array
      */
     protected $queryLog = [];
 
-    /** @var string  */
+    /** @var string */
     protected $tablePrefix;
 
     /**

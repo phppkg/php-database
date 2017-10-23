@@ -502,13 +502,11 @@ abstract class RecordModel extends BaseModel
 
     /**
      * findXxx 无法满足需求时，自定义 $query
-     *
      * ```php
      * $query = XModel::getQuery();
      * ...
      * XModel::setQuery($query)->loadAll(null, XModel::class);
      * ```
-     *
      * @param string|Query $query
      * @return AbstractDriver
      */

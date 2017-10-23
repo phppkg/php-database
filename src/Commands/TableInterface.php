@@ -7,6 +7,7 @@
  */
 
 namespace SimpleAR\Commands;
+
 use SimpleAR\Schema\Column;
 
 /**
@@ -68,7 +69,7 @@ interface TableInterface
      */
     public function dropColumn(string $name);
 
-    public function getColumnNames($toString=false);
+    public function getColumnNames($toString = false);
 
     public function getColumnDetails($full = true);
 

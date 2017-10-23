@@ -25,6 +25,7 @@ class MysqlDriver extends PdoDriver
         if ($forceNew || self::$newQueryCache === null) {
             self::$newQueryCache = new MysqlQuery($this->pdo);
         }
+
         return self::$newQueryCache;
     }
 

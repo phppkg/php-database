@@ -18,14 +18,12 @@ abstract class AbstractGrammar
 {
     /**
      * The grammar table prefix.
-     *
      * @var string
      */
     protected $tablePrefix = '';
 
     /**
      * Wrap an array of values.
-     *
      * @param  array $values
      * @return array
      */
@@ -36,7 +34,6 @@ abstract class AbstractGrammar
 
     /**
      * Wrap a table in keyword identifiers.
-     *
      * @param  Expression|string $table
      * @return string
      */
@@ -45,12 +42,12 @@ abstract class AbstractGrammar
         if (!$this->isExpression($table)) {
             return $this->wrap($this->tablePrefix . $table, true);
         }
+
         return $this->getValue($table);
     }
 
     /**
      * Wrap a value in keyword identifiers.
-     *
      * @param  Expression|string $value
      * @param  bool $prefixAlias
      * @return string
@@ -60,18 +57,19 @@ abstract class AbstractGrammar
         if ($this->isExpression($value)) {
             return $this->getValue($value);
         }
+
         // If the value being wrapped has a column alias we will need to separate out
         // the pieces so we can wrap each of the segments of the expression on it
         // own, and then joins them both back together with the "as" connector.
-        if (strpos(strtolower($value), ' as ') !== false) {
+        if (stripos($value, ' as ') !== false) {
             return $this->wrapAliasedValue($value, $prefixAlias);
         }
+
         return $this->wrapSegments(explode('.', $value));
     }
 
     /**
      * Wrap a value that has an alias.
-     *
      * @param  string $value
      * @param  bool $prefixAlias
      * @return string
@@ -85,14 +83,12 @@ abstract class AbstractGrammar
         if ($prefixAlias) {
             $segments[1] = $this->tablePrefix . $segments[1];
         }
-        return $this->wrap(
-                $segments[0]) . ' as ' . $this->wrapValue($segments[1]
-            );
+
+        return $this->wrap($segments[0]) . ' as ' . $this->wrapValue($segments[1]);
     }
 
     /**
      * Wrap the given value segments.
-     *
      * @param  array $segments
      * @return string
      */
@@ -107,7 +103,6 @@ abstract class AbstractGrammar
 
     /**
      * Wrap a single string in keyword identifiers.
-     *
      * @param  string $value
      * @return string
      */
@@ -116,12 +111,12 @@ abstract class AbstractGrammar
         if ($value !== '*') {
             return '"' . str_replace('"', '""', $value) . '"';
         }
+
         return $value;
     }
 
     /**
      * Convert an array of column names into a delimited string.
-     *
      * @param  array $columns
      * @return string
      */
@@ -132,7 +127,6 @@ abstract class AbstractGrammar
 
     /**
      * Create query parameter place-holders for an array.
-     *
      * @param  array $values
      * @return string
      */
@@ -143,7 +137,6 @@ abstract class AbstractGrammar
 
     /**
      * Get the appropriate query parameter place-holder for a value.
-     *
      * @param  mixed $value
      * @return string
      */
@@ -154,7 +147,6 @@ abstract class AbstractGrammar
 
     /**
      * Determine if the given value is a raw expression.
-     *
      * @param  mixed $value
      * @return bool
      */
@@ -165,7 +157,6 @@ abstract class AbstractGrammar
 
     /**
      * Get the value of a raw expression.
-     *
      * @param  Expression $expression
      * @return string
      */
@@ -176,7 +167,6 @@ abstract class AbstractGrammar
 
     /**
      * Get the format for database stored dates.
-     *
      * @return string
      */
     public function getDateFormat()
@@ -186,7 +176,6 @@ abstract class AbstractGrammar
 
     /**
      * Get the grammar's table prefix.
-     *
      * @return string
      */
     public function getTablePrefix()
@@ -196,13 +185,13 @@ abstract class AbstractGrammar
 
     /**
      * Set the grammar's table prefix.
-     *
      * @param  string $prefix
      * @return $this
      */
     public function setTablePrefix($prefix)
     {
         $this->tablePrefix = $prefix;
+
         return $this;
     }
 }

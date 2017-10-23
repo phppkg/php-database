@@ -24,7 +24,7 @@ abstract class Connections implements ManagerInterface
     const READER = 'reader';
     const WRITER = 'writer';
 
-    /** @var int  */
+    /** @var int */
     private $mode = self::MODE_SINGLETON;
 
     /**

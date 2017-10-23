@@ -16,10 +16,9 @@ class MySqlGrammar extends DefaultGrammar
 {
     /**
      * The components that make up a select clause.
-     *
      * @var array
      */
-    protected $selectComponents = [
+    protected static $selectComponents = [
         'aggregate',
         'columns',
         'from',

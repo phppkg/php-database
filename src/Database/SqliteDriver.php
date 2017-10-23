@@ -25,6 +25,7 @@ class SqliteDriver extends PdoDriver
         if ($forceNew || self::$newQueryCache === null) {
             self::$newQueryCache = new SqliteQuery($this->pdo);
         }
+
         return self::$newQueryCache;
     }
 

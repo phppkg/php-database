@@ -14,7 +14,6 @@ use SimpleAR\Helpers\ModelHelper;
 /**
  * Class RecordModelExtraTrait
  * @package SimpleAR\Model
- *
  * @method static RecordModel load()
  * @method static AbstractDriver getDb()
  * @method static AbstractDriver setQuery()

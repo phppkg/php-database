@@ -162,7 +162,6 @@ class PdoDriver extends AbstractDriver
 
     /**
      * count
-     *
      * ```
      * $db->setQuery($query)->count();
      * ```
@@ -179,7 +178,6 @@ class PdoDriver extends AbstractDriver
 
     /**
      * exists
-     *
      * ```
      * $db->setQuery($query)->exists();
      * // SQL: select exists(select * from `table` where (`phone` = 152xxx)) as `exists`;

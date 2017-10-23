@@ -39,7 +39,6 @@ class PdoConnection extends Connection
 
     /**
      * The default PDO connection options.
-     *
      * @var array
      */
     protected $options = [
@@ -110,7 +109,6 @@ class PdoConnection extends Connection
 
     /**
      * Set the timezone on the connection.
-     *
      * @param  \PDO $connection
      * @param  array $config
      * @return void
@@ -128,9 +126,8 @@ class PdoConnection extends Connection
 
     /**
      * Run a select statement
-     *
-     * @param  string  $statement
-     * @param  array   $bindings
+     * @param  string $statement
+     * @param  array $bindings
      * @return array
      */
     public function select($statement, array $bindings = [])
@@ -140,9 +137,8 @@ class PdoConnection extends Connection
 
     /**
      * Run a insert statement
-     *
-     * @param  string  $statement
-     * @param  array   $bindings
+     * @param  string $statement
+     * @param  array $bindings
      * @return int
      */
     public function insert($statement, array $bindings = [])
@@ -152,9 +148,8 @@ class PdoConnection extends Connection
 
     /**
      * Run a update statement
-     *
-     * @param  string  $statement
-     * @param  array   $bindings
+     * @param  string $statement
+     * @param  array $bindings
      * @return int
      */
     public function update($statement, array $bindings = [])
@@ -164,9 +159,8 @@ class PdoConnection extends Connection
 
     /**
      * Run a delete statement
-     *
-     * @param  string  $statement
-     * @param  array   $bindings
+     * @param  string $statement
+     * @param  array $bindings
      * @return int
      */
     public function delete($statement, array $bindings = [])
@@ -434,6 +428,7 @@ class PdoConnection extends Connection
         if (strpos($name, '.') === false) {
             return $this->quoteSingleName($name);
         }
+
         return implode(
             '.',
             array_map([$this, 'quoteSingleName'], explode('.', $name))
@@ -460,18 +455,21 @@ class PdoConnection extends Connection
                 $this->quoteNameSuffix = '`';
                 $this->quoteNameEscapeChar = '`';
                 $this->quoteNameEscapeReplace = '``';
+
                 return;
             case 'sqlsrv':
                 $this->quoteNamePrefix = '[';
                 $this->quoteNameSuffix = ']';
                 $this->quoteNameEscapeChar = ']';
                 $this->quoteNameEscapeReplace = '][';
+
                 return;
             default:
                 $this->quoteNamePrefix = '"';
                 $this->quoteNameSuffix = '"';
                 $this->quoteNameEscapeChar = '"';
                 $this->quoteNameEscapeReplace = '""';
+
                 return;
         }
     }

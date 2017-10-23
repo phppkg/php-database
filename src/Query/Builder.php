@@ -27,7 +27,6 @@ class Builder extends BaseQuery
 
     /**
      * The current query value bindings.
-     *
      * @var array
      */
     public $bindings = [
@@ -40,119 +39,102 @@ class Builder extends BaseQuery
     ];
     /**
      * An aggregate function and column to be run.
-     *
      * @var array
      */
     public $aggregate;
 
     /**
      * The columns that should be returned.
-     *
      * @var array
      */
     public $fields;
 
     /**
      * Indicates if the query returns distinct results.
-     *
      * @var bool
      */
     public $distinct = false;
 
     /**
      * The table which the query is targeting.
-     *
      * @var string
      */
     public $from;
 
     /**
      * The table joins for the query.
-     *
      * @var array
      */
     public $joins = [];
 
     /**
      * The where constraints for the query.
-     *
      * @var array
      */
     public $wheres = [];
 
     /**
      * The groupings for the query.
-     *
      * @var array
      */
     public $groups = [];
 
     /**
      * The having constraints for the query.
-     *
      * @var array
      */
     public $havings = [];
 
     /**
      * The orderings for the query.
-     *
      * @var array
      */
     public $orders = [];
 
     /**
      * The maximum number of records to return.
-     *
      * @var int
      */
     public $limit;
 
     /**
      * The number of records to skip.
-     *
      * @var int
      */
     public $offset;
 
     /**
      * The query union statements.
-     *
      * @var array
      */
     public $unions = [];
 
     /**
      * The maximum number of union records to return.
-     *
      * @var int
      */
     public $unionLimit;
 
     /**
      * The number of union records to skip.
-     *
      * @var int
      */
     public $unionOffset;
 
     /**
      * The orderings for the union query.
-     *
      * @var array
      */
     public $unionOrders = [];
 
     /**
      * Indicates whether row locking is being used.
-     *
      * @var string|bool
      */
     public $lock;
 
     /**
      * All of the available clause operators.
-     *
      * @var array
      */
     public $operators = [
@@ -166,7 +148,6 @@ class Builder extends BaseQuery
 
     /**
      * Whether use write pdo for select.
-     *
      * @var bool
      */
     public $useWritePdo = false;
@@ -221,7 +202,6 @@ class Builder extends BaseQuery
 
     /**
      * Insert a new record
-     *
      * @param  array $values
      * @return $this
      */
@@ -330,7 +310,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a new select column to the query.
-     *
      * @param  array ...$fields
      * @return $this
      */
@@ -343,7 +322,6 @@ class Builder extends BaseQuery
 
     /**
      * Force the query to only return distinct results.
-     *
      * @return $this
      */
     public function distinct()
@@ -355,7 +333,6 @@ class Builder extends BaseQuery
 
     /**
      * Set the table which the query is targeting.
-     *
      * @param  string $table
      * @return $this
      */
@@ -405,11 +382,10 @@ class Builder extends BaseQuery
 
     /**
      * Add a basic where clause to the query.
-     *
-     * @param  string|array|\Closure  $column
-     * @param  string|null  $operator
-     * @param  mixed   $value
-     * @param  string  $boolean
+     * @param  string|array|\Closure $column
+     * @param  string|null $operator
+     * @param  mixed $value
+     * @param  string $boolean
      * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
@@ -427,7 +403,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a raw where clause to the query.
-     *
      * @param  string $sql
      * @param  mixed $bindings
      * @param  string $boolean
@@ -449,7 +424,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a "where in" clause to the query.
-     *
      * @param  string $column
      * @param  mixed $values
      * @param  string $boolean
@@ -466,7 +440,6 @@ class Builder extends BaseQuery
 
     /**
      * Add an "or where in" clause to the query.
-     *
      * @param  string $column
      * @param  mixed $values
      * @return $this
@@ -478,7 +451,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a "where not in" clause to the query.
-     *
      * @param  string $column
      * @param  mixed $values
      * @param  string $boolean
@@ -491,7 +463,6 @@ class Builder extends BaseQuery
 
     /**
      * Add an "or where not in" clause to the query.
-     *
      * @param  string $column
      * @param  mixed $values
      * @return $this
@@ -503,7 +474,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a "where null" clause to the query.
-     *
      * @param  string $column
      * @param  string $boolean
      * @param  bool $not
@@ -519,7 +489,6 @@ class Builder extends BaseQuery
 
     /**
      * Add an "or where null" clause to the query.
-     *
      * @param  string $column
      * @return $this
      */
@@ -531,7 +500,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a "where not null" clause to the query.
-     *
      * @param  string $column
      * @param  string $boolean
      * @return $this
@@ -543,7 +511,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a where between statement to the query.
-     *
      * @param  string $column
      * @param  array $values
      * @param  string $boolean
@@ -556,12 +523,12 @@ class Builder extends BaseQuery
 //        $this->wheres[] = compact('column', 'type', 'boolean', 'not');
         $this->wheres[] = [$column, $type, $values, $boolean, $not];
         $this->addBinding($values, 'where');
+
         return $this;
     }
 
     /**
      * Add an or where between statement to the query.
-     *
      * @param  string $column
      * @param  array $values
      * @return $this
@@ -573,7 +540,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a where not between statement to the query.
-     *
      * @param  string $column
      * @param  array $values
      * @param  string $boolean
@@ -586,7 +552,6 @@ class Builder extends BaseQuery
 
     /**
      * Add an or where not between statement to the query.
-     *
      * @param  string $column
      * @param  array $values
      * @return $this
@@ -598,7 +563,6 @@ class Builder extends BaseQuery
 
     /**
      * Add an "or where not null" clause to the query.
-     *
      * @param  string $column
      * @return $this
      */
@@ -609,7 +573,6 @@ class Builder extends BaseQuery
 
     /**
      * Handles dynamic "where" clauses to the query.
-     *
      * @param  string $method
      * @param  string $parameters
      * @return $this
@@ -641,13 +604,13 @@ class Builder extends BaseQuery
                 $connector = $segment;
             }
         }
+
         return $this;
     }
 
 
     /**
      * Add a single dynamic where clause statement to the query.
-     *
      * @param  string $segment
      * @param  string $connector
      * @param  array $parameters
@@ -671,7 +634,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a "group by" clause to the query.
-     *
      * @param  array ...$groups
      * @return $this
      */
@@ -704,7 +666,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a raw having clause to the query.
-     *
      * @param  string $sql
      * @param  array $bindings
      * @param  string $boolean
@@ -716,12 +677,12 @@ class Builder extends BaseQuery
         $this->havings[] = [$type, $sql, $boolean];
 
         $this->addBinding($bindings, 'having');
+
         return $this;
     }
 
     /**
      * Add a raw or having clause to the query.
-     *
      * @param  string $sql
      * @param  array $bindings
      * @return $this
@@ -733,7 +694,6 @@ class Builder extends BaseQuery
 
     /**
      * Add an "order by" clause to the query.
-     *
      * @param  string $column
      * @param  string $direction
      * @return $this
@@ -756,7 +716,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a descending "order by" clause to the query.
-     *
      * @param  string $column
      * @return $this
      */
@@ -767,7 +726,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a raw "order by" clause to the query.
-     *
      * @param  string $sql
      * @param  array $bindings
      * @return $this
@@ -790,7 +748,6 @@ class Builder extends BaseQuery
 
     /**
      * Set the "offset" value of the query.
-     *
      * @param  int $value
      * @return $this
      */
@@ -829,7 +786,6 @@ class Builder extends BaseQuery
 
     /**
      * Add a union statement to the query.
-     *
      * @param  static|\Closure $query
      * @param  bool $all
      * @return $this
@@ -855,7 +811,6 @@ class Builder extends BaseQuery
 
     /**
      * Lock the selected rows in the table.
-     *
      * @param  string|bool $value
      * @return $this
      */
@@ -872,7 +827,6 @@ class Builder extends BaseQuery
 
     /**
      * Lock the selected rows in the table for updating.
-     *
      * @return $this
      */
     public function lockForUpdate()
@@ -882,7 +836,6 @@ class Builder extends BaseQuery
 
     /**
      * Share lock the selected rows in the table.
-     *
      * @return $this
      */
     public function sharedLock()
@@ -892,7 +845,6 @@ class Builder extends BaseQuery
 
     /**
      * Execute a query for a single record by ID.
-     *
      * @param  int $id
      * @param  array $columns
      * @param string $pkField
@@ -905,7 +857,6 @@ class Builder extends BaseQuery
 
     /**
      * Determine if any rows exist for the current query.
-     *
      * @return bool
      */
     public function exists()
@@ -919,14 +870,15 @@ class Builder extends BaseQuery
         // there are no rows for this query at all and we can return that info here.
         if (isset($results[0])) {
             $results = (array)$results[0];
+
             return (bool)$results['exists'];
         }
+
         return false;
     }
 
     /**
      * Retrieve the "count" result of the query.
-     *
      * @param  string $columns
      * @return int
      */
@@ -937,7 +889,6 @@ class Builder extends BaseQuery
 
     /**
      * Retrieve the minimum value of a given column.
-     *
      * @param  string $column
      * @return mixed
      */
@@ -948,7 +899,6 @@ class Builder extends BaseQuery
 
     /**
      * Retrieve the maximum value of a given column.
-     *
      * @param  string $column
      * @return mixed
      */
@@ -959,19 +909,18 @@ class Builder extends BaseQuery
 
     /**
      * Retrieve the sum of the values of a given column.
-     *
      * @param  string $column
      * @return mixed
      */
     public function sum($column)
     {
         $result = $this->aggregate(__FUNCTION__, [$column]);
+
         return $result ?: 0;
     }
 
     /**
      * Retrieve the average of the values of a given column.
-     *
      * @param  string $column
      * @return mixed
      */
@@ -982,7 +931,6 @@ class Builder extends BaseQuery
 
     /**
      * Alias for the "avg" method.
-     *
      * @param  string $column
      * @return mixed
      */
@@ -993,7 +941,6 @@ class Builder extends BaseQuery
 
     /**
      * Execute an aggregate function on the database.
-     *
      * @param  string $function
      * @param  array $columns
      * @return mixed
@@ -1012,7 +959,6 @@ class Builder extends BaseQuery
 
     /**
      * Get the SQL representation of the query.
-     *
      * @return string
      */
     public function toSql()
@@ -1022,11 +968,9 @@ class Builder extends BaseQuery
 
     /**
      * Set the bindings on the query builder.
-     *
      * @param  array $bindings
      * @param  string $type
      * @return $this
-     *
      * @throws \InvalidArgumentException
      */
     public function setBindings(array $bindings, $type = 'where')
@@ -1035,16 +979,15 @@ class Builder extends BaseQuery
             throw new InvalidArgumentException("Invalid binding type: {$type}.");
         }
         $this->bindings[$type] = $bindings;
+
         return $this;
     }
 
     /**
      * Add a binding to the query.
-     *
      * @param  mixed $value
      * @param  string $type
      * @return $this
-     *
      * @throws \InvalidArgumentException
      */
     public function addBinding($value, $type = 'where')
@@ -1064,19 +1007,18 @@ class Builder extends BaseQuery
 
     /**
      * Merge an array of bindings into our bindings.
-     *
      * @param  self $query
      * @return $this
      */
     public function mergeBindings(self $query)
     {
         $this->bindings = array_merge_recursive($this->bindings, $query->bindings);
+
         return $this;
     }
 
     /**
      * Remove all of the expressions from a list of bindings.
-     *
      * @param  array $bindings
      * @return array
      */
@@ -1102,7 +1044,6 @@ class Builder extends BaseQuery
 
     /**
      * Get the current query value bindings in a flattened array.
-     *
      * @return array
      */
     public function getBindings()
@@ -1112,7 +1053,6 @@ class Builder extends BaseQuery
 
     /**
      * Get the raw array of bindings.
-     *
      * @return array
      */
     public function getRawBindings()
@@ -1122,7 +1062,6 @@ class Builder extends BaseQuery
 
     /**
      * Get a new instance of the query builder.
-     *
      * @return static
      */
     public function newQuery()
@@ -1132,7 +1071,6 @@ class Builder extends BaseQuery
 
     /**
      * Determine if the given operator is supported.
-     *
      * @param  string $operator
      * @return bool
      */
@@ -1143,7 +1081,6 @@ class Builder extends BaseQuery
 
     /**
      * Merge an array of where clauses and bindings.
-     *
      * @param  array $wheres
      * @param  array $bindings
      * @return void

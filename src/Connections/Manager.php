@@ -83,7 +83,7 @@ class Manager
     /**
      * set Writer
      * @param string $name
-     * @param callable|\Closure  $cb
+     * @param callable|\Closure $cb
      */
     public function setWriter($name, \Closure $cb)
     {
@@ -112,7 +112,7 @@ class Manager
     /**
      * [setReader
      * @param string $name
-     * @param callable|\Closure  $cb
+     * @param callable|\Closure $cb
      */
     public function setReader($name, \Closure $cb)
     {

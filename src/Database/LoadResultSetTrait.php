@@ -11,7 +11,6 @@ namespace SimpleAR\Database;
 /**
  * Class LoadResultSetTrait
  * @package SimpleAR\Database
- *
  * @property \PDOStatement $cursor
  */
 trait LoadResultSetTrait

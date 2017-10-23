@@ -9,9 +9,9 @@
 namespace SimpleAR\Helpers;
 
 use SimpleAR\Database\DbFactory;
-use Windwalker\Query\QueryElement;
 use Windwalker\Compare\Compare;
 use Windwalker\Query\Query;
+use Windwalker\Query\QueryElement;
 
 /**
  * Created by PhpStorm.
@@ -23,10 +23,8 @@ class QueryHelper
 {
     /**
      * buildConditions
-     *
      * @param Query $query
      * @param array $conditions
-     *
      * @return  Query
      */
     public static function buildWheres(Query $query, array $conditions)
@@ -50,16 +48,15 @@ class QueryHelper
                 $query->where($query->format('%n = %q', $key, $value));
             }
         }
+
         return $query;
     }
 
     /**
      * buildCompare
-     *
      * @param string|int $key
      * @param Compare $value
      * @param Query $query
-     *
      * @return  string
      */
     public static function buildCompare($key, Compare $value, $query = null)
@@ -73,6 +70,7 @@ class QueryHelper
                 return $query->format('%n ' . $operator . ' %q', $compare1, $compare2);
             }
         );
+
         return (string)$value;
     }
 

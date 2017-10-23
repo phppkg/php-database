@@ -86,7 +86,7 @@ class ConnectionLocator
     /**
      * set Writer
      * @param string $name
-     * @param callable|\Closure  $cb
+     * @param callable|\Closure $cb
      */
     public function setWriter($name, \Closure $cb)
     {
@@ -115,7 +115,7 @@ class ConnectionLocator
     /**
      * [setReader
      * @param string $name
-     * @param callable|\Closure  $cb
+     * @param callable|\Closure $cb
      */
     public function setReader($name, \Closure $cb)
     {

@@ -23,12 +23,12 @@ class Column
     const NOT_NULL = false;
 
     // types for $type
-    const STRING	= 1;
-    const INTEGER	= 2;
-    const DECIMAL	= 3;
-    const DATETIME	= 4;
-    const DATE		= 5;
-    const TIME		= 6;
+    const STRING = 1;
+    const INTEGER = 2;
+    const DECIMAL = 3;
+    const DATETIME = 4;
+    const DATE = 5;
+    const TIME = 6;
 
     /**
      * Map a type to an column type.
@@ -36,21 +36,21 @@ class Column
      * @var array
      */
     const TYPE_MAPPING = [
-        'datetime'	=> self::DATETIME,
-        'timestamp'	=> self::DATETIME,
-        'date'		=> self::DATE,
-        'time'		=> self::TIME,
-        'tinyint'	=> self::INTEGER,
-        'smallint'	=> self::INTEGER,
-        'mediumint'	=> self::INTEGER,
-        'int'		=> self::INTEGER,
+        'datetime' => self::DATETIME,
+        'timestamp' => self::DATETIME,
+        'date' => self::DATE,
+        'time' => self::TIME,
+        'tinyint' => self::INTEGER,
+        'smallint' => self::INTEGER,
+        'mediumint' => self::INTEGER,
+        'int' => self::INTEGER,
         //'integer'	=> self::INTEGER,
-        'bigint'	=> self::INTEGER,
-        'float'		=> self::DECIMAL,
-        'double'	=> self::DECIMAL,
-        'numeric'	=> self::DECIMAL,
-        'decimal'	=> self::DECIMAL,
-        'dec'		=> self::DECIMAL
+        'bigint' => self::INTEGER,
+        'float' => self::DECIMAL,
+        'double' => self::DECIMAL,
+        'numeric' => self::DECIMAL,
+        'decimal' => self::DECIMAL,
+        'dec' => self::DECIMAL
     ];
 
     /**

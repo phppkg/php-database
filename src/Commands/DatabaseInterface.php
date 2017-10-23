@@ -20,7 +20,7 @@ interface DatabaseInterface
 
     public function isExists();
 
-    public function setCharset($charset='utf8');
+    public function setCharset($charset = 'utf8');
 
     public function hasTable(string $name);
 
@@ -30,5 +30,5 @@ interface DatabaseInterface
      */
     public function getTable(string $name);
 
-    public function getTableNames($refresh=false);
+    public function getTableNames($refresh = false);
 }

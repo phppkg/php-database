@@ -11,7 +11,6 @@ namespace SimpleAR\Database;
 /**
  * Class DbFactory
  * @package SimpleAR\Database
- *
  * @referrer Windwalker\Database\DatabaseFactory
  */
 class DbFactory
@@ -87,11 +86,9 @@ class DbFactory
      * createPdo
      * @param array $options
      * e.g.
-     *
      * [
      *     'dsn' => 'sqlite:/var/www/xx.db'
      * ]
-     *
      * [
      *     'dsn' => 'mysql:dbname=testDb;host=127.0.0.1',
      *     'username' => 'demo',

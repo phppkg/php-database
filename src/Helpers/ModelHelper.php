@@ -58,14 +58,12 @@ class ModelHelper
      *      'title' => 'test',  // value will auto add quote, equal to "title = 'test'"
      *      'id' => [4,5,56],   // ==> '`id` IN ('4','5','56')'
      *      'id NOT IN' => [4,5,56], // ==> '`id` NOT IN ('4','5','56')'
-     *
      *      // a closure
      *      function (Query $q) {
      *          $q->orWhere('a < 5', 'b > 6');
      *          $q->where( 'column = ' . $q->q($value) );
      *      }
      * ]);
-     *
      * ```
      * @return Query
      */

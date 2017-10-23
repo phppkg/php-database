@@ -13,7 +13,6 @@ use Inhere\Exceptions\UnknownCalledException;
 /**
  * Class Singleton
  * @package SimpleAR\Connections
- *
  * ```
  * $client = new Singleton($config);
  * ```

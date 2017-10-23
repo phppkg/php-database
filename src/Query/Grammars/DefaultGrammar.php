@@ -19,18 +19,15 @@ class DefaultGrammar extends AbstractGrammar
 {
     /**
      * The grammar specific operators.
-     *
      * @var array
      */
     protected $operators = [];
 
-
     /**
      * The components that make up a select clause.
-     *
      * @var array
      */
-    protected $selectComponents = [
+    protected static $selectComponents = [
         'aggregate',
         'columns',
         'from',
@@ -47,7 +44,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a select query into SQL.
-     *
      * @param  Builder $query
      * @return string
      */
@@ -65,9 +61,7 @@ class DefaultGrammar extends AbstractGrammar
         // To compile the query, we'll spin through each component of the query and
         // see if that component exists. If it does we'll just call the compiler
         // function for the component which is responsible for making the SQL.
-        $sql = trim($this->concatenate(
-            $this->compileComponents($query))
-        );
+        $sql = trim($this->concatenate($this->compileComponents($query)));
 
         $query->fields = $original;
 
@@ -76,7 +70,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the components necessary for a select clause.
-     *
      * @param  Builder $query
      * @return array
      */
@@ -84,7 +77,7 @@ class DefaultGrammar extends AbstractGrammar
     {
         $sql = [];
 
-        foreach ($this->selectComponents as $component) {
+        foreach (static::$selectComponents as $component) {
             // To compile the query, we'll spin through each component of the query and
             // see if that component exists. If it does we'll just call the compiler
             // function for the component which is responsible for making the SQL.
@@ -99,7 +92,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an aggregated select clause.
-     *
      * @param  Builder $query
      * @param  array $aggregate
      * @return string
@@ -113,12 +105,12 @@ class DefaultGrammar extends AbstractGrammar
         if ($query->distinct && $column !== '*') {
             $column = 'distinct ' . $column;
         }
+
         return 'select ' . $aggregate['function'] . '(' . $column . ') as aggregate';
     }
 
     /**
      * Compile the "select *" portion of the query.
-     *
      * @param  Builder $query
      * @param  array $columns
      * @return string|null
@@ -128,16 +120,17 @@ class DefaultGrammar extends AbstractGrammar
         // If the query is actually performing an aggregating select, we will let that
         // compiler handle the building of the select clauses, as it will need some
         // more syntax that is best handled by that function to keep things neat.
-        if (!is_null($query->aggregate)) {
-            return;
+        if (!$query->aggregate) {
+            return null;
         }
+
         $select = $query->distinct ? 'select distinct ' : 'select ';
+
         return $select . $this->columnize($columns);
     }
 
     /**
      * Compile the "from" portion of the query.
-     *
      * @param  Builder $query
      * @param  string $table
      * @return string
@@ -149,7 +142,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "join" portions of the query.
-     *
      * @param  Builder $query
      * @param  array $joins
      * @return string
@@ -158,13 +150,13 @@ class DefaultGrammar extends AbstractGrammar
     {
         return collect($joins)->map(function ($join) use ($query) {
             $table = $this->wrapTable($join->table);
+
             return trim("{$join->type} join {$table} {$this->compileWheres($join)}");
         })->implode(' ');
     }
 
     /**
      * Compile the "where" portions of the query.
-     *
      * @param  Builder $query
      * @return string
      */
@@ -173,21 +165,22 @@ class DefaultGrammar extends AbstractGrammar
         // Each type of where clauses has its own compiler function which is responsible
         // for actually creating the where clauses SQL. This helps keep the code nice
         // and maintainable since each clause has a very small method that it uses.
-        if (is_null($query->wheres)) {
+        if (!$query->wheres) {
             return '';
         }
+
         // If we actually have some where clauses, we will strip off the first boolean
         // operator, which is added by the query builders for convenience so we can
         // avoid checking for the first clauses in each of the compilers methods.
         if (count($sql = $this->compileWheresToArray($query)) > 0) {
             return $this->concatenateWhereClauses($query, $sql);
         }
+
         return '';
     }
 
     /**
      * Get an array of all the where clauses for the query.
-     *
      * @param  Builder $query
      * @return array
      */
@@ -200,7 +193,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Format the where clause statements into one string.
-     *
      * @param  Builder $query
      * @param  array $sql
      * @return string
@@ -208,12 +200,12 @@ class DefaultGrammar extends AbstractGrammar
     protected function concatenateWhereClauses($query, $sql)
     {
         $conjunction = $query instanceof JoinClause ? 'on' : 'where';
+
         return $conjunction . ' ' . $this->removeLeadingBoolean(implode(' ', $sql));
     }
 
     /**
      * Compile a raw where clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -225,7 +217,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a basic where clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -233,12 +224,12 @@ class DefaultGrammar extends AbstractGrammar
     protected function whereBasic(Builder $query, $where)
     {
         $value = $this->parameter($where['value']);
+
         return $this->wrap($where['column']) . ' ' . $where['operator'] . ' ' . $value;
     }
 
     /**
      * Compile a "where in" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -254,7 +245,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where not in" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -264,12 +254,12 @@ class DefaultGrammar extends AbstractGrammar
         if (!empty($where['values'])) {
             return $this->wrap($where['column']) . ' not in (' . $this->parameterize($where['values']) . ')';
         }
+
         return '1 = 1';
     }
 
     /**
      * Compile a where in sub-select clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -281,7 +271,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a where not in sub-select clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -293,7 +282,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where null" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -305,7 +293,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where not null" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -317,7 +304,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "between" where clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -325,12 +311,12 @@ class DefaultGrammar extends AbstractGrammar
     protected function whereBetween(Builder $query, $where)
     {
         $between = $where['not'] ? 'not between' : 'between';
+
         return $this->wrap($where['column']) . ' ' . $between . ' ? and ?';
     }
 
     /**
      * Compile a "where date" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -342,7 +328,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where time" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -354,7 +339,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where day" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -366,7 +350,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where month" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -378,7 +361,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a "where year" clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -390,7 +372,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a date based where clause.
-     *
      * @param  string $type
      * @param  Builder $query
      * @param  array $where
@@ -399,12 +380,12 @@ class DefaultGrammar extends AbstractGrammar
     protected function dateBasedWhere($type, Builder $query, $where)
     {
         $value = $this->parameter($where['value']);
+
         return $type . '(' . $this->wrap($where['column']) . ') ' . $where['operator'] . ' ' . $value;
     }
 
     /**
      * Compile a where clause comparing two columns..
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -416,7 +397,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a nested where clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -427,12 +407,12 @@ class DefaultGrammar extends AbstractGrammar
         // is a join clause query, we need to remove the "on" portion of the SQL and
         // if it is a normal query we need to take the leading "where" of queries.
         $offset = $query instanceof JoinClause ? 3 : 6;
+
         return '(' . substr($this->compileWheres($where['query']), $offset) . ')';
     }
 
     /**
      * Compile a where condition with a sub-select.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -440,12 +420,12 @@ class DefaultGrammar extends AbstractGrammar
     protected function whereSub(Builder $query, $where)
     {
         $select = $this->compileSelect($where['query']);
+
         return $this->wrap($where['column']) . ' ' . $where['operator'] . " ($select)";
     }
 
     /**
      * Compile a where exists clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -457,7 +437,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a where exists clause.
-     *
      * @param  Builder $query
      * @param  array $where
      * @return string
@@ -469,7 +448,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "group by" portions of the query.
-     *
      * @param  Builder $query
      * @param  array $groups
      * @return string
@@ -481,7 +459,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "having" portions of the query.
-     *
      * @param  Builder $query
      * @param  array $havings
      * @return string
@@ -489,12 +466,12 @@ class DefaultGrammar extends AbstractGrammar
     protected function compileHavings(Builder $query, $havings)
     {
         $sql = implode(' ', array_map([$this, 'compileHaving'], $havings));
+
         return 'having ' . $this->removeLeadingBoolean($sql);
     }
 
     /**
      * Compile a single having clause.
-     *
      * @param  array $having
      * @return string
      */
@@ -506,12 +483,12 @@ class DefaultGrammar extends AbstractGrammar
         if ($having['type'] === 'Raw') {
             return $having['boolean'] . ' ' . $having['sql'];
         }
+
         return $this->compileBasicHaving($having);
     }
 
     /**
      * Compile a basic having clause.
-     *
      * @param  array $having
      * @return string
      */
@@ -519,12 +496,12 @@ class DefaultGrammar extends AbstractGrammar
     {
         $column = $this->wrap($having['column']);
         $parameter = $this->parameter($having['value']);
+
         return $having['boolean'] . ' ' . $column . ' ' . $having['operator'] . ' ' . $parameter;
     }
 
     /**
      * Compile the "order by" portions of the query.
-     *
      * @param  Builder $query
      * @param  array $orders
      * @return string
@@ -534,28 +511,28 @@ class DefaultGrammar extends AbstractGrammar
         if (!empty($orders)) {
             return 'order by ' . implode(', ', $this->compileOrdersToArray($query, $orders));
         }
+
         return '';
     }
 
     /**
      * Compile the query orders to an array.
-     *
-     * @param  Builder
+     * @param  Builder $query
      * @param  array $orders
      * @return array
      */
     protected function compileOrdersToArray(Builder $query, $orders)
     {
         return array_map(function ($order) {
-            return !isset($order['sql'])
-                ? $this->wrap($order['column']) . ' ' . $order['direction']
-                : $order['sql'];
+//            return !isset($order['sql'])
+//                ? $this->wrap($order['column']) . ' ' . $order['direction']
+//                : $order['sql'];
+            return $order['sql'] ?? $this->wrap($order['column']) . ' ' . $order['direction'];
         }, $orders);
     }
 
     /**
      * Compile the random statement into SQL.
-     *
      * @param  string $seed
      * @return string
      */
@@ -566,7 +543,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "limit" portions of the query.
-     *
      * @param  Builder $query
      * @param  int $limit
      * @return string
@@ -578,7 +554,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "offset" portions of the query.
-     *
      * @param  Builder $query
      * @param  int $offset
      * @return string
@@ -590,7 +565,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the "union" queries attached to the main query.
-     *
      * @param  Builder $query
      * @return string
      */
@@ -600,33 +574,36 @@ class DefaultGrammar extends AbstractGrammar
         foreach ($query->unions as $union) {
             $sql .= $this->compileUnion($union);
         }
+
         if (!empty($query->unionOrders)) {
             $sql .= ' ' . $this->compileOrders($query, $query->unionOrders);
         }
-        if (isset($query->unionLimit)) {
+
+        if (null !== $query->unionLimit) {
             $sql .= ' ' . $this->compileLimit($query, $query->unionLimit);
         }
-        if (isset($query->unionOffset)) {
+
+        if (null !== $query->unionOffset) {
             $sql .= ' ' . $this->compileOffset($query, $query->unionOffset);
         }
+
         return ltrim($sql);
     }
 
     /**
      * Compile a single union statement.
-     *
      * @param  array $union
      * @return string
      */
     protected function compileUnion(array $union)
     {
-        $conjuction = $union['all'] ? ' union all ' : ' union ';
-        return $conjuction . $union['query']->toSql();
+        $type = $union['all'] ? ' union all ' : ' union ';
+
+        return $type . $union['query']->toSql();
     }
 
     /**
      * Compile an exists statement into SQL.
-     *
      * @param  Builder $query
      * @return string
      */
@@ -639,7 +616,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an insert statement into SQL.
-     *
      * @param  Builder $query
      * @param  array $values
      * @return string
@@ -669,7 +645,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an insert and get ID statement into SQL.
-     *
      * @param  Builder $query
      * @param  array $values
      * @param  string $sequence
@@ -682,7 +657,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile an update statement into SQL.
-     *
      * @param  Builder $query
      * @param  array $values
      * @return string
@@ -703,7 +677,7 @@ class DefaultGrammar extends AbstractGrammar
         // can get join statements to attach to other tables when they're needed.
         $joins = '';
 
-        if (isset($query->joins)) {
+        if (!$query->joins) {
             $joins = ' ' . $this->compileJoins($query, $query->joins);
         }
 
@@ -711,12 +685,12 @@ class DefaultGrammar extends AbstractGrammar
         // need to compile the where clauses and attach it to the query so only the
         // intended records are updated by the SQL statements we generate to run.
         $wheres = $this->compileWheres($query);
+
         return trim("update {$table}{$joins} set $columns $wheres");
     }
 
     /**
      * Prepare the bindings for an update statement.
-     *
      * @param  array $bindings
      * @param  array $values
      * @return array
@@ -724,6 +698,7 @@ class DefaultGrammar extends AbstractGrammar
     public function prepareBindingsForUpdate(array $bindings, array $values)
     {
         $cleanBindings = Arr::except($bindings, ['join', 'select']);
+
         return array_values(
             array_merge($bindings['join'], $values, Arr::flatten($cleanBindings))
         );
@@ -731,19 +706,18 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile a delete statement into SQL.
-     *
      * @param  Builder $query
      * @return string
      */
     public function compileDelete(Builder $query)
     {
         $wheres = is_array($query->wheres) ? $this->compileWheres($query) : '';
+
         return trim("delete from {$this->wrapTable($query->from)} $wheres");
     }
 
     /**
      * Compile a truncate table statement into SQL.
-     *
      * @param  Builder $query
      * @return array
      */
@@ -754,7 +728,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the lock into SQL.
-     *
      * @param  Builder $query
      * @param  bool|string $value
      * @return string
@@ -766,7 +739,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Determine if the grammar supports savepoints.
-     *
      * @return bool
      */
     public function supportsSavepoints()
@@ -776,7 +748,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the SQL statement to define a savepoint.
-     *
      * @param  string $name
      * @return string
      */
@@ -787,7 +758,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the SQL statement to execute a savepoint rollback.
-     *
      * @param  string $name
      * @return string
      */
@@ -798,7 +768,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Concatenate an array of segments, removing empties.
-     *
      * @param  array $segments
      * @return string
      */
@@ -811,7 +780,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Remove the leading boolean from a statement.
-     *
      * @param  string $value
      * @return string
      */
@@ -822,7 +790,6 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Get the grammar specific operators.
-     *
      * @return array
      */
     public function getOperators()

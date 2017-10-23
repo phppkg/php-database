@@ -8,14 +8,14 @@
 
 namespace SimpleAR\Database;
 
-use InvalidArgumentException;
 use Inhere\Library\Traits\LiteEventTrait;
 use Inhere\Library\Traits\LiteOptionsTrait;
-use Psr\Log\LoggerAwareTrait;
+use InvalidArgumentException;
 use PDO;
 use PDOStatement;
-use SimpleAR\Helpers\QueryHelper;
+use Psr\Log\LoggerAwareTrait;
 use SimpleAR\Helpers\DsnHelper;
+use SimpleAR\Helpers\QueryHelper;
 use Windwalker\Query\Query;
 
 /**
@@ -251,6 +251,7 @@ abstract class AbstractDriver implements InterfaceDriver
             } else {
                 $data->$priKey = $id;
             }
+
             return $data;
         }
 
@@ -259,11 +260,9 @@ abstract class AbstractDriver implements InterfaceDriver
 
     /**
      * insertMultiple
-     *
      * @param   string $table The name of the database table to update.
      * @param   array &$dataSet A reference to an object whose public properties match the table fields.
      * @param   array $key The name of the primary key.
-     *
      * @throws \InvalidArgumentException
      * @return  mixed
      */
@@ -388,12 +387,10 @@ abstract class AbstractDriver implements InterfaceDriver
 
     /**
      * updateMultiple
-     *
      * @param   string $table The name of the database table to update.
      * @param   array $dataSet A reference to an object whose public properties match the table fields.
      * @param   array $key The name of the primary key.
      * @param   boolean $updateNulls True to update null fields or false to ignore them.
-     *
      * @throws \InvalidArgumentException
      * @return  mixed
      */
@@ -627,7 +624,6 @@ abstract class AbstractDriver implements InterfaceDriver
 
     /**
      * Is this driver supported.
-     *
      * @return  boolean
      */
     public static function isSupported()
