@@ -6,12 +6,13 @@
  * Time: 上午10:36
  */
 
-namespace SimpleAR\Connections;
+namespace SimpleAR\Connections\Pdo;
 
 use Inhere\Exceptions\UnknownMethodException;
 use Inhere\Library\Helpers\Php;
 use PDO;
 use PDOStatement;
+use SimpleAR\Connections\Connection;
 use SimpleAR\Helpers\DsnHelper;
 
 /**
@@ -381,7 +382,7 @@ class PdoConnection extends Connection
             throw new UnknownMethodException("Class '{$class}' does not have a method '{$name}'");
         }
 
-        return Php::call([$this->pdo, $name], ...$arguments);
+        return $this->pdo->$name(...$arguments);
     }
 
     /**
@@ -432,10 +433,7 @@ class PdoConnection extends Connection
             return $this->quoteSingleName($name);
         }
 
-        return implode(
-            '.',
-            array_map([$this, 'quoteSingleName'], explode('.', $name))
-        );
+        return implode('.',array_map([$this, 'quoteSingleName'], explode('.', $name)));
     }
 
     public function quoteSingleName($name)

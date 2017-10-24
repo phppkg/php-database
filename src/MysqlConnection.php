@@ -9,7 +9,6 @@
 namespace SimpleAR\Connections\Pdo;
 
 use PDO;
-use SimpleAR\Connections\PdoConnection;
 
 /**
  * Class MysqlConnection
