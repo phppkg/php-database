@@ -145,6 +145,17 @@ abstract class AbstractGrammar
         return $this->isExpression($value) ? $this->getValue($value) : '?';
     }
 
+    protected function escapeWithNoConnection($text)
+    {
+        if (is_int($text) || is_float($text)) {
+            return $text;
+        }
+
+        $text = str_replace("'", "''", $text);
+
+        return addcslashes($text, "\000\n\r\\\032");
+    }
+
     /**
      * Determine if the given value is a raw expression.
      * @param  mixed $value

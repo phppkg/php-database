@@ -14,7 +14,7 @@ namespace Inhere\Database\Connections;
  * @package Inhere\Database\Connections
  * @from https://github.com/auraphp/Aura.Sql
  */
-interface ConnectionInterface extends PdoInterface
+interface ConnectionInterface extends PDOInterface
 {
     /**
      * Connects to the database.

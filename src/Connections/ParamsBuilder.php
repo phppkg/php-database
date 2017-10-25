@@ -8,17 +8,16 @@
 
 namespace Inhere\Database\Connections;
 
-
-class ParametersBuilder
+/**
+ * Class ParamsBuilder
+ * @package Inhere\Database\Connections
+ */
+class ParamsBuilder
 {
     /**
-     *
      * Prepares the sub-parts of a query with placeholders.
-     *
      * @param array $subs The query subparts.
-     *
      * @return string The prepared subparts.
-     *
      */
     protected function prepareValuePlaceholders(array $subs)
     {

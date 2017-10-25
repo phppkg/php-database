@@ -8,8 +8,8 @@
 
 namespace Inhere\Database\Helpers;
 
-use Inhere\Exceptions\UnknownMethodException;
 use Inhere\Database\Model\RecordModel;
+use Inhere\Exceptions\UnknownMethodException;
 use Windwalker\Query\Query;
 
 /**

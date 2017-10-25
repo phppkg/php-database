@@ -18,5 +18,5 @@ abstract class AbstractWhereFragment
      * Tokens for nested OR and AND conditions.
      */
     const TOKEN_AND = '@AND';
-    const TOKEN_OR  = '@OR';
+    const TOKEN_OR = '@OR';
 }

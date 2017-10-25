@@ -39,16 +39,46 @@ trait JoinClauseTrait
         return $this;
     }
 
+    /**
+     * @see JoinClauseTrait::join()
+     * {@inheritdoc}
+     */
     public function leftJoin($table, $conditions = null)
     {
         return $this->join($table, $conditions);
     }
 
+    /**
+     * @see JoinClauseTrait::join()
+     * {@inheritdoc}
+     */
     public function rightJoin($table, $conditions = null)
     {
         return $this->join($table, $conditions, 'right');
     }
 
+    /**
+     * @see JoinClauseTrait::join()
+     * {@inheritdoc}
+     */
+    public function innerJoin($table, $conditions = null)
+    {
+        return $this->join($table, $conditions, 'inner');
+    }
+
+    /**
+     * @see JoinClauseTrait::join()
+     * {@inheritdoc}
+     */
+    public function outerJoin($table, $conditions = null)
+    {
+        return $this->join($table, $conditions, 'outer');
+    }
+
+    /**
+     * @see JoinClauseTrait::join()
+     * {@inheritdoc}
+     */
     public function crossJoin($table, $conditions = null)
     {
         return $this->join($table, $conditions, 'cross');

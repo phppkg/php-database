@@ -8,8 +8,8 @@
 
 namespace Inhere\Database\Builders\Grammars;
 
-use Inhere\Library\Helpers\Arr;
 use Inhere\Database\Builders\QueryBuilder;
+use Inhere\Library\Helpers\Arr;
 
 /**
  * Class DefaultGrammar

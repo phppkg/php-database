@@ -7,7 +7,7 @@
  * @referrer https://github.com/auraphp/Aura.Sql
  */
 
-namespace Inhere\Database;
+namespace Inhere\Database\Connections;
 
 use Inhere\Database\Database\AbstractDriver;
 

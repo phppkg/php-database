@@ -12,7 +12,7 @@ use PDO;
  * An interface to the native PDO object.
  * @package Aura.Sql
  */
-interface PdoInterface
+interface PDOInterface
 {
     /**
      * Begins a transaction and turns off autocommit mode.

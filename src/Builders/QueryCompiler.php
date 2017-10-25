@@ -8,10 +8,9 @@
 
 namespace Inhere\Database\Builders;
 
-
-use PDO;
-use Inhere\Database\Connections\PdoConnection;
+use Inhere\Database\Connections\PDOConnection;
 use Inhere\Database\SQLCompileException;
+use PDO;
 
 /**
  * Class QueryCompiler
@@ -21,7 +20,7 @@ use Inhere\Database\SQLCompileException;
 class QueryCompiler
 {
     /**
-     * @var PdoConnection
+     * @var PDOConnection
      */
     protected $connection;
 
@@ -34,52 +33,98 @@ class QueryCompiler
     const INSERT_QUERY = 'insert';
 
     /**
+     * quote (field/table) name
+     * @param string|array $name
+     * @return string
+     */
+    protected function qn($name)
+    {
+        if (is_string($name)) {
+            return $this->connection->quoteName($name);
+        }
+
+        return array_map(function ($name) {
+            return $this->connection->quoteName($name);
+        }, (array)$name);
+    }
+
+    /**
+     * quote value
      * @param mixed $value
      * @param int $type
      * @return string
      */
-    protected function quote($value, $type = PDO::PARAM_STR)
+    protected function q($value, $type = PDO::PARAM_STR)
     {
         return $this->connection->quote($value, $type);
     }
 
+    /**
+     * @param string $table
+     * @param array $columns
+     * @param array $values
+     * @return string
+     */
     public function compileInsert(string $table, array $columns, array $values)
     {
         if (!$columns || !$values) {
             throw new SQLCompileException('Unable compile the insert sql, the columns and values cannot be empty.');
         }
 
-        $table = $this->quote($table);
-        $columnString = $this->quote($columns);
-        $valueString = $this->quote($values);
+        $table = $this->qn($table);
+        $columnString = $this->qn($columns);
+        $valueString = $this->q($values);
 
         return "INSERT INTO {$table} {$columnString} VALUES {$valueString}";
     }
 
+    /**
+     * @param string $table
+     * @param array $updates
+     * @param array $wheres
+     * @return string
+     */
     public function compileUpdate(string $table, array $updates, array $wheres = [])
     {
-        $table = $this->quote($table);
+        $table = $this->qn($table);
         $updateString = $this->prepareUpdates($updates);
-        $whereString = $this->compileWhere($wheres);
+        $whereString = $this->compileWheres($wheres);
 
         return trim("UPDATE {$table} SET {$updateString} {$whereString}");
     }
 
+    /**
+     * @param string $table
+     * @param array $wheres
+     * @return string
+     */
     public function compileDelete(string $table, array $wheres = [])
     {
-        $table = $this->quote($table);
-        $whereString = $this->compileWhere($wheres);
+        $table = $this->qn($table);
+        $whereString = $this->compileWheres($wheres);
 
         return trim("DELETE FROM {$table} {$whereString}");
     }
 
     protected function prepareUpdates(array $updates)
     {
+        foreach ($updates as $column => &$value) {
+//            if ($value instanceof FragmentInterface) {
+//                $value = $this->prepareFragment($value);
+//            } else {
+            //Simple value (such condition should never be met since every value has to be
+            //wrapped using parameter interface)
+//                $value = '?';
+//            }
 
-        return '';
+            $value = "{$this->q($column)} = {$value}";
+            unset($value);
+        }
+
+        return trim(implode(', ', $updates));
     }
 
-    protected function compileWhere(array $wheres)
+    protected function compileWheres(array $wheres)
     {
 
         return '';

@@ -6,20 +6,18 @@
  * Time: 上午10:36
  */
 
-namespace Inhere\Database\Connections\Pdo;
+namespace Inhere\Database\Connections;
 
+use Inhere\Database\Helpers\DsnHelper;
 use Inhere\Exceptions\UnknownMethodException;
-use Inhere\Library\Helpers\Php;
 use PDO;
 use PDOStatement;
-use Inhere\Database\Connections\Connection;
-use Inhere\Database\Helpers\DsnHelper;
 
 /**
  * Class Connection
- * @package Inhere\Database\Base
+ * @package Inhere\Database\Connections
  */
-class PdoConnection extends Connection
+class PDOConnection extends Connection
 {
     const DATETIME = 'Y-m-d H:i:s';
 
@@ -427,26 +425,30 @@ class PdoConnection extends Connection
         return $sth->bindValue($key, $val);
     }
 
-    public function quoteName($name)
+    public function qn(string $name)
+    {
+        return $this->quoteName($name);
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function quoteName(string $name)
     {
         if (strpos($name, '.') === false) {
             return $this->quoteSingleName($name);
         }
 
-        return implode('.',array_map([$this, 'quoteSingleName'], explode('.', $name)));
+        return implode('.', array_map([$this, 'quoteSingleName'], explode('.', $name)));
     }
 
-    public function quoteSingleName($name)
+    public function quoteSingleName(string $name)
     {
-        $name = str_replace(
-            $this->quoteNameEscapeChar,
-            $this->quoteNameEscapeReplace,
-            $name
-        );
+        $name = str_replace($this->quoteNameEscapeChar, $this->quoteNameEscapeReplace, $name);
 
         return $this->quoteNamePrefix . $name . $this->quoteNameSuffix;
     }
-
 
     protected function initQuoteName($driver)
     {
@@ -473,6 +475,34 @@ class PdoConnection extends Connection
 
                 return;
         }
+    }
+
+    public function q($value, $type = PDO::PARAM_STR)
+    {
+        return $this->quote($value, $type);
+    }
+
+    /**
+     * @param string|array $value
+     * @param int $type
+     * @return string
+     */
+    public function quote($value, $type = PDO::PARAM_STR)
+    {
+        $this->connect();
+
+        // non-array quoting
+        if (!is_array($value)) {
+            return $this->pdo->quote($value, $type);
+        }
+
+        // quote array values, not keys, then combine with commas
+        /** @var array $value */
+        foreach ((array)$value as $k => $v) {
+            $value[$k] = $this->pdo->quote($v, $type);
+        }
+
+        return implode(', ', $value);
     }
 
     /********************************************************************************
@@ -521,29 +551,6 @@ class PdoConnection extends Connection
     public function prepare($statement, $options = null)
     {
         return $this->pdo->prepare($statement, $options);
-    }
-
-    /**
-     * @param string|array $value
-     * @param int $type
-     * @return string
-     */
-    public function quote($value, $type = PDO::PARAM_STR)
-    {
-        $this->connect();
-
-        // non-array quoting
-        if (!is_array($value)) {
-            return $this->pdo->quote($value, $type);
-        }
-
-        // quote array values, not keys, then combine with commas
-        /** @var array $value */
-        foreach ((array)$value as $k => $v) {
-            $value[$k] = $this->pdo->quote($v, $type);
-        }
-
-        return implode(', ', $value);
     }
 
     /**

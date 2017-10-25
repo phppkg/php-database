@@ -8,14 +8,14 @@
 
 namespace Inhere\Database\Connections;
 
-use Inhere\Library\Traits\LiteEventTrait;
 use Inhere\Database\Builders\Grammars\DefaultGrammar;
+use Inhere\Library\Traits\LiteEventTrait;
 
 /**
  * Class Connection
  * @package Inhere\Database\Base
  */
-abstract class Connection implements PdoInterface
+abstract class Connection implements PDOInterface
 {
     use LiteEventTrait;
 
@@ -62,6 +62,11 @@ abstract class Connection implements PdoInterface
     protected $config = [];
 
     /**
+     * @var bool
+     */
+    protected $debug = false;
+
+    /**
      * All of the queries run against the connection.
      * @var array
      */
@@ -70,7 +75,7 @@ abstract class Connection implements PdoInterface
     /** @var string */
     protected $tablePrefix;
 
-    /** @var string  */
+    /** @var string */
     protected $prefixPlaceholder = '{pfx}';
 
     /**
@@ -126,11 +131,25 @@ abstract class Connection implements PdoInterface
             $return = $func($this);
             $this->flush();
             $this->conn->commit();
+
             return $return ?: true;
         } catch (\Throwable $e) {
             $this->close();
             $this->conn->rollBack();
             throw $e;
+        }
+    }
+
+    /**
+     * @param string $message
+     * @param array $context
+     * @param string $category
+     */
+    public function log(string $message, array $context = [], $category = 'select')
+    {
+        if ($this->debug) {
+            $context['category'] = 'db.' . $category;
+            $this->queryLog[] = [microtime(1), $message, $context];
         }
     }
 

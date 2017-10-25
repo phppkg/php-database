@@ -63,7 +63,7 @@ class Manager
 
     public function newQuery()
     {
-
+//        return new QueryBuilder();
     }
 
     public function newNativeQuery()

@@ -8,7 +8,10 @@
 
 namespace Inhere\Database\Schema;
 
-
+/**
+ * Class ForeignKey
+ * @package Inhere\Database\Schema
+ */
 class ForeignKey
 {
 

@@ -6,7 +6,7 @@
  * Time: 17:07
  */
 
-namespace Inhere\Database\Connections\Pdo;
+namespace Inhere\Database\Connections;
 
 use PDO;
 
@@ -14,7 +14,7 @@ use PDO;
  * Class MysqlConnection
  * @package Inhere\Database\Connections
  */
-class MySQLConnection extends PdoConnection
+class MySQLConnection extends PDOConnection
 {
     /**
      * The default PDO connection options.
@@ -50,5 +50,14 @@ class MySQLConnection extends PdoConnection
         }
 
         return $result;
+    }
+
+    /**
+     * Is this driver supported.
+     * @return  boolean
+     */
+    public static function isSupported()
+    {
+        return in_array('mysql', \PDO::getAvailableDrivers(), true);
     }
 }

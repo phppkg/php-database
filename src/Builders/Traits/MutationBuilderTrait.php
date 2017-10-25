@@ -46,16 +46,21 @@ trait MutationBuilderTrait
 
     /**
      * Insert a new record
-     * @param  array $values
+     * @param string $table
+     * @param array $values
      * @return $this
      */
-    public function insert(array $values)
+    public function insert(array $values, $table = null)
     {
         if (!$values) {
             return $this;
         }
 
-        $this->type = 'insert';
+        if (!$table) {
+            $this->from($table);
+        }
+
+        $this->type = self::INSERT;
         $this->values = $values;
 
         return $this;
@@ -67,7 +72,7 @@ trait MutationBuilderTrait
      */
     public function delete($table = null)
     {
-        $this->type = 'delete';
+        $this->type = self::DELETE;
         $this->delete = ['DELETE'];
 
         if (!$table) {
@@ -84,7 +89,7 @@ trait MutationBuilderTrait
      */
     public function update(array $values, $table = null)
     {
-        $this->type = 'update';
+        $this->type = self::UPDATE;
         $this->update = ['UPDATE'];
 
         $this->values($values);
@@ -109,12 +114,15 @@ trait MutationBuilderTrait
      */
     public function columns($columns)
     {
-        $this->columns = $columns;
-
+        $this->columns = (array)$columns;
 
         return $this;
     }
 
+    /**
+     * @param array $values
+     * @return $this
+     */
     public function values(array $values)
     {
         foreach ($values as $key => $value) {

@@ -8,8 +8,6 @@
 
 namespace Inhere\Database\Builders;
 
-use Closure;
-use Inhere\Library\Helpers\Arr;
 use Inhere\Database\Builders\Grammars\DefaultGrammar;
 use Inhere\Database\Builders\Traits\AggregateClauseTrait;
 use Inhere\Database\Builders\Traits\JoinClauseTrait;
@@ -17,6 +15,7 @@ use Inhere\Database\Builders\Traits\MutationBuilderTrait;
 use Inhere\Database\Builders\Traits\UnionClauseTrait;
 use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Database\Connections\Connection;
+use Inhere\Library\Helpers\Arr;
 
 /**
  * Class QueryBuilder
@@ -32,13 +31,19 @@ class QueryBuilder
         UnionClauseTrait;
 
     /* The query types. */
-    const SELECT = 0;
-    const DELETE = 1;
-    const UPDATE = 2;
+    const INSERT = 1;
+    const SELECT = 2;
+    const DELETE = 3;
+    const UPDATE = 4;
 
     /* The builder states. */
     const STATE_DIRTY = 0;
     const STATE_CLEAN = 1;
+    /**
+     * Tokens for nested OR and AND conditions.
+     */
+    const TOKEN_AND = '@and';
+    const TOKEN_OR = '@or';
 
     /* Sort directions. */
     const SORT_ASC = 'ASC';
@@ -217,6 +222,13 @@ class QueryBuilder
      * @return $this
      */
     public function from($table)
+    {
+        $this->from = $table;
+
+        return $this;
+    }
+
+    public function table($table)
     {
         $this->from = $table;
 
@@ -557,6 +569,17 @@ class QueryBuilder
     public function getRawBindings()
     {
         return $this->bindings;
+    }
+
+    /**
+     * @param $name
+     * @param $elements
+     * @param string $glue
+     * @return QueryElement
+     */
+    public function newElement($name, $elements, $glue = ',')
+    {
+        return new QueryElement($name, $elements, $glue);
     }
 
     /**
