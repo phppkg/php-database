@@ -12,7 +12,7 @@ namespace SimpleAR\Connections\Pdo;
  * Class SqliteConnection - Sqlite Connection
  * @package SimpleAR\Connections\Pdo
  */
-class SqliteConnection extends MysqlConnection
+class SQLiteConnection extends MySQLConnection
 {
 
 }

@@ -112,6 +112,29 @@ abstract class Connection implements PdoInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function transactional($func)
+    {
+        if (!is_callable($func)) {
+            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . gettype($func) . '"');
+        }
+
+        $this->conn->beginTransaction();
+
+        try {
+            $return = $func($this);
+            $this->flush();
+            $this->conn->commit();
+            return $return ?: true;
+        } catch (\Throwable $e) {
+            $this->close();
+            $this->conn->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * @return array
      */
     public function getQueryLog(): array

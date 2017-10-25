@@ -6,7 +6,9 @@
  * Time: 下午6:21
  */
 
-namespace SimpleAR\Connections;
+namespace SimpleAR;
+
+use SimpleAR\Connections\Connection;
 
 /**
  * $mgr = new Manager;
@@ -57,6 +59,16 @@ class Manager
         foreach ($writers as $name => $writer) {
             $this->setWriter($name, $writer);
         }
+    }
+
+    public function newQuery()
+    {
+
+    }
+
+    public function newNativeQuery()
+    {
+
     }
 
     /**

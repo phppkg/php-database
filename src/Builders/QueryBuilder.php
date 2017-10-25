@@ -10,21 +10,38 @@ namespace SimpleAR\Builders;
 
 use Closure;
 use Inhere\Library\Helpers\Arr;
-use Inhere\Library\Helpers\Str;
-use SimpleAR\Connections\Connection;
 use SimpleAR\Builders\Grammars\DefaultGrammar;
+use SimpleAR\Builders\Traits\AggregateClauseTrait;
+use SimpleAR\Builders\Traits\JoinClauseTrait;
+use SimpleAR\Builders\Traits\MutationBuilderTrait;
+use SimpleAR\Builders\Traits\UnionClauseTrait;
+use SimpleAR\Builders\Traits\WhereClauseTrait;
+use SimpleAR\Connections\Connection;
 
 /**
  * Class QueryBuilder
  * @package SimpleAR
  * @link https://github.com/illuminate/database/blob/master/Query/Builder.php
  */
-class QueryBuilder extends BaseQuery
+class QueryBuilder
 {
-    /**
-     * Sort directions.
-     */
-    const SORT_ASC  = 'ASC';
+    use AggregateClauseTrait,
+        JoinClauseTrait,
+        WhereClauseTrait,
+        MutationBuilderTrait,
+        UnionClauseTrait;
+
+    /* The query types. */
+    const SELECT = 0;
+    const DELETE = 1;
+    const UPDATE = 2;
+
+    /* The builder states. */
+    const STATE_DIRTY = 0;
+    const STATE_CLEAN = 1;
+
+    /* Sort directions. */
+    const SORT_ASC = 'ASC';
     const SORT_DESC = 'DESC';
 
     /** @var Connection */
@@ -52,6 +69,13 @@ class QueryBuilder extends BaseQuery
         'order' => [],
         'union' => [],
     ];
+
+    /**
+     * 'select' 'insert' 'update' 'delete'
+     * @var string
+     */
+    protected $type = self::SELECT;
+
     /**
      * An aggregate function and column to be run.
      * @var array
@@ -75,18 +99,6 @@ class QueryBuilder extends BaseQuery
      * @var string
      */
     public $from;
-
-    /**
-     * The table joins for the query.
-     * @var array
-     */
-    public $joins = [];
-
-    /**
-     * The where constraints for the query.
-     * @var array
-     */
-    public $wheres = [];
 
     /**
      * The groupings for the query.
@@ -119,30 +131,6 @@ class QueryBuilder extends BaseQuery
     public $offset;
 
     /**
-     * The query union statements.
-     * @var array
-     */
-    public $unions = [];
-
-    /**
-     * The maximum number of union records to return.
-     * @var int
-     */
-    public $unionLimit;
-
-    /**
-     * The number of union records to skip.
-     * @var int
-     */
-    public $unionOffset;
-
-    /**
-     * The orderings for the union query.
-     * @var array
-     */
-    public $unionOrders = [];
-
-    /**
      * Indicates whether row locking is being used.
      * @var string|bool
      */
@@ -165,38 +153,7 @@ class QueryBuilder extends BaseQuery
      * Whether use write pdo for select.
      * @var bool
      */
-    public $useWritePdo = false;
-
-    /**
-     * 'select' 'insert' 'update' 'delete'
-     * @var string
-     */
-    private $type = 'select';
-
-    /**
-     * @var array
-     */
-    private $delete;
-
-    /**
-     * @var array
-     */
-    private $update;
-
-    /**
-     * @var array
-     */
-    private $sets;
-
-    /**
-     * @var array
-     */
-    private $columns;
-
-    /**
-     * @var array
-     */
-    private $values;
+    public $useWriter = false;
 
     private $sql;
 
@@ -204,94 +161,6 @@ class QueryBuilder extends BaseQuery
     {
         $this->connection = $connection;
         $this->grammar = $grammar;
-    }
-
-    /********************************************************************************
-     * select statement methods
-     *******************************************************************************/
-
-    /**
-     * Insert a new record
-     * @param  array $values
-     * @return $this
-     */
-    public function insert(array $values)
-    {
-        if (!$values) {
-            return $this;
-        }
-
-        $this->type = 'insert';
-        $this->values = $values;
-
-        return $this;
-    }
-
-    /**
-     * @param null $table
-     * @return $this
-     */
-    public function delete($table = null)
-    {
-        $this->type = 'delete';
-        $this->delete = ['DELETE'];
-
-        if (!$table) {
-            $this->from($table);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param array $values
-     * @param null $table
-     * @return $this
-     */
-    public function update(array $values, $table = null)
-    {
-        $this->type = 'update';
-        $this->update = ['UPDATE'];
-
-        $this->values($values);
-
-        if (!$table) {
-            $this->from($table);
-        }
-
-        return $this;
-    }
-
-    public function set($conditions, $glue = ',')
-    {
-        $this->sets[] = $conditions;
-
-        return $this;
-    }
-
-    /**
-     * @param string|array $columns The column name(s) to insert/update.
-     * @return $this
-     */
-    public function columns($columns)
-    {
-        $this->columns = $columns;
-
-
-        return $this;
-    }
-
-    public function values(array $values)
-    {
-        foreach ($values as $key => $value) {
-            if (is_array($value) || is_object($value)) {
-                $values[$key] = implode(',', (array)$value);
-            }
-        }
-
-        $this->values[] = ['()', $values, '), ('];
-
-        return $this;
     }
 
     /********************************************************************************
@@ -353,290 +222,6 @@ class QueryBuilder extends BaseQuery
 
         return $this;
     }
-
-
-    /**
-     * @param string $type 'INNER'
-     * @param string $table
-     * @param array|string $conditions
-     * @return $this
-     */
-    public function join($table, $conditions = null, $type = 'left')
-    {
-        if (is_string($table)) {
-            $table .= $conditions ? ' ON ' . implode(' AND ', (array)$conditions) : '';
-        }
-
-        $this->joins[] = [strtoupper($type) . ' JOIN', $table];
-
-        return $this;
-    }
-
-    public function leftJoin($table, $conditions = null)
-    {
-        return $this->join($table, $conditions);
-    }
-
-    public function rightJoin($table, $conditions = null)
-    {
-        return $this->join($table, $conditions, 'right');
-    }
-
-    public function crossJoin($table, $conditions = null)
-    {
-        return $this->join($table, $conditions, 'cross');
-    }
-
-    /********************************************************************************
-     * -- where nodes
-     *******************************************************************************/
-
-    /**
-     * Add a basic where clause to the query.
-     * @param  string|array|\Closure $column
-     * @param  string|null $operator
-     * @param  mixed $value
-     * @param  string $boolean
-     * @return $this
-     */
-    public function where($column, $operator = null, $value = null, $boolean = 'and')
-    {
-        $type = 'Basic';
-        $this->wheres[] = [$type, $column, $operator, $value, $boolean];
-
-        return $this;
-    }
-
-    public function orWhere($column, $operator = null, $value = null)
-    {
-        return $this->where($column, $operator, $value, 'or');
-    }
-
-    /**
-     * Add a raw where clause to the query.
-     * @param  string $sql
-     * @param  mixed $bindings
-     * @param  string $boolean
-     * @return $this
-     */
-    public function whereRaw($sql, $bindings = null, $boolean = 'and')
-    {
-        $this->wheres[] = ['type' => 'raw', 'sql' => $sql, 'boolean' => $boolean];
-
-        $this->addBinding((array)$bindings, 'where');
-
-        return $this;
-    }
-
-    public function orWhereRaw($sql, $bindings = null)
-    {
-        return $this->whereRaw($sql, $bindings, 'or');
-    }
-
-    /**
-     * Add a "where in" clause to the query.
-     * @param  string $column
-     * @param  mixed $values
-     * @param  string $boolean
-     * @param  bool $not
-     * @return $this
-     */
-    public function whereIn($column, $values, $boolean = 'and', $not = false)
-    {
-        $type = $not ? 'NotIn' : 'In';
-        $this->wheres[] = [$type, $column, $values, $boolean];
-
-        return $this;
-    }
-
-    /**
-     * Add an "or where in" clause to the query.
-     * @param  string $column
-     * @param  mixed $values
-     * @return $this
-     */
-    public function orWhereIn($column, $values)
-    {
-        return $this->whereIn($column, $values, 'or');
-    }
-
-    /**
-     * Add a "where not in" clause to the query.
-     * @param  string $column
-     * @param  mixed $values
-     * @param  string $boolean
-     * @return $this
-     */
-    public function whereNotIn($column, $values, $boolean = 'and')
-    {
-        return $this->whereIn($column, $values, $boolean, true);
-    }
-
-    /**
-     * Add an "or where not in" clause to the query.
-     * @param  string $column
-     * @param  mixed $values
-     * @return $this
-     */
-    public function orWhereNotIn($column, $values)
-    {
-        return $this->whereNotIn($column, $values, 'or');
-    }
-
-    /**
-     * Add a "where null" clause to the query.
-     * @param  string $column
-     * @param  string $boolean
-     * @param  bool $not
-     * @return $this
-     */
-    public function whereNull($column, $boolean = 'and', $not = false)
-    {
-        $type = $not ? 'NotNull' : 'Null';
-        $this->wheres[] = [$type, $column, $boolean];
-
-        return $this;
-    }
-
-    /**
-     * Add an "or where null" clause to the query.
-     * @param  string $column
-     * @return $this
-     */
-    public function orWhereNull($column)
-    {
-        return $this->whereNull($column, 'or');
-    }
-
-
-    /**
-     * Add a "where not null" clause to the query.
-     * @param  string $column
-     * @param  string $boolean
-     * @return $this
-     */
-    public function whereNotNull($column, $boolean = 'and')
-    {
-        return $this->whereNull($column, $boolean, true);
-    }
-
-    /**
-     * Add a where between statement to the query.
-     * @param  string $column
-     * @param  array $values
-     * @param  string $boolean
-     * @param  bool $not
-     * @return $this
-     */
-    public function whereBetween($column, array $values, $boolean = 'and', $not = false)
-    {
-        $type = 'between';
-//        $this->wheres[] = compact('column', 'type', 'boolean', 'not');
-        $this->wheres[] = [$column, $type, $values, $boolean, $not];
-        $this->addBinding($values, 'where');
-
-        return $this;
-    }
-
-    /**
-     * Add an or where between statement to the query.
-     * @param  string $column
-     * @param  array $values
-     * @return $this
-     */
-    public function orWhereBetween($column, array $values)
-    {
-        return $this->whereBetween($column, $values, 'or');
-    }
-
-    /**
-     * Add a where not between statement to the query.
-     * @param  string $column
-     * @param  array $values
-     * @param  string $boolean
-     * @return $this
-     */
-    public function whereNotBetween($column, array $values, $boolean = 'and')
-    {
-        return $this->whereBetween($column, $values, $boolean, true);
-    }
-
-    /**
-     * Add an or where not between statement to the query.
-     * @param  string $column
-     * @param  array $values
-     * @return $this
-     */
-    public function orWhereNotBetween($column, array $values)
-    {
-        return $this->whereNotBetween($column, $values, 'or');
-    }
-
-    /**
-     * Add an "or where not null" clause to the query.
-     * @param  string $column
-     * @return $this
-     */
-    public function orWhereNotNull($column)
-    {
-        return $this->whereNotNull($column, 'or');
-    }
-
-    /**
-     * Handles dynamic "where" clauses to the query.
-     * @param  string $method
-     * @param  string|array $parameters
-     * @return $this
-     */
-    public function dynamicWhere($method, $parameters)
-    {
-        $finder = substr($method, 5);
-        $segments = preg_split(
-            '/(And|Or)(?=[A-Z])/', $finder, -1, PREG_SPLIT_DELIM_CAPTURE
-        );
-        // The connector variable will determine which connector will be used for the
-        // query condition. We will change it as we come across new boolean values
-        // in the dynamic method strings, which could contain a number of these.
-        $connector = 'and';
-        $index = 0;
-
-        foreach ($segments as $segment) {
-            // If the segment is not a boolean connector, we can assume it is a column's name
-            // and we will add it to the query as a new constraint as a where clause, then
-            // we can keep iterating through the dynamic method string's segments again.
-            if ($segment !== 'And' && $segment !== 'Or') {
-                $this->addDynamic($segment, $connector, $parameters, $index);
-                $index++;
-            }
-            // Otherwise, we will store the connector so we know how the next where clause we
-            // find in the query should be connected to the previous ones, meaning we will
-            // have the proper boolean connector to connect the next where clause found.
-            else {
-                $connector = $segment;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add a single dynamic where clause statement to the query.
-     * @param  string $segment
-     * @param  string $connector
-     * @param  array $parameters
-     * @param  int $index
-     * @return void
-     */
-    protected function addDynamic($segment, $connector, $parameters, $index)
-    {
-        // Once we have parsed out the columns and formatted the boolean operators we
-        // are ready to add it to this query as a where clause just like any other
-        // clause on the query. Then we'll increment the parameter index values.
-        $bool = strtolower($connector);
-
-        $this->where(Str::toSnake($segment, ' '), '=', $parameters[$index], $bool);
-    }
-
 
     /********************************************************************************
      * -- other nodes methods
@@ -794,30 +379,6 @@ class QueryBuilder extends BaseQuery
         return $this->offset(($page - 1) * $pageSize)->limit($pageSize);
     }
 
-    /**
-     * Add a union statement to the query.
-     * @param  static|\Closure $query
-     * @param  bool $all
-     * @return $this
-     */
-    public function union($query, $all = false)
-    {
-        if ($query instanceof Closure) {
-            $query($query = $this->newQuery());
-        }
-
-        $this->unions[] = [$query, $all];
-
-        $this->addBinding($query->getBindings(), 'union');
-
-        return $this;
-    }
-
-    public function unionAll($query)
-    {
-        return $this->union($query, true);
-    }
-
 
     /**
      * Lock the selected rows in the table.
@@ -829,7 +390,7 @@ class QueryBuilder extends BaseQuery
         $this->lock = $value;
 
         if (null !== $this->lock) {
-            $this->useWritePdo();
+            $this->useWriter();
         }
 
         return $this;
@@ -872,7 +433,7 @@ class QueryBuilder extends BaseQuery
     public function exists()
     {
         $results = $this->connection->select(
-            $this->grammar->compileExists($this), $this->getBindings(), !$this->useWritePdo
+            $this->grammar->compileExists($this), $this->getBindings(), !$this->useWriter
         );
 
         // If the results has rows, we will get the row and see if the exists column is a
@@ -887,85 +448,6 @@ class QueryBuilder extends BaseQuery
         return false;
     }
 
-    /**
-     * Retrieve the "count" result of the query.
-     * @param  string $columns
-     * @return int
-     */
-    public function count($columns = '*')
-    {
-        return (int)$this->aggregate(__FUNCTION__, Arr::wrap($columns));
-    }
-
-    /**
-     * Retrieve the minimum value of a given column.
-     * @param  string $column
-     * @return mixed
-     */
-    public function min($column)
-    {
-        return $this->aggregate(__FUNCTION__, [$column]);
-    }
-
-    /**
-     * Retrieve the maximum value of a given column.
-     * @param  string $column
-     * @return mixed
-     */
-    public function max($column)
-    {
-        return $this->aggregate(__FUNCTION__, [$column]);
-    }
-
-    /**
-     * Retrieve the sum of the values of a given column.
-     * @param  string $column
-     * @return mixed
-     */
-    public function sum($column)
-    {
-        $result = $this->aggregate(__FUNCTION__, [$column]);
-
-        return $result ?: 0;
-    }
-
-    /**
-     * Retrieve the average of the values of a given column.
-     * @param  string $column
-     * @return mixed
-     */
-    public function avg($column)
-    {
-        return $this->aggregate(__FUNCTION__, [$column]);
-    }
-
-    /**
-     * Alias for the "avg" method.
-     * @param  string $column
-     * @return mixed
-     */
-    public function average($column)
-    {
-        return $this->avg($column);
-    }
-
-    /**
-     * Execute an aggregate function on the database.
-     * @param  string $function
-     * @param  array $columns
-     * @return mixed
-     */
-    public function aggregate($function, array $columns = ['*'])
-    {
-        $results = $this->cloneWithout(['columns'])
-            ->cloneWithoutBindings(['select'])
-            ->setAggregate($function, $columns)
-            ->get($columns);
-
-        if (!$results->isEmpty()) {
-            return array_change_key_case((array)$results[0])['aggregate'];
-        }
-    }
 
     /**
      * Get the SQL representation of the query.
@@ -988,6 +470,7 @@ class QueryBuilder extends BaseQuery
         if (!array_key_exists($type, $this->bindings)) {
             throw new \InvalidArgumentException("Invalid binding type: {$type}.");
         }
+
         $this->bindings[$type] = $bindings;
 
         return $this;
@@ -1043,6 +526,12 @@ class QueryBuilder extends BaseQuery
      * helper methods
      *******************************************************************************/
 
+    public function useWriter()
+    {
+        $this->useWriter = true;
+
+        return $this;
+    }
 
     /**
      * @return Connection
@@ -1076,7 +565,22 @@ class QueryBuilder extends BaseQuery
      */
     public function newQuery()
     {
-        return new static($this->connection, $this->grammar, $this->processor);
+        return new static($this->connection, $this->grammar);
+    }
+
+    /**
+     * @param array $props
+     * @return QueryBuilder
+     */
+    public function cloneWithout(array $props = [])
+    {
+        $new = clone $this;
+
+        foreach ($props as $prop) {
+            $new->$prop = null;
+        }
+
+        return $new;
     }
 
     /**
@@ -1087,21 +591,6 @@ class QueryBuilder extends BaseQuery
     protected function invalidOperator($operator)
     {
         return !in_array(strtolower($operator), $this->operators, true);
-    }
-
-    /**
-     * Merge an array of where clauses and bindings.
-     * @param  array $wheres
-     * @param  array $bindings
-     * @return void
-     */
-    public function mergeWheres($wheres, $bindings)
-    {
-        $this->wheres = array_merge($this->wheres, (array)$wheres);
-
-        $this->bindings['where'] = array_values(
-            array_merge($this->bindings['where'], (array)$bindings)
-        );
     }
 
     /**
@@ -1135,6 +624,15 @@ class QueryBuilder extends BaseQuery
         return $this->escape($text, $extra);
     }
 
+    protected function escapeWithNoConnection($text)
+    {
+        return str_replace(
+            ['\\', "\0", "\n", "\r", "'", '"', "\x1a"],
+            ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'],
+            $text
+        );
+    }
+
     /**
      * @return QueryCompiler
      */
@@ -1150,4 +648,5 @@ class QueryBuilder extends BaseQuery
     {
         $this->compiler = $compiler;
     }
+
 }

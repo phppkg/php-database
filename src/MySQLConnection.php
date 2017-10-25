@@ -14,7 +14,7 @@ use PDO;
  * Class MysqlConnection
  * @package SimpleAR\Connections
  */
-class MysqlConnection extends PdoConnection
+class MySQLConnection extends PdoConnection
 {
     /**
      * The default PDO connection options.

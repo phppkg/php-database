@@ -22,20 +22,13 @@ namespace SimpleAR\Schema;
  */
 class Index
 {
-    /**
-     * @var string
-     */
     const UNIQUE = 'unique';
 
-    /**
-     * @var string
-     */
     const INDEX = 'index';
 
-    /**
-     * @var string
-     */
     const PRIMARY = 'primary';
+
+    const FULLTEXT = 'fulltext';
 
     /**
      * the index type.

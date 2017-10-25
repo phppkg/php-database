@@ -35,7 +35,14 @@ git clone https://git.oschina.net/inhere/php-simple-activeRecord.git // git@osc
 git clone https://github.com/inhere/php-simple-activeRecord.git // github
 ```
 
+## 结构说明
+
+```text
+
+```
+
 ## 如何使用
+
 
 ## 其他
 
