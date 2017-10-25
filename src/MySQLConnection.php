@@ -6,13 +6,13 @@
  * Time: 17:07
  */
 
-namespace SimpleAR\Connections\Pdo;
+namespace Inhere\Database\Connections\Pdo;
 
 use PDO;
 
 /**
  * Class MysqlConnection
- * @package SimpleAR\Connections
+ * @package Inhere\Database\Connections
  */
 class MySQLConnection extends PdoConnection
 {

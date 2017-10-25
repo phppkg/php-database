@@ -6,11 +6,11 @@
  * Time: 下午11:32
  */
 
-namespace SimpleAR\Builders\Grammars;
+namespace Inhere\Database\Builders\Grammars;
 
 /**
  * Class MySqlGrammar
- * @package SimpleAR\Builders\Grammars
+ * @package Inhere\Database\Builders\Grammars
  */
 class MySqlGrammar extends DefaultGrammar
 {

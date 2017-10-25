@@ -6,7 +6,7 @@
  * Time: 上午11:33
  */
 
-namespace SimpleAR\Helpers;
+namespace Inhere\Database\Helpers;
 
 
 class DbHelper

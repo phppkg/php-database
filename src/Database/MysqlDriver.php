@@ -6,13 +6,13 @@
  * Time: 22:33
  */
 
-namespace SimpleAR\Database;
+namespace Inhere\Database\Database;
 
 use Windwalker\Query\Mysql\MysqlQuery;
 
 /**
  * Class MysqlDriver
- * @package SimpleAR\Database
+ * @package Inhere\Database\Database
  */
 class MysqlDriver extends PdoDriver
 {

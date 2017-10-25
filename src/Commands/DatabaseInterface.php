@@ -6,11 +6,11 @@
  * Time: 上午11:07
  */
 
-namespace SimpleAR\Commands;
+namespace Inhere\Database\Commands;
 
 /**
  * Interface DatabaseInterface
- * @package SimpleAR\Commands
+ * @package Inhere\Database\Commands
  */
 interface DatabaseInterface
 {

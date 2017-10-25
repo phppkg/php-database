@@ -6,11 +6,11 @@
  * Time: 23:35
  */
 
-namespace SimpleAR\Database;
+namespace Inhere\Database\Database;
 
 /**
  * Class DbFactory
- * @package SimpleAR\Database
+ * @package Inhere\Database\Database
  * @referrer Windwalker\Database\DatabaseFactory
  */
 class DbFactory

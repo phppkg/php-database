@@ -6,11 +6,11 @@
  * Time: 上午10:35
  */
 
-namespace SimpleAR\Builders;
+namespace Inhere\Database\Builders;
 
 /**
  * Class BaseQuery
- * @package SimpleAR\Base
+ * @package Inhere\Database\Base
  */
 class BaseQuery
 {

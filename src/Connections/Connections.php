@@ -6,13 +6,13 @@
  * Time: 22:02
  */
 
-namespace SimpleAR\Connections;
+namespace Inhere\Database\Connections;
 
 use Inhere\Exceptions\UnknownMethodException;
 
 /**
  * Class AbstractConnections
- * @package SimpleAR\Connections
+ * @package Inhere\Database\Connections
  */
 abstract class Connections implements ManagerInterface
 {

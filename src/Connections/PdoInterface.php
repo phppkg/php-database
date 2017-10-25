@@ -4,7 +4,7 @@
  * @license https://opensource.org/licenses/MIT MIT
  */
 
-namespace SimpleAR\Connections;
+namespace Inhere\Database\Connections;
 
 use PDO;
 

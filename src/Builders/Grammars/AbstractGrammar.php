@@ -6,13 +6,13 @@
  * Time: 下午11:33
  */
 
-namespace SimpleAR\Builders\Grammars;
+namespace Inhere\Database\Builders\Grammars;
 
-use SimpleAR\Builders\Expression;
+use Inhere\Database\Builders\Expression;
 
 /**
  * Class AbstractGrammar
- * @package SimpleAR\Builders\Grammars
+ * @package Inhere\Database\Builders\Grammars
  */
 abstract class AbstractGrammar
 {

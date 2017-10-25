@@ -6,10 +6,10 @@
  * Time: 下午11:17
  */
 
-namespace SimpleAR\Helpers;
+namespace Inhere\Database\Helpers;
 
 use Inhere\Exceptions\UnknownMethodException;
-use SimpleAR\Model\RecordModel;
+use Inhere\Database\Model\RecordModel;
 use Windwalker\Query\Query;
 
 /**

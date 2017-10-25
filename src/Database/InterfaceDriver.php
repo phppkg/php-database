@@ -6,11 +6,11 @@
  * Time: 下午9:56
  */
 
-namespace SimpleAR\Database;
+namespace Inhere\Database\Database;
 
 /**
  * Interface InterfaceDriver
- * @package SimpleAR\Database
+ * @package Inhere\Database\Database
  */
 interface InterfaceDriver
 {

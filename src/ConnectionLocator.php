@@ -7,9 +7,9 @@
  * @referrer https://github.com/auraphp/Aura.Sql
  */
 
-namespace SimpleAR;
+namespace Inhere\Database;
 
-use SimpleAR\Database\AbstractDriver;
+use Inhere\Database\Database\AbstractDriver;
 
 /**
  * $connections = new ConnectionLocator;

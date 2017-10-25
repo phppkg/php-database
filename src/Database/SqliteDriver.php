@@ -6,13 +6,13 @@
  * Time: 22:33
  */
 
-namespace SimpleAR\Database;
+namespace Inhere\Database\Database;
 
 use Windwalker\Query\Sqlite\SqliteQuery;
 
 /**
  * Class Sqlite
- * @package SimpleAR\Database
+ * @package Inhere\Database\Database
  */
 class SqliteDriver extends PdoDriver
 {

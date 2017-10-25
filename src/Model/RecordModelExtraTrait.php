@@ -6,14 +6,14 @@
  * Time: 下午4:13
  */
 
-namespace SimpleAR\Model;
+namespace Inhere\Database\Model;
 
-use SimpleAR\Database\AbstractDriver;
-use SimpleAR\Helpers\ModelHelper;
+use Inhere\Database\Database\AbstractDriver;
+use Inhere\Database\Helpers\ModelHelper;
 
 /**
  * Class RecordModelExtraTrait
- * @package SimpleAR\Model
+ * @package Inhere\Database\Model
  * @method static RecordModel load()
  * @method static AbstractDriver getDb()
  * @method static AbstractDriver setQuery()

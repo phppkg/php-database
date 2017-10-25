@@ -6,14 +6,14 @@
  * Time: 下午11:42
  */
 
-namespace SimpleAR\Builders\Grammars;
+namespace Inhere\Database\Builders\Grammars;
 
 use Inhere\Library\Helpers\Arr;
-use SimpleAR\Builders\QueryBuilder;
+use Inhere\Database\Builders\QueryBuilder;
 
 /**
  * Class DefaultGrammar
- * @package SimpleAR\Query\Grammars
+ * @package Inhere\Database\Query\Grammars
  */
 class DefaultGrammar extends AbstractGrammar
 {

@@ -6,11 +6,11 @@
  * Time: 17:50
  */
 
-namespace SimpleAR;
+namespace Inhere\Database;
 
 /**
  * Class SQLCompileException
- * @package SimpleAR
+ * @package Inhere\Database
  */
 class SQLCompileException extends \RuntimeException
 {

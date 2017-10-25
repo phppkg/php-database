@@ -6,13 +6,13 @@
  * Time: 13:13
  */
 
-namespace SimpleAR\Builders\Traits;
+namespace Inhere\Database\Builders\Traits;
 
 use Closure;
 
 /**
  * Trait UnionClauseTrait
- * @package SimpleAR\Builders\Traits
+ * @package Inhere\Database\Builders\Traits
  */
 trait UnionClauseTrait
 {

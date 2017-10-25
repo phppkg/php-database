@@ -6,14 +6,14 @@
  * Time: 上午10:36
  */
 
-namespace SimpleAR\Connections;
+namespace Inhere\Database\Connections;
 
 use Inhere\Library\Traits\LiteEventTrait;
-use SimpleAR\Builders\Grammars\DefaultGrammar;
+use Inhere\Database\Builders\Grammars\DefaultGrammar;
 
 /**
  * Class Connection
- * @package SimpleAR\Base
+ * @package Inhere\Database\Base
  */
 abstract class Connection implements PdoInterface
 {

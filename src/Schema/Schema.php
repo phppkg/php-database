@@ -7,13 +7,13 @@
  * Use : 一个表的架构信息,包含了各个字段列的信息(class Column)
  */
 
-namespace SimpleAR\Schema;
+namespace Inhere\Database\Schema;
 
 use Inhere\Library\Helpers\Obj;
 
 /**
  * Class Schema
- * @package SimpleAR\Schema
+ * @package Inhere\Database\Schema
  */
 class Schema
 {

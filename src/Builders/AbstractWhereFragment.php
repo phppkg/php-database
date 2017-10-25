@@ -6,11 +6,11 @@
  * Time: 17:26
  */
 
-namespace SimpleAR\Builders;
+namespace Inhere\Database\Builders;
 
 /**
  * Class AbstractWhere
- * @package SimpleAR\Builders
+ * @package Inhere\Database\Builders
  */
 abstract class AbstractWhereFragment
 {

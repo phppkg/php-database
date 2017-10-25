@@ -6,11 +6,11 @@
  * Time: 下午7:44
  */
 
-namespace SimpleAR\Connections\Pdo;
+namespace Inhere\Database\Connections\Pdo;
 
 /**
  * Class SqliteConnection - Sqlite Connection
- * @package SimpleAR\Connections\Pdo
+ * @package Inhere\Database\Connections\Pdo
  */
 class SQLiteConnection extends MySQLConnection
 {

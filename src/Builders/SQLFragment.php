@@ -6,7 +6,7 @@
  * Time: 17:24
  */
 
-namespace SimpleAR\Builders;
+namespace Inhere\Database\Builders;
 
 
 class SQLFragment

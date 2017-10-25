@@ -6,21 +6,21 @@
  * Time: 下午2:57
  */
 
-namespace SimpleAR\Builders;
+namespace Inhere\Database\Builders;
 
 use Closure;
 use Inhere\Library\Helpers\Arr;
-use SimpleAR\Builders\Grammars\DefaultGrammar;
-use SimpleAR\Builders\Traits\AggregateClauseTrait;
-use SimpleAR\Builders\Traits\JoinClauseTrait;
-use SimpleAR\Builders\Traits\MutationBuilderTrait;
-use SimpleAR\Builders\Traits\UnionClauseTrait;
-use SimpleAR\Builders\Traits\WhereClauseTrait;
-use SimpleAR\Connections\Connection;
+use Inhere\Database\Builders\Grammars\DefaultGrammar;
+use Inhere\Database\Builders\Traits\AggregateClauseTrait;
+use Inhere\Database\Builders\Traits\JoinClauseTrait;
+use Inhere\Database\Builders\Traits\MutationBuilderTrait;
+use Inhere\Database\Builders\Traits\UnionClauseTrait;
+use Inhere\Database\Builders\Traits\WhereClauseTrait;
+use Inhere\Database\Connections\Connection;
 
 /**
  * Class QueryBuilder
- * @package SimpleAR
+ * @package Inhere\Database
  * @link https://github.com/illuminate/database/blob/master/Query/Builder.php
  */
 class QueryBuilder

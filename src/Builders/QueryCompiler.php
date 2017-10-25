@@ -6,16 +6,16 @@
  * Time: 17:42
  */
 
-namespace SimpleAR\Builders;
+namespace Inhere\Database\Builders;
 
 
 use PDO;
-use SimpleAR\Connections\PdoConnection;
-use SimpleAR\SQLCompileException;
+use Inhere\Database\Connections\PdoConnection;
+use Inhere\Database\SQLCompileException;
 
 /**
  * Class QueryCompiler
- * @package SimpleAR\Builders
+ * @package Inhere\Database\Builders
  * @link https://github.com/spiral/database/blob/master/source/Spiral/Database/Entities/QueryCompiler.php
  */
 class QueryCompiler

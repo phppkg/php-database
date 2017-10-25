@@ -6,13 +6,13 @@
  * Time: 下午11:51
  */
 
-namespace SimpleAR\Helpers;
+namespace Inhere\Database\Helpers;
 
 use Inhere\Library\Helpers\Str;
 
 /**
  * Trait DetectsLostConnections
- * @package SimpleAR\Helpers
+ * @package Inhere\Database\Helpers
  */
 trait DetectsLostConnections
 {

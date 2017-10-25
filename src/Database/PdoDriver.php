@@ -6,13 +6,13 @@
  * Time: 22:33
  */
 
-namespace SimpleAR\Database;
+namespace Inhere\Database\Database;
 
 use Windwalker\Query\Query;
 
 /**
  * Class PdoDriver
- * @package SimpleAR\Database
+ * @package Inhere\Database\Database
  */
 class PdoDriver extends AbstractDriver
 {

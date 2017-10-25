@@ -6,11 +6,11 @@
  * Time: 下午11:26
  */
 
-namespace SimpleAR\Builders;
+namespace Inhere\Database\Builders;
 
 /**
  * Class Expression
- * @package SimpleAR\Builders
+ * @package Inhere\Database\Builders
  */
 class Expression
 {

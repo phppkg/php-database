@@ -6,18 +6,18 @@
  * Time: 上午10:36
  */
 
-namespace SimpleAR\Connections\Pdo;
+namespace Inhere\Database\Connections\Pdo;
 
 use Inhere\Exceptions\UnknownMethodException;
 use Inhere\Library\Helpers\Php;
 use PDO;
 use PDOStatement;
-use SimpleAR\Connections\Connection;
-use SimpleAR\Helpers\DsnHelper;
+use Inhere\Database\Connections\Connection;
+use Inhere\Database\Helpers\DsnHelper;
 
 /**
  * Class Connection
- * @package SimpleAR\Base
+ * @package Inhere\Database\Base
  */
 class PdoConnection extends Connection
 {

@@ -6,11 +6,11 @@
  * Time: 下午7:44
  */
 
-namespace SimpleAR\Connections\Swoole;
+namespace Inhere\Database\Connections\Swoole;
 
 /**
  * Class SqliteConnection - Sqlite Connection
- * @package SimpleAR\Connections\Swoole
+ * @package Inhere\Database\Connections\Swoole
  */
 class SqliteConnection extends MysqlConnection
 {

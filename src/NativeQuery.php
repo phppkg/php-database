@@ -6,7 +6,7 @@
  * Time: 10:52
  */
 
-namespace SimpleAR\Connections\Pdo;
+namespace Inhere\Database\Connections\Pdo;
 
 
 class NativeQuery

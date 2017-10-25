@@ -6,7 +6,7 @@
  * Time: 23:35
  */
 
-namespace SimpleAR\Model;
+namespace Inhere\Database\Model;
 
 use Inhere\Library\Collections\SimpleCollection;
 use Inhere\Library\Types;
@@ -14,7 +14,7 @@ use Inhere\Validate\ValidationTrait;
 
 /**
  * Class BaseModel
- * @package SimpleAR\Model
+ * @package Inhere\Database\Model
  */
 abstract class BaseModel extends SimpleCollection
 {

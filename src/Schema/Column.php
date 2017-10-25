@@ -6,13 +6,13 @@
  * Time: 上午10:50
  */
 
-namespace SimpleAR\Schema;
+namespace Inhere\Database\Schema;
 
 use Inhere\Library\Helpers\Obj;
 
 /**
  * Class Column
- * @package SimpleAR\Schema
+ * @package Inhere\Database\Schema
  */
 class Column
 {

@@ -6,11 +6,11 @@
  * Time: 下午11:32
  */
 
-namespace SimpleAR\Database;
+namespace Inhere\Database\Database;
 
 /**
  * Class LoadResultSetTrait
- * @package SimpleAR\Database
+ * @package Inhere\Database\Database
  * @property \PDOStatement $cursor
  */
 trait LoadResultSetTrait

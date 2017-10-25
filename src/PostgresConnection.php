@@ -6,11 +6,11 @@
  * Time: 13:55
  */
 
-namespace SimpleAR;
+namespace Inhere\Database;
 
 /**
  * Class PostgresConnection
- * @package SimpleAR
+ * @package Inhere\Database
  */
 class PostgresConnection
 {

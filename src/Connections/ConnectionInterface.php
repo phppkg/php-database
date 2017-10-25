@@ -7,11 +7,11 @@
  * @license https://opensource.org/licenses/MIT MIT
  */
 
-namespace SimpleAR\Connections;
+namespace Inhere\Database\Connections;
 
 /**
  * Interface ConnectionInterface
- * @package SimpleAR\Connections
+ * @package Inhere\Database\Connections
  * @from https://github.com/auraphp/Aura.Sql
  */
 interface ConnectionInterface extends PdoInterface

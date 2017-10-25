@@ -6,7 +6,7 @@
  * Time: 下午7:41
  */
 
-namespace SimpleAR\Connections\Swoole;
+namespace Inhere\Database\Connections\Swoole;
 
 
 class MysqlConnection

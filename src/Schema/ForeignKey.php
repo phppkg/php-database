@@ -6,7 +6,7 @@
  * Time: 10:08
  */
 
-namespace SimpleAR\Schema;
+namespace Inhere\Database\Schema;
 
 
 class ForeignKey

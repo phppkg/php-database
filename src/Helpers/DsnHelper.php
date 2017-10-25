@@ -6,7 +6,7 @@
  * Time: 22:33
  */
 
-namespace SimpleAR\Helpers;
+namespace Inhere\Database\Helpers;
 
 /**
  * Class DsnHelper

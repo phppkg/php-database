@@ -6,7 +6,7 @@
  * Time: 下午7:36
  */
 
-namespace SimpleAR\Connections;
+namespace Inhere\Database\Connections;
 
 
 class ParametersBuilder

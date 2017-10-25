@@ -6,12 +6,12 @@
  * Time: 13:04
  */
 
-namespace SimpleAR\Builders\Traits;
+namespace Inhere\Database\Builders\Traits;
 
 /**
  * Trait MutationBuilderTrait
  * - insert, update, delete query builder
- * @package SimpleAR\Builders\Traits
+ * @package Inhere\Database\Builders\Traits
  */
 trait MutationBuilderTrait
 {

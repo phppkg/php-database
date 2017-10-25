@@ -6,14 +6,14 @@
  * Time: 12:01
  */
 
-namespace SimpleAR\Builders\Traits;
+namespace Inhere\Database\Builders\Traits;
 
 use Inhere\Library\Helpers\Arr;
 
 /**
  * Trait AggregateClauseTrait
  *  - 在数据库上执行聚合函数的相关语句
- * @package SimpleAR\Builders\Traits
+ * @package Inhere\Database\Builders\Traits
  */
 trait AggregateClauseTrait
 {

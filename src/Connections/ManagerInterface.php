@@ -6,11 +6,11 @@
  * Time: 22:14
  */
 
-namespace SimpleAR\Connections;
+namespace Inhere\Database\Connections;
 
 /**
  * Interface ManagerInterface
- * @package SimpleAR\Connections
+ * @package Inhere\Database\Connections
  */
 interface ManagerInterface
 {

@@ -6,9 +6,9 @@
  * Time: 下午6:21
  */
 
-namespace SimpleAR;
+namespace Inhere\Database;
 
-use SimpleAR\Connections\Connection;
+use Inhere\Database\Connections\Connection;
 
 /**
  * $mgr = new Manager;

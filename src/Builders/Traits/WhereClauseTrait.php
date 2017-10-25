@@ -6,13 +6,13 @@
  * Time: 10:16
  */
 
-namespace SimpleAR\Builders\Traits;
+namespace Inhere\Database\Builders\Traits;
 
 use Inhere\Library\Helpers\Str;
 
 /**
  * trait WhereClauseTrait
- * @package SimpleAR\Builders\Traits
+ * @package Inhere\Database\Builders\Traits
  */
 trait WhereClauseTrait
 {

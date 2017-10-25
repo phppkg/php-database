@@ -6,7 +6,7 @@
  * Time: 22:33
  */
 
-namespace SimpleAR\Database;
+namespace Inhere\Database\Database;
 
 use Inhere\Library\Traits\LiteEventTrait;
 use Inhere\Library\Traits\LiteOptionsTrait;
@@ -14,13 +14,13 @@ use InvalidArgumentException;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareTrait;
-use SimpleAR\Helpers\DsnHelper;
-use SimpleAR\Helpers\QueryHelper;
+use Inhere\Database\Helpers\DsnHelper;
+use Inhere\Database\Helpers\QueryHelper;
 use Windwalker\Query\Query;
 
 /**
  * Class AbstractDriver
- * @package SimpleAR\Database
+ * @package Inhere\Database\Database
  * @link https://github.com/ventoviro/windwalker-database
  */
 abstract class AbstractDriver implements InterfaceDriver

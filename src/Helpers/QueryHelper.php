@@ -6,9 +6,9 @@
  * Time: 22:33
  */
 
-namespace SimpleAR\Helpers;
+namespace Inhere\Database\Helpers;
 
-use SimpleAR\Database\DbFactory;
+use Inhere\Database\Database\DbFactory;
 use Windwalker\Compare\Compare;
 use Windwalker\Query\Query;
 use Windwalker\Query\QueryElement;

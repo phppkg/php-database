@@ -9,7 +9,9 @@
 参考：
 
 - https://github.com/illuminate/database
+- https://github.com/spiral/database
 - https://github.com/ventoviro/windwalker-query
+- https://github.com/ventoviro/windwalker-database
 
 ## 项目地址
 

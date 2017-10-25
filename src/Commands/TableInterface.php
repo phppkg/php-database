@@ -6,13 +6,13 @@
  * Time: 上午11:10
  */
 
-namespace SimpleAR\Commands;
+namespace Inhere\Database\Commands;
 
-use SimpleAR\Schema\Column;
+use Inhere\Database\Schema\Column;
 
 /**
  * Interface TableInterface
- * @package SimpleAR\Commands
+ * @package Inhere\Database\Commands
  */
 interface TableInterface
 {

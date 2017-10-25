@@ -6,11 +6,11 @@
  * Time: 10:16
  */
 
-namespace SimpleAR\Builders\Traits;
+namespace Inhere\Database\Builders\Traits;
 
 /**
  * trait JoinClauseTrait
- * @package SimpleAR\Builders\Traits
+ * @package Inhere\Database\Builders\Traits
  */
 trait JoinClauseTrait
 {

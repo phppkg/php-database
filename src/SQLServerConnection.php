@@ -6,11 +6,11 @@
  * Time: 13:57
  */
 
-namespace SimpleAR;
+namespace Inhere\Database;
 
 /**
  * Class SQLServerConnection
- * @package SimpleAR
+ * @package Inhere\Database
  */
 class SQLServerConnection
 {

@@ -14,11 +14,11 @@
  *    );
  */
 
-namespace SimpleAR\Schema;
+namespace Inhere\Database\Schema;
 
 /**
  * Class Index
- * @package SimpleAR\Schema
+ * @package Inhere\Database\Schema
  */
 class Index
 {

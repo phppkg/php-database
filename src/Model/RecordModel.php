@@ -6,19 +6,19 @@
  * Time: 下午4:13
  */
 
-namespace SimpleAR\Model;
+namespace Inhere\Database\Model;
 
 use Inhere\Exceptions\InvalidArgumentException;
 use Inhere\Exceptions\InvalidConfigException;
 use Inhere\Exceptions\UnknownMethodException;
 use Inhere\Library\Helpers\Arr;
-use SimpleAR\Database\AbstractDriver;
-use SimpleAR\Helpers\ModelHelper;
+use Inhere\Database\Database\AbstractDriver;
+use Inhere\Database\Helpers\ModelHelper;
 use Windwalker\Query\Query;
 
 /**
  * Class RecordModel
- * @package SimpleAR\Model
+ * @package Inhere\Database\Model
  */
 abstract class RecordModel extends BaseModel
 {
