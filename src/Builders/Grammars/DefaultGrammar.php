@@ -8,6 +8,7 @@
 
 namespace Inhere\Database\Builders\Grammars;
 
+use Inhere\Database\Builders\Compilers\AbstractCompiler;
 use Inhere\Database\Builders\QueryBuilder;
 use Inhere\Library\Helpers\Arr;
 
@@ -15,7 +16,7 @@ use Inhere\Library\Helpers\Arr;
  * Class DefaultGrammar
  * @package Inhere\Database\Query\Grammars
  */
-class DefaultGrammar extends AbstractGrammar
+class DefaultGrammar extends AbstractCompiler
 {
     /**
      * The grammar specific operators.
@@ -61,7 +62,7 @@ class DefaultGrammar extends AbstractGrammar
         // To compile the query, we'll spin through each component of the query and
         // see if that component exists. If it does we'll just call the compiler
         // function for the component which is responsible for making the SQL.
-        $sql = trim($this->concatenate($this->compileComponents($query)));
+        $sql = trim($this->concatenate($this->compileComponents($query, static::$selectComponents)));
 
         $query->fields = $original;
 
@@ -70,24 +71,25 @@ class DefaultGrammar extends AbstractGrammar
 
     /**
      * Compile the components necessary for a select clause.
-     * @param  QueryBuilder $query
+     * @param QueryBuilder $query
+     * @param array $components
      * @return array
      */
-    protected function compileComponents(QueryBuilder $query)
+    protected function compileComponents(QueryBuilder $query, array $components)
     {
-        $sql = [];
+        $parts = [];
 
-        foreach (static::$selectComponents as $component) {
+        foreach ($components as $component) {
             // To compile the query, we'll spin through each component of the query and
             // see if that component exists. If it does we'll just call the compiler
             // function for the component which is responsible for making the SQL.
             if (null !== $query->$component) {
                 $method = 'build' . ucfirst($component);
-                $sql[$component] = $this->$method($query, $query->$component);
+                $parts[$component] = $this->$method($query, $query->$component);
             }
         }
 
-        return $sql;
+        return $parts;
     }
 
     /**
@@ -764,18 +766,6 @@ class DefaultGrammar extends AbstractGrammar
     public function compileSavepointRollBack($name)
     {
         return 'ROLLBACK TO SAVEPOINT ' . $name;
-    }
-
-    /**
-     * Concatenate an array of segments, removing empties.
-     * @param  array $segments
-     * @return string
-     */
-    protected function concatenate($segments)
-    {
-        return implode(' ', array_filter($segments, function ($value) {
-            return (string)$value !== '';
-        }));
     }
 
     /**

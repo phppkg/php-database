@@ -45,9 +45,33 @@ class QueryBuilder
     const TOKEN_AND = '@and';
     const TOKEN_OR = '@or';
 
+    /** operator constants */
+    const EQ = '=';
+    const NEQ = '!=';
+    const LT = '<';
+    const LTE = '<=';
+    const GT = '>';
+    const GTE = '>=';
+
     /* Sort directions. */
     const SORT_ASC = 'ASC';
     const SORT_DESC = 'DESC';
+
+    /* 字段修饰符: field-modifier */
+    const IS = 'IS';
+    const IS_NOT = 'IS NOT';
+
+    const IN = 'IN';
+    const NOT_IN = 'NOT IN';
+
+    const LIKE = 'LIKE';
+    const NOT_LIKE = 'NOT LIKE';
+
+    const NULL = 'NULL';
+    const NOT_NULL = 'NOT NULL';
+
+    const BETWEEN = 'BETWEEN';
+    const NOT_BETWEEN = 'NOT BETWEEN';
 
     /** @var Connection */
     public $connection;
@@ -575,11 +599,11 @@ class QueryBuilder
      * @param $name
      * @param $elements
      * @param string $glue
-     * @return QueryElement
+     * @return Fragment
      */
-    public function newElement($name, $elements, $glue = ',')
+    public function newFragment($name, $elements, $glue = ',')
     {
-        return new QueryElement($name, $elements, $glue);
+        return new Fragment($name, $elements, $glue);
     }
 
     /**

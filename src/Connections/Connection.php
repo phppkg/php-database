@@ -9,6 +9,7 @@
 namespace Inhere\Database\Connections;
 
 use Inhere\Database\Builders\Grammars\DefaultGrammar;
+use Inhere\Database\Builders\QueryCompiler;
 use Inhere\Library\Traits\LiteEventTrait;
 
 /**
@@ -82,6 +83,11 @@ abstract class Connection implements PDOInterface
      * @var DefaultGrammar
      */
     protected $queryGrammar;
+
+    /**
+     * @var QueryCompiler
+     */
+    protected $queryCompiler;
 
     /**
      * connect

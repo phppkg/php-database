@@ -2,18 +2,38 @@
 /**
  * Created by PhpStorm.
  * User: inhere
- * Date: 2017/10/22
- * Time: 上午10:35
+ * Date: 2017-10-25
+ * Time: 17:43
  */
 
-namespace Inhere\Database\Builders;
+namespace Inhere\Database\Builders\Compilers;
+
+use Inhere\Database\Builders\QueryCompiler;
 
 /**
- * Class BaseQuery
- * @package Inhere\Database\Base
+ * Class MySQLCompiler
+ * @package Inhere\Database\Builders\Compilers
  */
-class BaseQuery
+class MySQLCompiler extends QueryCompiler
 {
+    /**
+     * The components that make up a select clause.
+     * @var array
+     */
+    protected static $selectComponents = [
+        'aggregate',
+        'columns',
+        'from',
+        'joins',
+        'wheres',
+        'groups',
+        'havings',
+        'orders',
+        'limit',
+        'offset',
+        'lock',
+    ];
+
     /**
      * If no connection set, we escape it with default function.
      * Since mysql_real_escape_string() has been deprecated, we use an alternative one.

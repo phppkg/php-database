@@ -6,15 +6,15 @@
  * Time: 下午11:33
  */
 
-namespace Inhere\Database\Builders\Grammars;
+namespace Inhere\Database\Builders\Compilers;
 
 use Inhere\Database\Builders\Expression;
 
 /**
- * Class AbstractGrammar
- * @package Inhere\Database\Builders\Grammars
+ * Class AbstractCompiler
+ * @package Inhere\Database\Builders\Compilers
  */
-abstract class AbstractGrammar
+abstract class AbstractCompiler
 {
     /**
      * The grammar table prefix.
@@ -133,6 +133,18 @@ abstract class AbstractGrammar
     public function parameterize(array $values)
     {
         return implode(', ', array_map([$this, 'parameter'], $values));
+    }
+
+    /**
+     * Concatenate an array of segments, removing empties.
+     * @param  array $segments
+     * @return string
+     */
+    protected function concatenate($segments)
+    {
+        return implode(' ', array_filter($segments, function ($value) {
+            return (string)$value !== '';
+        }));
     }
 
     /**

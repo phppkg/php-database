@@ -4,6 +4,7 @@
  * User: inhere
  * Date: 2017-10-23
  * Time: 17:24
+ * @from Windwalker https://github.com/ventoviro/windwalker-query/blob/master/QueryElement.php
  */
 
 namespace Inhere\Database\Builders;
