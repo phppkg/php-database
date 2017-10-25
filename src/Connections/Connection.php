@@ -80,11 +80,6 @@ abstract class Connection implements PDOInterface
     protected $prefixPlaceholder = '{pfx}';
 
     /**
-     * @var DefaultGrammar
-     */
-    protected $queryGrammar;
-
-    /**
      * @var QueryCompiler
      */
     protected $queryCompiler;
@@ -187,6 +182,22 @@ abstract class Connection implements PDOInterface
     public function setConfig(array $config)
     {
         $this->config = $config;
+    }
+
+    /**
+     * @param QueryCompiler $queryCompiler
+     */
+    public function setQueryCompiler(QueryCompiler $queryCompiler)
+    {
+        $this->queryCompiler = $queryCompiler;
+    }
+
+    /**
+     * @return QueryCompiler
+     */
+    public function getQueryCompiler(): QueryCompiler
+    {
+        return $this->queryCompiler;
     }
 
 }

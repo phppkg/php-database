@@ -77,11 +77,6 @@ class QueryBuilder
     public $connection;
 
     /**
-     * @var DefaultGrammar
-     */
-    private $grammar;
-
-    /**
      * @var QueryCompiler
      */
     private $compiler;
@@ -186,10 +181,15 @@ class QueryBuilder
 
     private $sql;
 
-    public function __construct(Connection $connection, DefaultGrammar $grammar = null)
+    /**
+     * QueryBuilder constructor.
+     * @param Connection $connection
+     * @param QueryCompiler|null $compiler
+     */
+    public function __construct(Connection $connection, QueryCompiler $compiler = null)
     {
         $this->connection = $connection;
-        $this->grammar = $grammar;
+        $this->compiler = $compiler ?: $connection->getQueryCompiler();;
     }
 
     /********************************************************************************
@@ -469,7 +469,7 @@ class QueryBuilder
     public function exists()
     {
         $results = $this->connection->select(
-            $this->grammar->compileExists($this), $this->getBindings(), !$this->useWriter
+            $this->compiler->compileExists($this), $this->getBindings(), !$this->useWriter
         );
 
         // If the results has rows, we will get the row and see if the exists column is a
@@ -491,7 +491,7 @@ class QueryBuilder
      */
     public function toSql()
     {
-        return $this->grammar->compileSelect($this);
+        return $this->compiler->compileSelect($this);
     }
 
     /**
@@ -612,7 +612,7 @@ class QueryBuilder
      */
     public function newQuery()
     {
-        return new static($this->connection, $this->grammar);
+        return new static($this->connection, $this->compiler);
     }
 
     /**
@@ -637,7 +637,8 @@ class QueryBuilder
      */
     protected function invalidOperator($operator)
     {
-        return !in_array(strtolower($operator), $this->operators, true);
+        return !in_array(strtolower($operator), $this->operators, true) &&
+            ! in_array(strtolower($operator), $this->compiler->getOperators(), true);
     }
 
     /**

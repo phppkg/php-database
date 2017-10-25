@@ -8,6 +8,9 @@
 
 namespace Inhere\Database\Builders\Traits;
 
+use Closure;
+use Inhere\Database\Builders\Expression;
+use Inhere\Database\Builders\QueryBuilder;
 use Inhere\Library\Helpers\Str;
 
 /**
@@ -48,6 +51,56 @@ trait WhereClauseTrait
     }
 
     /**
+     * Add a "where" clause comparing two columns to the query.
+     *
+     * @param  string|array  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @param  string|null  $boolean
+     * @return $this
+     */
+    public function whereColumn($first, $operator = null, $second = null, $boolean = 'and')
+    {
+        // If the column is an array, we will assume it is an array of key-value pairs
+        // and can add them each as a where clause. We will maintain the boolean we
+        // received when the method was called and pass it into the nested where.
+        if (is_array($first)) {
+            return $this->addArrayOfWheres($first, $boolean, 'whereColumn');
+        }
+
+        // If the given operator is not found in the list of valid operators we will
+        // assume that the developer is just short-cutting the '=' operators and
+        // we will set the operators to '=' and set the values appropriately.
+        if ($this->invalidOperator($operator)) {
+            list($second, $operator) = [$operator, '='];
+        }
+
+        // Finally, we will add this where clause into this array of clauses that we
+        // are building for the query. All of them will be compiled via a grammar
+        // once the query is about to be executed and run against the database.
+        $type = 'Column';
+
+        $this->wheres[] = compact(
+            'type', 'first', 'operator', 'second', 'boolean'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause comparing two columns to the query.
+     *
+     * @param  string|array  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @return $this
+     */
+    public function orWhereColumn($first, $operator = null, $second = null)
+    {
+        return $this->whereColumn($first, $operator, $second, 'or');
+    }
+
+    /**
      * Add a raw where clause to the query.
      * @param  string $sql
      * @param  mixed $bindings
@@ -79,7 +132,37 @@ trait WhereClauseTrait
     public function whereIn($column, $values, $boolean = 'and', $not = false)
     {
         $type = $not ? 'NotIn' : 'In';
+
+        // If the value is a query builder instance we will assume the developer wants to
+        // look for any values that exists within this given query. So we will add the
+        // query accordingly so that this query is properly executed when it is run.
+        if ($values instanceof self) {
+            return $this->whereInExistingQuery(
+                $column, $values, $boolean, $not
+            );
+        }
+
+        // If the value of the where in clause is actually a Closure, we will assume that
+        // the developer is using a full sub-select for this "in" statement, and will
+        // execute those Closures, then we can re-construct the entire sub-selects.
+        if ($values instanceof Closure) {
+            return $this->whereInSub($column, $values, $boolean, $not);
+        }
+
+        if (method_exists($values, 'toArray')) {
+            $values = $values->toArray();
+        }
+
         $this->wheres[] = [$type, $column, $values, $boolean];
+
+        // Finally we'll add a binding for each values unless that value is an expression
+        // in which case we will just skip over it since it will be the query as a raw
+        // string and not as a parameterized place-holder to be replaced by the PDO.
+        foreach ($values as $value) {
+            if (! $value instanceof Expression) {
+                $this->addBinding($value, 'where');
+            }
+        }
 
         return $this;
     }

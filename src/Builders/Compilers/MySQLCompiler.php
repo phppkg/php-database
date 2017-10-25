@@ -20,7 +20,7 @@ class MySQLCompiler extends QueryCompiler
      * The components that make up a select clause.
      * @var array
      */
-    protected static $selectComponents = [
+    const SELECT_COMPONENTS = [
         'aggregate',
         'columns',
         'from',
