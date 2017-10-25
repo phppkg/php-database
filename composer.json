@@ -1,9 +1,9 @@
 {
-  "name": "inhere/simple-active-record",
+  "name": "inhere/database",
   "type": "library",
-  "description": "a simple activeRecord library of the php",
-  "keywords": ["library", "tool", "php", "pdo", "activeRecord"],
-  "homepage": "https://github.com/inhere/php-simple-activeRecord",
+  "description": "a simple database library of the php",
+  "keywords": ["library", "tool", "php", "pdo", "mysql"],
+  "homepage": "https://github.com/inhere/php-database",
   "license": "MIT",
   "authors": [
     {
@@ -14,14 +14,11 @@
   ],
   "require": {
     "php": ">=7.0.0",
-    "inhere/php-validate": "^2.0",
-    "psr/log": "~1.0",
-    "windwalker/query": "^3.0",
-    "windwalker/compare": "^3.0"
+    "inhere/library": "dev-master"
   },
   "autoload": {
     "psr-4": {
-      "SimpleAR\\" : "src/"
+      "Database\\" : "src/"
     }
   },
   "suggest": {

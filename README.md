@@ -1,6 +1,6 @@
-# simple activeRecord
+# php database
 
-一个简洁的php activeRecord库
+一个php database库
 
 功能：
 
@@ -13,8 +13,8 @@
 
 ## 项目地址
 
-- **git@osc** https://git.oschina.net/inhere/php-simple-activeRecord.git
-- **github** https://github.com/inhere/php-simple-activeRecord.git
+- **git@osc** https://git.oschina.net/inhere/php-database.git
+- **github** https://github.com/inhere/php-database.git
 
 ## 安装
 
@@ -23,7 +23,7 @@
 编辑 `composer.json`，在 `require` 添加
 
 ```
-"inhere/php-simple-activeRecord": "dev-master",
+"inhere/php-database": "dev-master",
 ```
 
 然后执行: `composer update`
@@ -31,8 +31,8 @@
 - 直接拉取
 
 ```
-git clone https://git.oschina.net/inhere/php-simple-activeRecord.git // git@osc
-git clone https://github.com/inhere/php-simple-activeRecord.git // github
+git clone https://git.oschina.net/inhere/php-database.git // git@osc
+git clone https://github.com/inhere/php-database.git // github
 ```
 
 ## 结构说明
