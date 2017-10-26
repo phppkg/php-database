@@ -28,6 +28,7 @@ interface DatabaseInterface
      * @param string $name
      * @return TableInterface
      */
+    public function table(string $name);
     public function getTable(string $name);
 
     public function getTableNames($refresh = false);

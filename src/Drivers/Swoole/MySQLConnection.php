@@ -8,8 +8,11 @@
 
 namespace Inhere\Database\Connections\Swoole;
 
-
-class MysqlConnection
+/**
+ * Class MySQLConnection
+ * @package Inhere\Database\Connections\Swoole
+ */
+class MySQLConnection
 {
     /**
      * If no connection set, we escape it with default function.

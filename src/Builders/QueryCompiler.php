@@ -18,6 +18,14 @@ use Inhere\Library\Helpers\Arr;
 class QueryCompiler extends AbstractCompiler
 {
     /**
+     * Query types for parameter ordering.
+     */
+    const SELECT_QUERY = 'select';
+    const UPDATE_QUERY = 'update';
+    const DELETE_QUERY = 'delete';
+    const INSERT_QUERY = 'insert';
+
+    /**
      * The grammar specific operators.
      * @var array
      */

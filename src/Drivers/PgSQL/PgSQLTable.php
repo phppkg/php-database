@@ -12,7 +12,7 @@ namespace Inhere\Database\Table;
  * Class PostgresTable
  * @package Inhere\Database\Table
  */
-class PostgresTable extends AbstractTable
+class PgSQLTable extends AbstractTable
 {
 
 }

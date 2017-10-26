@@ -1,5 +1,74 @@
 ## Database
 
+### config 
+
+```php
+use Inhere\Database\Drivers;
+
+$config = [
+    'default'     => 'default',
+    'aliases'     => [
+        'default'  => 'primary',
+        'database' => 'primary',
+        'db'       => 'primary',
+        'slave'    => 'secondary'
+    ],
+    
+    'databases' => [
+        'primary'     => [
+            'connection'  => 'mysql',
+            'tablePrefix' => 'primary_'
+        ],
+        'secondary' => [
+            'connection'  => 'postgres',
+            'tablePrefix' => 'secondary_',
+        ],
+    ],
+ 
+    'connections' => [
+        'mySql'     => [
+            'driver'     => Drivers\MySQL\MySQLConnection::class,
+            'debug'  => env('DEBUG', false),
+            'host' => '127.0.0.1',
+            'port' => 3306,
+            'database'   => env('DB_NAME'),
+            'username'   => env('DB_USERNAME'),
+            'password'   => env('DB_PASSWORD'),
+            'options'    => []
+        ],
+        'pgSql'  => [
+            'driver'     => Drivers\PgSQL\PgSQLConnection::class,
+            'debug'  => env('DEBUG', false),
+            'host' => '127.0.0.1',
+            'port' => xxx,
+            'database'   => env('DB_NAME'),
+            'username'   => env('DB_USERNAME'),
+            'password'   => env('DB_PASSWORD'),
+            'options'    => []
+        ],
+        'runtime'   => [
+            'driver'     => Drivers\SQLite\SQLiteConnection::class,
+            'database' => 'sqlite:' . directory('runtime') . 'runtime.db',
+            'debug'  => env('DEBUG', false),
+            'username'   => 'sqlite',
+            'password'   => '',
+            'options'    => []
+        ],
+        'msSql' => [
+            'driver'     => Drivers\MsSQL\MsSQLConnection::class,
+            // 'connection' => 'sqlsrv:Server=MY-PC;Database=' . env('DB_NAME'),
+            'debug'  => env('DEBUG', false),
+            'host' => 'Server=MY-PC',
+            'port' => xxx,
+            'database'   => env('DB_NAME'),
+            'username'   => env('DB_USERNAME'),
+            'password'   => env('DB_PASSWORD'),
+            'options'    => []
+        ],
+    ]
+];
+```
+
 > [Return](index.md)
 
 - add a db to container

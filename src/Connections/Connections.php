@@ -12,7 +12,7 @@ namespace Inhere\Database\Connections;
  * Class AbstractConnections
  * @package Inhere\Database\Connections
  */
-abstract class Connections implements ManagerInterface
+abstract class Connections
 {
     // mode: singleton master-slave cluster
     const MODE_SINGLETON = 1;

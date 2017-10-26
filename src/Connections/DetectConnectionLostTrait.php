@@ -6,15 +6,15 @@
  * Time: 下午11:51
  */
 
-namespace Inhere\Database\Helpers;
+namespace Inhere\Database\Connections;
 
 use Inhere\Library\Helpers\Str;
 
 /**
  * Trait DetectsLostConnections
- * @package Inhere\Database\Helpers
+ * @package Inhere\Database\Connections
  */
-trait DetectsLostConnections
+trait DetectConnectionLostTrait
 {
     /**
      * Determine if the given exception was caused by a lost connection.

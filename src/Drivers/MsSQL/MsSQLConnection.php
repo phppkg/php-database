@@ -6,11 +6,13 @@
  * Time: 13:57
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database\Drivers\MySQL;
+
+use Inhere\Database\Connections\PDOConnection;
 
 /**
  * Class MsSQLConnection - The Microsoft SQL Server Connection
- * @package Inhere\Database\Connections
+ * @package Inhere\Database\Drivers\MySQL
  */
 class MsSQLConnection extends PDOConnection
 {

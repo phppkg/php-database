@@ -8,12 +8,6 @@
 
 namespace Inhere\Database\Builders;
 
-use Inhere\Database\Builders\Grammars\DefaultGrammar;
-use Inhere\Database\Builders\Traits\AggregateClauseTrait;
-use Inhere\Database\Builders\Traits\JoinClauseTrait;
-use Inhere\Database\Builders\Traits\MutationBuilderTrait;
-use Inhere\Database\Builders\Traits\UnionClauseTrait;
-use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Database\Connections\Connection;
 use Inhere\Library\Helpers\Arr;
 
@@ -24,12 +18,6 @@ use Inhere\Library\Helpers\Arr;
  */
 class QueryBuilder
 {
-    use AggregateClauseTrait,
-        JoinClauseTrait,
-        WhereClauseTrait,
-        MutationBuilderTrait,
-        UnionClauseTrait;
-
     /* The query types. */
     const INSERT = 1;
     const SELECT = 2;
@@ -39,13 +27,12 @@ class QueryBuilder
     /* The builder states. */
     const STATE_DIRTY = 0;
     const STATE_CLEAN = 1;
-    /**
-     * Tokens for nested OR and AND conditions.
-     */
+
+    /* Tokens for nested OR and AND conditions. */
     const TOKEN_AND = '@and';
     const TOKEN_OR = '@or';
 
-    /** operator constants */
+    /* operator constants */
     const EQ = '=';
     const NEQ = '!=';
     const LT = '<';
@@ -79,7 +66,7 @@ class QueryBuilder
     /**
      * @var QueryCompiler
      */
-    private $compiler;
+    protected $compiler;
 
     /**
      * The current query value bindings.
@@ -113,46 +100,10 @@ class QueryBuilder
     public $fields;
 
     /**
-     * Indicates if the query returns distinct results.
-     * @var bool
-     */
-    public $distinct = false;
-
-    /**
      * The table which the query is targeting.
      * @var string
      */
     public $from;
-
-    /**
-     * The groupings for the query.
-     * @var array
-     */
-    public $groups = [];
-
-    /**
-     * The having constraints for the query.
-     * @var array
-     */
-    public $havings = [];
-
-    /**
-     * The orderings for the query.
-     * @var array
-     */
-    public $orders = [];
-
-    /**
-     * The maximum number of records to return.
-     * @var int
-     */
-    public $limit;
-
-    /**
-     * The number of records to skip.
-     * @var int
-     */
-    public $offset;
 
     /**
      * Indicates whether row locking is being used.
@@ -178,8 +129,6 @@ class QueryBuilder
      * @var bool
      */
     public $useWriter = false;
-
-    private $sql;
 
     /**
      * QueryBuilder constructor.
@@ -228,17 +177,6 @@ class QueryBuilder
         return $this;
     }
 
-    /**
-     * Force the query to only return distinct results.
-     * @param bool $value
-     * @return $this
-     */
-    public function distinct($value = true)
-    {
-        $this->distinct = (bool)$value;
-
-        return $this;
-    }
 
     /**
      * Set the table which the query is targeting.
@@ -252,169 +190,9 @@ class QueryBuilder
         return $this;
     }
 
-    public function table($table)
-    {
-        $this->from = $table;
-
-        return $this;
-    }
-
     /********************************************************************************
      * -- other nodes methods
      *******************************************************************************/
-
-    /**
-     * Add a "group by" clause to the query.
-     * @param  array ...$groups
-     * @return $this
-     */
-    public function groupBy(...$groups)
-    {
-        foreach ($groups as $group) {
-            $this->groups = array_merge((array)$this->groups, Arr::wrap($group));
-        }
-
-        return $this;
-    }
-
-    public function having($column, $operator = null, $value = null, $boolean = 'and')
-    {
-        $type = 'Basic';
-
-        $this->havings[] = [$type, $column, $operator, $value, $boolean];
-
-//        if (! $value instanceof Expression) {
-//            $this->addBinding($value, 'having');
-//        }
-
-        return $this;
-    }
-
-    public function orHaving($column, $operator = null, $value = null)
-    {
-        return $this->having($column, $operator, $value, 'or');
-    }
-
-    /**
-     * Add a raw having clause to the query.
-     * @param  string $sql
-     * @param  array $bindings
-     * @param  string $boolean
-     * @return $this
-     */
-    public function havingRaw($sql, array $bindings = [], $boolean = 'and')
-    {
-        $type = 'Raw';
-        $this->havings[] = [$type, $sql, $boolean];
-
-        $this->addBinding($bindings, 'having');
-
-        return $this;
-    }
-
-    /**
-     * Add a raw or having clause to the query.
-     * @param  string $sql
-     * @param  array $bindings
-     * @return $this
-     */
-    public function orHavingRaw($sql, array $bindings = [])
-    {
-        return $this->havingRaw($sql, $bindings, 'or');
-    }
-
-    /**
-     * Add an "order by" clause to the query.
-     * @param  string $column
-     * @param  string $direction
-     * @return $this
-     */
-    public function orderBy($column, $direction = 'asc')
-    {
-        $info = [
-            'column' => $column,
-            'direction' => strtolower($direction) === 'asc' ? 'asc' : 'desc',
-        ];
-
-        if ($this->unions) {
-            $this->unionOrders[] = $info;
-        } else {
-            $this->orders[] = $info;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add a descending "order by" clause to the query.
-     * @param  string $column
-     * @return $this
-     */
-    public function orderByDesc($column)
-    {
-        return $this->orderBy($column, 'desc');
-    }
-
-    /**
-     * Add a raw "order by" clause to the query.
-     * @param  string $sql
-     * @param  array $bindings
-     * @return $this
-     */
-    public function orderByRaw($sql, $bindings = null)
-    {
-        $type = 'Raw';
-        $info = [$type, $sql];
-
-        if ($this->unions) {
-            $this->unionOrders[] = $info;
-        } else {
-            $this->orders[] = $info;
-        }
-
-        $this->addBinding($bindings, 'order');
-
-        return $this;
-    }
-
-    /**
-     * Set the "offset" value of the query.
-     * @param  int $value
-     * @return $this
-     */
-    public function offset($value)
-    {
-        $property = $this->unions ? 'unionOffset' : 'offset';
-        $this->$property = max(0, (int)$value);
-
-        return $this;
-    }
-
-    public function limit($limit, $offset = null)
-    {
-        $property = $this->unions ? 'unionLimit' : 'limit';
-
-        if ($limit >= 0) {
-            $this->$property = $limit;
-        }
-
-        if (null !== $offset) {
-            $this->offset($offset);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param int $page
-     * @param int $pageSize
-     * @return $this
-     */
-    public function forPage($page, $pageSize = 15)
-    {
-        return $this->offset(($page - 1) * $pageSize)->limit($pageSize);
-    }
-
 
     /**
      * Lock the selected rows in the table.
@@ -451,45 +229,14 @@ class QueryBuilder
     }
 
     /**
-     * Execute a query for a single record by ID.
-     * @param  int $id
-     * @param  array $columns
-     * @param string $pkField
-     * @return mixed|static
-     */
-    public function find($id, array $columns = ['*'], $pkField = 'id')
-    {
-        return $this->where($pkField, '=', $id)->first($columns);
-    }
-
-    /**
-     * Determine if any rows exist for the current query.
-     * @return bool
-     */
-    public function exists()
-    {
-        $results = $this->connection->select(
-            $this->compiler->compileExists($this), $this->getBindings(), !$this->useWriter
-        );
-
-        // If the results has rows, we will get the row and see if the exists column is a
-        // boolean true. If there is no results for this query we will return false as
-        // there are no rows for this query at all and we can return that info here.
-        if (isset($results[0])) {
-            $results = (array)$results[0];
-
-            return (bool)$results['exists'];
-        }
-
-        return false;
-    }
-
-
-    /**
      * Get the SQL representation of the query.
      * @return string
      */
     public function toSql()
+    {
+        return $this->compiler->compileSelect($this);
+    }
+    public function queryString()
     {
         return $this->compiler->compileSelect($this);
     }

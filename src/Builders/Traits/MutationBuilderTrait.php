@@ -28,11 +28,6 @@ trait MutationBuilderTrait
     /**
      * @var array
      */
-    public $sets;
-
-    /**
-     * @var array
-     */
     public $columns;
 
     /**
@@ -101,9 +96,9 @@ trait MutationBuilderTrait
         return $this;
     }
 
-    public function set($conditions, $glue = ',')
+    public function set($column, $value)
     {
-        $this->sets[] = $conditions;
+        $this->values[$column] = $value;
 
         return $this;
     }
@@ -125,13 +120,7 @@ trait MutationBuilderTrait
      */
     public function values(array $values)
     {
-        foreach ($values as $key => $value) {
-            if (is_array($value) || is_object($value)) {
-                $values[$key] = implode(',', (array)$value);
-            }
-        }
-
-        $this->values[] = ['()', $values, '), ('];
+        $this->values = $values;
 
         return $this;
     }

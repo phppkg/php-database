@@ -6,11 +6,11 @@
  * Time: 16:10
  */
 
-namespace Inhere\Database\Table;
+namespace Inhere\Database\Base;
 
 /**
  * Class AbstractTable
- * @package Inhere\Database\Table
+ * @package Inhere\Database\Base
  */
 abstract class AbstractTable
 {

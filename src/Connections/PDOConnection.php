@@ -85,6 +85,7 @@ class PDOConnection extends Connection
         } while ($retry >= 0);
 
         $this->pdo = $pdo;
+        $this->log('connect to DB server', $config, 'connect');
         $this->fire(self::CONNECT, [$this]);
 
         return $this;
@@ -104,9 +105,9 @@ class PDOConnection extends Connection
      */
     public function disconnect()
     {
-        $this->pdo = null;
+        parent::disconnect();
 
-        $this->fire(self::DISCONNECT, [$this]);
+        $this->pdo = null;
     }
 
     /**
@@ -176,52 +177,58 @@ class PDOConnection extends Connection
 
     /**
      * @param string $statement
-     * @param array $values
+     * @param array $bindings
      * @return int
      */
-    public function fetchAffected($statement, array $values = [])
+    public function fetchAffected($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         return $sth->rowCount();
     }
 
-    public function fetchAll($statement, array $values = [])
+    public function fetchAll($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
-        return $sth->fetchAll(PDO::FETCH_ASSOC);
+        $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->releaseResource($sth);
+
+        return $result;
     }
 
-    public function fetchAssoc($statement, array $values = [])
+    public function fetchAssoc($statement, array $bindings = [])
     {
         $data = [];
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $data[current($row)] = $row;
         }
 
+        $this->releaseResource($sth);
+
         return $data;
     }
 
-    public function fetchColumn($statement, array $values = [])
+    public function fetchColumn($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         return $sth->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
-    public function fetchGroup($statement, array $values = [], $style = PDO::FETCH_COLUMN)
+    public function fetchGroup($statement, array $bindings = [], $style = PDO::FETCH_COLUMN)
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         return $sth->fetchAll(PDO::FETCH_GROUP | $style);
     }
 
-    public function fetchObject($statement, array $values = [], $class = 'stdClass', array $args = [])
+    public function fetchObject($statement, array $bindings = [], $class = 'stdClass', array $args = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         if (!empty($args)) {
             return $sth->fetchObject($class, $args);
@@ -230,9 +237,9 @@ class PDOConnection extends Connection
         return $sth->fetchObject($class);
     }
 
-    public function fetchObjects($statement, array $values = [], $class = 'stdClass', array $args = [])
+    public function fetchObjects($statement, array $bindings = [], $class = 'stdClass', array $args = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         if (!empty($args)) {
             return $sth->fetchAll(PDO::FETCH_CLASS, $class, $args);
@@ -241,23 +248,23 @@ class PDOConnection extends Connection
         return $sth->fetchAll(PDO::FETCH_CLASS, $class);
     }
 
-    public function fetchOne($statement, array $values = [])
+    public function fetchOne($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         return $sth->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function fetchPairs($statement, array $values = [])
+    public function fetchPairs($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         return $sth->fetchAll(PDO::FETCH_KEY_PAIR);
     }
 
-    public function fetchValue($statement, array $values = [])
+    public function fetchValue($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         return $sth->fetchColumn();
     }
@@ -284,21 +291,26 @@ class PDOConnection extends Connection
 
     /**
      * @param string $statement
-     * @param array $values
+     * @param array $bindings
      * @return \Generator
      */
-    public function yieldAll($statement, array $values = [])
+    public function yieldAll($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             yield $row;
         }
     }
 
-    public function yieldAssoc($statement, array $values = [])
+    /**
+     * @param string $statement
+     * @param array $bindings
+     * @return \Generator
+     */
+    public function yieldAssoc($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $key = current($row);
@@ -306,9 +318,14 @@ class PDOConnection extends Connection
         }
     }
 
-    public function yieldColumn($statement, array $values = [])
+    /**
+     * @param string $statement
+     * @param array $bindings
+     * @return \Generator
+     */
+    public function yieldColumn($statement, array $bindings = [])
     {
-        $sth = $this->execute($statement, $values);
+        $sth = $this->execute($statement, $bindings);
 
         while ($row = $sth->fetch(PDO::FETCH_NUM)) {
             yield $row[0];
@@ -321,12 +338,12 @@ class PDOConnection extends Connection
 
     /**
      * @param string $statement
-     * @param array $values
+     * @param array $params
      * @return PDOStatement
      */
-    public function execute($statement, array $values = [])
+    public function execute($statement, array $params = [])
     {
-        $sth = $this->prepareWithValues($statement, $values);
+        $sth = $this->prepareWithBindings($statement, $params);
 
         $sth->execute();
 
@@ -335,13 +352,13 @@ class PDOConnection extends Connection
 
     /**
      * @param string $statement
-     * @param array $values
+     * @param array $params
      * @return PDOStatement
      */
-    public function prepareWithValues($statement, array $values = [])
+    public function prepareWithBindings($statement, array $params = [])
     {
         // if there are no values to bind ...
-        if (empty($values)) {
+        if (empty($params)) {
             // ... use the normal preparation
             return $this->prepare($statement);
         }
@@ -349,15 +366,15 @@ class PDOConnection extends Connection
         $this->connect();
 
         // rebuild the statement and values
-        $parser = clone $this->parser;
-        list ($statement, $values) = $parser->rebuild($statement, $values);
+//        $parser = clone $this->parser;
+//        list ($statement, $bindings) = $parser->rebuild($statement, $bindings);
 
         // prepare the statement
         $sth = $this->pdo->prepare($statement);
 
         // for the placeholders we found, bind the corresponding data values
-        /** @var array $values */
-        foreach ($values as $key => $val) {
+        /** @var array $params */
+        foreach ($params as $key => $val) {
             $this->bindValue($sth, $key, $val);
         }
 
@@ -654,7 +671,7 @@ class PDOConnection extends Connection
      * @param PDOStatement $sth
      * @return $this
      */
-    public function freeResult($sth)
+    public function releaseResource($sth)
     {
         if ($sth instanceof PDOStatement) {
             $sth->closeCursor();

@@ -6,7 +6,7 @@
  * Time: 22:33
  */
 
-namespace Inhere\Database\Database;
+namespace Inhere\Database\Base;
 
 use Inhere\Database\Helpers\DsnHelper;
 use Inhere\Database\Helpers\QueryHelper;
@@ -20,10 +20,10 @@ use Windwalker\Query\Query;
 
 /**
  * Class AbstractDriver
- * @package Inhere\Database\Database
+ * @package Inhere\Database\Base
  * @link https://github.com/ventoviro/windwalker-database
  */
-abstract class AbstractDriver implements InterfaceDriver
+abstract class AbstractDriver
 {
     use LiteEventTrait;
     use LiteOptionsTrait;

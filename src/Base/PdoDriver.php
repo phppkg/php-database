@@ -6,13 +6,13 @@
  * Time: 22:33
  */
 
-namespace Inhere\Database\Database;
+namespace Inhere\Database\Base;
 
 use Windwalker\Query\Query;
 
 /**
  * Class PdoDriver
- * @package Inhere\Database\Database
+ * @package Inhere\Database\Base
  */
 class PdoDriver extends AbstractDriver
 {

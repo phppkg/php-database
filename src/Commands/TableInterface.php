@@ -9,6 +9,7 @@
 namespace Inhere\Database\Commands;
 
 use Inhere\Database\Schema\Column;
+use Inhere\Database\Schema\Index;
 
 /**
  * Interface TableInterface
@@ -39,6 +40,11 @@ interface TableInterface
      */
 
     /**
+     * @return Column[]
+     */
+    public function getColumns();
+
+    /**
      * @param string $name
      * @return Column
      */
@@ -48,6 +54,7 @@ interface TableInterface
      * @param string $name
      * @return Column
      */
+    public function column(string $name);
     public function getColumn(string $name);
 
     /**
@@ -74,4 +81,26 @@ interface TableInterface
     public function getColumnDetails($full = true);
 
     public function getColumnDetail(string $name, $full = true);
+
+    /**
+     * The indexes
+     */
+
+    /**
+     * @return Index[]
+     */
+    public function getIndexes();
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function getIndex(string $name);
+
+    public function addIndex(string $name);
+
+    public function dropIndex(string $name);
+
+    public function updateIndex(string $name);
+
 }

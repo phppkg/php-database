@@ -6,13 +6,14 @@
  * Time: 17:07
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database\Drivers\MySQL;
 
+use Inhere\Database\Connections\PDOConnection;
 use PDO;
 
 /**
  * Class MysqlConnection
- * @package Inhere\Database\Connections
+ * @package Inhere\Database\Drivers\MySQL
  */
 class MySQLConnection extends PDOConnection
 {

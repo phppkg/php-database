@@ -12,7 +12,7 @@ namespace Inhere\Database\Connections\Swoole;
  * Class SqliteConnection - Sqlite Connection
  * @package Inhere\Database\Connections\Swoole
  */
-class SqliteConnection extends MysqlConnection
+class SqliteConnection extends MySQLConnection
 {
 
 }

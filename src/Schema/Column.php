@@ -54,14 +54,10 @@ class Column
     ];
 
     /**
-     * 主键索引
-     * mark is primary Key.
-     * @var boolean
+     * The key. 索引
+     * @var string
      */
-    private $priKey = false;
-
-    /** @var bool mark is foreign key */
-    private $foreKey = false;
+    public $key;
 
     /** @var string The name. */
     public $name;
@@ -81,8 +77,8 @@ class Column
     /** @var string The collation. */
     public $collation;
 
-    /** @var bool Mark is allow Null */
-    public $allowNull = false;
+    /** @var bool Mark is not Null */
+    public $notNull = true;
 
     /** @var string The default value */
     public $default;
@@ -90,22 +86,21 @@ class Column
     /** @var string The comment. */
     public $comment;
 
-    /**
-     * 索引
-     * The key.
-     * @var string
-     */
-    public $key;
-
-    /**
-     * 权限
-     * The privilege.
-     * @var  string
-     */
+    /** @var  string The privilege. 权限 */
     public $privilege;
 
     /** @var int The position in the table */
     public $position;
+
+    /**
+     * 主键索引
+     * mark is primary Key.
+     * @var boolean
+     */
+    private $priKey = false;
+
+    /** @var bool mark is foreign key */
+    private $foreKey = false;
 
     /**
      * @param array $props
@@ -119,7 +114,7 @@ class Column
     }
 
     /**
-     * @param bool $priKey
+     * @param bool|null $priKey
      * @return Column
      */
     public function setPriKey($priKey): Column
@@ -130,7 +125,7 @@ class Column
 
         if ($this->priKey = (bool)$priKey) {
             // $this->signed        = false;
-            $this->allowNull = false;
+            $this->notNull = true;
             $this->autoIncrement = true;
         }
 
