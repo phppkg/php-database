@@ -8,7 +8,7 @@
 
 namespace Inhere\Database\Builders;
 
-use Inhere\Database\Connections\Connection;
+use Inhere\Database\Connection;
 use Inhere\Library\Helpers\Arr;
 
 /**

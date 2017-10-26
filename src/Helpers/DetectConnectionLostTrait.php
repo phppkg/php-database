@@ -6,7 +6,7 @@
  * Time: 下午11:51
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database\Helpers;
 
 use Inhere\Library\Helpers\Str;
 

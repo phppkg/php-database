@@ -6,7 +6,7 @@
  * Time: 上午10:36
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database;
 
 use Inhere\Database\Helpers\DsnHelper;
 use Inhere\Exceptions\UnknownMethodException;
@@ -15,7 +15,7 @@ use PDOStatement;
 
 /**
  * Class Connection
- * @package Inhere\Database\Connections
+ * @package Inhere\Database
  */
 class PDOConnection extends Connection
 {
@@ -42,7 +42,7 @@ class PDOConnection extends Connection
      * The default PDO connection options.
      * @var array
      */
-    protected $options = [
+    protected static $pdoOptions = [
         PDO::ATTR_CASE => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
@@ -60,7 +60,7 @@ class PDOConnection extends Connection
             return $this;
         }
 
-        $config = array_merge(self::DEFAULT_CONFIG, $this->config);
+        $config = array_merge($this->options, static::$pdoOptions);
 
         $retry = (int)$config['retry'];
         $retry = ($retry > 0 && $retry <= 5) ? $retry : 0;
@@ -69,7 +69,7 @@ class PDOConnection extends Connection
 
         do {
             try {
-                $pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
+                $pdo = new PDO($dsn, $config['user'], $config['password'], $options);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 
@@ -357,13 +357,13 @@ class PDOConnection extends Connection
      */
     public function prepareWithBindings($statement, array $params = [])
     {
+        $this->connect();
+
         // if there are no values to bind ...
         if (empty($params)) {
             // ... use the normal preparation
             return $this->prepare($statement);
         }
-
-        $this->connect();
 
         // rebuild the statement and values
 //        $parser = clone $this->parser;
@@ -532,6 +532,8 @@ class PDOConnection extends Connection
      */
     public function exec($statement)
     {
+        $this->connect();
+
         // trigger before event
         $this->fire(self::BEFORE_EXECUTE, [$statement, 'exec']);
 
@@ -549,6 +551,8 @@ class PDOConnection extends Connection
      */
     public function query($statement, ...$fetch)
     {
+        $this->connect();
+
         // trigger before event
         $this->fire(self::BEFORE_EXECUTE, [$statement, 'query']);
 
@@ -567,6 +571,8 @@ class PDOConnection extends Connection
      */
     public function prepare($statement, $options = null)
     {
+        $this->connect();
+
         return $this->pdo->prepare($statement, $options);
     }
 
@@ -575,6 +581,8 @@ class PDOConnection extends Connection
      */
     public function beginTransaction()
     {
+        $this->connect();
+
         return $this->pdo->rollBack();
     }
 
@@ -583,6 +591,8 @@ class PDOConnection extends Connection
      */
     public function inTransaction()
     {
+        $this->connect();
+
         return $this->pdo->inTransaction();
     }
 
@@ -591,6 +601,8 @@ class PDOConnection extends Connection
      */
     public function commit()
     {
+        $this->connect();
+
         return $this->pdo->rollBack();
     }
 
@@ -599,6 +611,8 @@ class PDOConnection extends Connection
      */
     public function rollBack()
     {
+        $this->connect();
+
         return $this->pdo->rollBack();
     }
 
@@ -607,6 +621,8 @@ class PDOConnection extends Connection
      */
     public function errorCode()
     {
+        $this->connect();
+
         return $this->pdo->errorCode();
     }
 
@@ -615,6 +631,8 @@ class PDOConnection extends Connection
      */
     public function errorInfo()
     {
+        $this->connect();
+
         return $this->pdo->errorInfo();
     }
 
@@ -623,6 +641,8 @@ class PDOConnection extends Connection
      */
     public function lastInsertId($name = null)
     {
+        $this->connect();
+
         return $this->pdo->lastInsertId($name);
     }
 
@@ -631,6 +651,8 @@ class PDOConnection extends Connection
      */
     public function getAttribute($attribute)
     {
+        $this->connect();
+
         return $this->pdo->getAttribute($attribute);
     }
 
@@ -639,6 +661,8 @@ class PDOConnection extends Connection
      */
     public function setAttribute($attribute, $value)
     {
+        $this->connect();
+
         return $this->pdo->setAttribute($attribute, $value);
     }
 

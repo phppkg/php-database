@@ -10,4 +10,10 @@ use Inhere\Database\Drivers\MySQL\MySQLConnection;
 
 require __DIR__ . '/simple-load.php';
 
-$conn = new MySQLConnection();
+$conn = new MySQLConnection([
+
+]);
+
+$rows = $conn->fetchAll('show tables limit 10');
+
+var_dump($rows);

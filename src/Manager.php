@@ -8,7 +8,9 @@
 
 namespace Inhere\Database;
 
-use Inhere\Database\Connections\Connection;
+use Inhere\Database\Builders\QueryBuilder;
+use Inhere\Database\Builders\SchemaBuilder;
+use Inhere\Library\DI\Container;
 
 /**
  * $mgr = new Manager;
@@ -26,39 +28,100 @@ class Manager
     const WRITER = 'writer';
 
     /**
-     * @var \Closure|Connection
+     * @var self
      */
-    private $default;
+    public static $self;
 
     /**
-     * @var array
+     * The database manager instance.
+     * @var DatabaseManager
      */
-    private $readers = [];
+    protected $manager;
 
     /**
-     * @var array
+     * @var Container
      */
-    private $writers = [];
+    private $container;
 
     /**
-     * ConnectionLocator constructor.
-     * @param callable|null $default
-     * @param array $readers
-     * @param array $writers
+     * constructor.
+     * @param array $config
+     * @param Container|null $container
      */
-    public function __construct(callable $default = null, array $readers = [], array $writers = [])
+    public function __construct(array $config, Container $container = null)
     {
-        if ($default) {
-            $this->setDefault($default);
-        }
+        $this->setupContainer($container ?: new Container);
+        $this->setupManager($config);
+    }
 
-        foreach ($readers as $name => $reader) {
-            $this->setReader($name, $reader);
-        }
+    /**
+     * Build the database manager instance.
+     * @param array $config
+     * @return void
+     */
+    protected function setupManager(array $config)
+    {
+//        $factory = new ConnectionFactory($this->container);
 
-        foreach ($writers as $name => $writer) {
-            $this->setWriter($name, $writer);
-        }
+        $this->manager = new DatabaseManager($config, $this->container);
+    }
+
+    protected function setupContainer(Container $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * @param null $name
+     * @return Connection
+     */
+    public function getConnection($name = null)
+    {
+        return $this->manager->getConnection($name);
+    }
+
+    /**
+     * Get a connection instance from the global manager.
+     *
+     * @param  string  $connection
+     * @return Connection
+     */
+    public static function connection($connection = null)
+    {
+        return static::$self->getConnection($connection);
+    }
+
+    /**
+     * @param $name
+     * @param null $connection
+     * @return Database
+     */
+    public static function database($name, $connection = null)
+    {
+        return static::$self->getConnection($connection)->database();
+    }
+
+    /**
+     * Get a fluent query builder instance.
+     *
+     * @param  string  $table
+     * @param  string  $connection
+     * @return Table
+     */
+    public static function table($table, $connection = null)
+    {
+        return static::$self->getConnection($connection)->table($table);
+    }
+
+    /**
+     * Get a schema builder instance.
+     *
+     * @param  string  $connection
+     * @return SchemaBuilder
+     */
+    public static function schema($connection = null)
+    {
+        return static::$self->getConnection($connection)->getSchemaBuilder();
     }
 
     public function newQuery()
@@ -71,146 +134,5 @@ class Manager
 
     }
 
-    /**
-     * get default connection instance
-     * @return Connection
-     */
-    public function getDefault()
-    {
-        if ($this->default instanceof \Closure) {
-            $this->default = ($this->default)();
-        }
 
-        return $this->default;
-    }
-
-    /**
-     * @param \Closure $default
-     */
-    public function setDefault(\Closure $default)
-    {
-        $this->default = $default;
-    }
-
-    /**
-     * set Writer
-     * @param string $name
-     * @param callable|\Closure $cb
-     */
-    public function setWriter($name, \Closure $cb)
-    {
-        $this->writers[$name] = $cb;
-    }
-
-    /**
-     * get Writer
-     * @param  string $name
-     * @return Connection
-     */
-    public function getWriter($name = null)
-    {
-        return $this->getConnection(self::WRITER, $name);
-    }
-
-    /**
-     * get master Writer
-     * @return Connection
-     */
-    public function getMaster()
-    {
-        return $this->getConnection(self::WRITER, 'master');
-    }
-
-    /**
-     * [setReader
-     * @param string $name
-     * @param callable|\Closure $cb
-     */
-    public function setReader($name, \Closure $cb)
-    {
-        $this->readers[$name] = $cb;
-    }
-
-    /**
-     * get Reader
-     * @param  string $name
-     * @return Connection
-     */
-    public function getReader($name = null)
-    {
-        return $this->getConnection(self::READER, $name);
-    }
-
-
-    /**
-     * @param array $readers
-     */
-    public function setReaders(array $readers)
-    {
-        foreach ($readers as $name => $cb) {
-            $this->setReader($name, $cb);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getReaders(): array
-    {
-        return $this->readers;
-    }
-
-    /**
-     * @return array
-     */
-    public function getWriters(): array
-    {
-        return $this->writers;
-    }
-
-    /**
-     * @param array $writers
-     */
-    public function setWriters(array $writers)
-    {
-        foreach ($writers as $name => $cb) {
-            $this->setWriter($name, $cb);
-        }
-    }
-
-    /**
-     * getConnection
-     * @param  string $type
-     * @param  string $name
-     * @return Connection
-     */
-    protected function getConnection($type, $name)
-    {
-        // no reader/writer, return default
-        if (!in_array($type, [self::WRITER, self::READER], true)) {
-            return $this->getDefault();
-        }
-
-        if ($type === self::READER) {
-            $connections = &$this->readers;
-        } else {
-            $connections = &$this->writers;
-        }
-
-        if (!$name) {
-            // return a random key
-            $name = array_rand($connections);
-        }
-
-        if (!isset($connections[$name])) {
-            throw new \InvalidArgumentException("The connection '{$type}.{$name}' is not exists!");
-        }
-
-        // if not be instanced.
-        if ($connections[$name] instanceof \Closure) {
-            $connections[$name] = $connections[$name]();
-        }
-
-        return $connections[$name];
-    }
 }

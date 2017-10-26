@@ -8,7 +8,7 @@
 
 namespace Inhere\Database\Drivers\MySQL;
 
-use Inhere\Database\Connections\PDOConnection;
+use Inhere\Database\PDOConnection;
 use PDO;
 
 /**
@@ -21,7 +21,7 @@ class MySQLConnection extends PDOConnection
      * The default PDO connection options.
      * @var array
      */
-    protected $options = [
+    protected static $pdoOptions = [
         PDO::ATTR_CASE => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES "UTF8"',
@@ -36,7 +36,7 @@ class MySQLConnection extends PDOConnection
     {
         $query = 'SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?';
 
-        return (bool)$this->query($query, [$this->getConfig('database'), $name])->fetchColumn();
+        return (bool)$this->query($query, [$this->getOptions('database'), $name])->fetchColumn();
     }
 
     /**

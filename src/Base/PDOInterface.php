@@ -1,16 +1,15 @@
 <?php
 /**
- * This file is part of Aura for PHP.
  * @license https://opensource.org/licenses/MIT MIT
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database\Base;
 
 use PDO;
 
 /**
  * An interface to the native PDO object.
- * @package Aura.Sql
+ * @from Aura.Sql
  */
 interface PDOInterface
 {

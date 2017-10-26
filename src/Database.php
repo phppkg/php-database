@@ -8,14 +8,20 @@
 
 namespace Inhere\Database;
 
-use Inhere\Database\Connections\Connection;
-
 /**
  * Class Database
  * @package Inhere\Database
  */
 class Database
 {
+    /**
+     * Known database types. More to be added?
+     */
+    const MYSQL = 'MySQL';
+    const PGSQL = 'PgSQL';
+    const SQLITE = 'SQLite';
+    const MSSQL = 'MsSQL';
+
     /** @var string */
     private $name;
 

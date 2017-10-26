@@ -6,11 +6,13 @@
  * Time: 13:55
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database\Drivers\PgSQL;
+
+use Inhere\Database\PDOConnection;
 
 /**
  * Class PgSQLConnection - The Postgres db connection
- * @package Inhere\Database\Connections
+ * @package Inhere\Database\Drivers\PgSQL
  */
 class PgSQLConnection extends PDOConnection
 {

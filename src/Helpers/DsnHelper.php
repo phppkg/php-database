@@ -70,7 +70,7 @@ class DsnHelper
      * mysql
      * @return  array
      */
-    private static function mysql()
+    protected static function mysql()
     {
         return [
             'mysql:host={HOST};port={PORT};dbname={DBNAME};charset={CHARSET}',

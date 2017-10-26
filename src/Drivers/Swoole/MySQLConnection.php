@@ -6,11 +6,11 @@
  * Time: 下午7:41
  */
 
-namespace Inhere\Database\Connections\Swoole;
+namespace Inhere\Database\Drivers\Swoole;
 
 /**
  * Class MySQLConnection
- * @package Inhere\Database\Connections\Swoole
+ * @package Inhere\Database\Drivers\Swoole
  */
 class MySQLConnection
 {

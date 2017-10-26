@@ -8,7 +8,7 @@
 
 namespace Inhere\Database\Drivers\MySQL;
 
-use Inhere\Database\Connections\PDOConnection;
+use Inhere\Database\PDOConnection;
 
 /**
  * Class MsSQLConnection - The Microsoft SQL Server Connection

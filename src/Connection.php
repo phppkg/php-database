@@ -6,14 +6,16 @@
  * Time: 上午10:36
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database;
 
+use Inhere\Database\Base\PDOInterface;
 use Inhere\Database\Builders\QueryCompiler;
+use Inhere\Database\Helpers\DetectConnectionLostTrait;
 use Inhere\Library\Traits\LiteEventTrait;
 
 /**
  * Class Connection
- * @package Inhere\Database\Base
+ * @package Inhere\Database
  */
 abstract class Connection implements PDOInterface
 {
@@ -39,7 +41,7 @@ abstract class Connection implements PDOInterface
         'host' => 'localhost',
         'port' => '3306',
         'user' => 'root',
-        'pass' => '',
+        'password' => '',
         'database' => 'test',
         'charset' => 'utf8',
 
@@ -59,7 +61,26 @@ abstract class Connection implements PDOInterface
     ];
 
     /** @var array */
-    protected $config = [];
+    protected $options = [
+        'driver' => 'mysql',
+
+        'debug' => false,
+
+        'host' => 'localhost',
+        'port' => '3306',
+        'user' => 'root',
+        'password' => '',
+        'database' => 'test',
+        'charset' => 'utf8',
+
+        'timezone' => null,
+        'collation' => 'utf8_unicode_ci',
+
+        'options' => [],
+
+        // retry times.
+        'retry' => 0,
+    ];
 
     /**
      * @var bool
@@ -83,9 +104,29 @@ abstract class Connection implements PDOInterface
      */
     protected $queryCompiler;
 
-    public function __construct($database = '', $tablePrefix = '', array $config = [])
+    public function __construct($database = '', $tablePrefix = '', array $options)
     {
+        $this->options = $options;
 
+        $this->useDefaultQueryGrammar();
+    }
+
+    /**
+     * Set the query grammar to the default implementation.
+     * @return void
+     */
+    public function useDefaultQueryGrammar()
+    {
+        $this->queryCompiler = $this->getDefaultQueryGrammar();
+    }
+
+    /**
+     * Get the default query grammar instance.
+     * @return QueryCompiler
+     */
+    protected function getDefaultQueryGrammar()
+    {
+        return new QueryCompiler;
     }
 
     /**
@@ -171,21 +212,21 @@ abstract class Connection implements PDOInterface
      * @param null|mixed $default
      * @return array|mixed
      */
-    public function getConfig($name = null, $default = null)
+    public function getOptions($name = null, $default = null)
     {
         if (!$name) {
-            return $this->config;
+            return $this->options;
         }
 
-        return $this->config[$name] ?? $default;
+        return $this->options[$name] ?? $default;
     }
 
     /**
-     * @param array $config
+     * @param array $options
      */
-    public function setConfig(array $config)
+    public function setOptions(array $options)
     {
-        $this->config = $config;
+        $this->options = $options;
     }
 
     /**
