@@ -8,7 +8,7 @@
 
 namespace Inhere\Database\Builders;
 
-use Inhere\Database\Builders\Compilers\AbstractCompiler;
+use Inhere\Database\Base\AbstractCompiler;
 use Inhere\Library\Helpers\Arr;
 
 /**

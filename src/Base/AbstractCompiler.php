@@ -6,13 +6,13 @@
  * Time: 下午11:33
  */
 
-namespace Inhere\Database\Builders\Compilers;
+namespace Inhere\Database\Base;
 
 use Inhere\Database\Builders\Expression;
 
 /**
  * Class AbstractCompiler
- * @package Inhere\Database\Builders\Compilers
+ * @package Inhere\Database\Base
  */
 abstract class AbstractCompiler
 {

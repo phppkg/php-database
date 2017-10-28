@@ -154,7 +154,7 @@ class InsertQuery extends QueryBuilder
         //This must execute our query
         $this->pdoStatement();
 
-        return $this->driver->lastInsertID();
+        return $this->connection->lastInsertId();
     }
 
     /**

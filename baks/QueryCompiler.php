@@ -18,7 +18,7 @@ use PDO;
  * @package Inhere\Database\Builders
  * @link https://github.com/spiral/database/blob/master/source/Spiral/Database/Entities/QueryCompiler.php
  */
-class QueryCompiler extends AbstractCompiler
+class QueryCompilerB extends AbstractCompiler
 {
     /**
      * @var PDOConnection
