@@ -8,7 +8,6 @@
 
 namespace Inhere\Database;
 
-use Inhere\Database\Builders\QueryBuilder;
 use Inhere\Database\Builders\SchemaBuilder;
 use Inhere\Library\DI\Container;
 
@@ -44,12 +43,27 @@ class Manager
     private $container;
 
     /**
+     * @param array $config
+     * @param Container|null $container
+     * @return Manager
+     */
+    public static function create(array $config, Container $container = null)
+    {
+        if (!self::$self) {
+            self::$self = new self($config, $container);
+        }
+
+        return self::$self;
+    }
+
+    /**
      * constructor.
      * @param array $config
      * @param Container|null $container
      */
     public function __construct(array $config, Container $container = null)
     {
+        self::$self = $this;
         $this->setupContainer($container ?: new Container);
         $this->setupManager($config);
     }

@@ -52,6 +52,11 @@ class PDOConnection extends Connection
     ];
 
     /**
+     * @var PDOStatement
+     */
+    protected $cursor;
+
+    /**
      * @return static
      */
     public function connect()
@@ -97,6 +102,7 @@ class PDOConnection extends Connection
     public function reconnect()
     {
         $this->pdo = null;
+        $this->cursor = null;
         $this->connect();
     }
 
@@ -566,10 +572,10 @@ class PDOConnection extends Connection
 
     /**
      * @param string $statement
-     * @param null|string $options
+     * @param array $options
      * @return PDOStatement
      */
-    public function prepare($statement, $options = null)
+    public function prepare($statement, array $options = [])
     {
         $this->connect();
 
@@ -695,8 +701,10 @@ class PDOConnection extends Connection
      * @param PDOStatement $sth
      * @return $this
      */
-    public function releaseResource($sth)
+    public function releaseResource($sth = null)
     {
+        $sth = $sth ?: $this->cursor;
+
         if ($sth instanceof PDOStatement) {
             $sth->closeCursor();
         }
@@ -722,6 +730,14 @@ class PDOConnection extends Connection
     public function setPdo(PDO $pdo)
     {
         $this->pdo = $pdo;
+    }
+
+    /**
+     * @return PDOStatement
+     */
+    public function getCursor()
+    {
+        return $this->cursor;
     }
 
     /**

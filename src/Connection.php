@@ -71,8 +71,9 @@ abstract class Connection implements PDOInterface
         'user' => 'root',
         'password' => '',
         'database' => 'test',
-        'charset' => 'utf8',
 
+        'tablePrefix' => '',
+        'charset' => 'utf8',
         'timezone' => null,
         'collation' => 'utf8_unicode_ci',
 
@@ -94,6 +95,9 @@ abstract class Connection implements PDOInterface
     protected $queryLog = [];
 
     /** @var string */
+    protected $database;
+
+    /** @var string */
     protected $tablePrefix;
 
     /** @var string */
@@ -104,11 +108,14 @@ abstract class Connection implements PDOInterface
      */
     protected $queryCompiler;
 
-    public function __construct($database = '', $tablePrefix = '', array $options)
+//    public function __construct($database = '', $tablePrefix = '', array $options)
+    public function __construct(array $options)
     {
-        $this->options = $options;
-
+        $this->setOptions($options);
         $this->useDefaultQueryGrammar();
+
+        $this->database = $this->options['database'];
+        $this->tablePrefix = $this->options['tablePrefix'];
     }
 
     /**
@@ -226,7 +233,7 @@ abstract class Connection implements PDOInterface
      */
     public function setOptions(array $options)
     {
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
     }
 
     /**
