@@ -6,13 +6,13 @@
  * Time: 17:43
  */
 
-namespace Inhere\Database\Builders\Compilers;
+namespace Inhere\Database\Drivers\MySQL;
 
 use Inhere\Database\Builders\QueryCompiler;
 
 /**
  * Class MySQLCompiler
- * @package Inhere\Database\Builders\Compilers
+ * @package Inhere\Database\Drivers\MySQL
  */
 class MySQLCompiler extends QueryCompiler
 {

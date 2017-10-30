@@ -55,6 +55,7 @@ interface TableInterface
      * @return Column
      */
     public function column(string $name);
+
     public function getColumn(string $name);
 
     /**

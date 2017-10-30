@@ -8,12 +8,9 @@
 
 namespace Inhere\Database;
 
-use Inhere\Database\Connection;
 use Inhere\Library\Collections\Collection;
 use Inhere\Library\DI\Container;
 use Inhere\Library\Helpers\Arr;
-use Inhere\Library\Helpers\Obj;
-use Psr\Container\ContainerInterface;
 
 /**
  * Class DatabaseManager

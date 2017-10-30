@@ -11,8 +11,8 @@ namespace Inhere\Database\Builders;
 use Inhere\Database\Builders\Traits\AggregateClauseTrait;
 use Inhere\Database\Builders\Traits\JoinClauseTrait;
 use Inhere\Database\Builders\Traits\LimitClauseTrait;
-use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Database\Builders\Traits\UnionClauseTrait;
+use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Library\Helpers\Arr;
 
 /**

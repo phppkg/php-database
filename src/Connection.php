@@ -83,16 +83,8 @@ abstract class Connection implements PDOInterface
         'retry' => 0,
     ];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $debug = false;
-
-    /**
-     * All of the queries run against the connection.
-     * @var array
-     */
-    protected $queryLog = [];
 
     /** @var string */
     protected $database;
@@ -108,30 +100,41 @@ abstract class Connection implements PDOInterface
      */
     protected $queryCompiler;
 
+    /**
+     * All of the queries run against the connection.
+     * @var array
+     * [
+     *  [time, category, message, context],
+     *  ... ...
+     * ]
+     */
+    protected $queryLog = [];
+
 //    public function __construct($database = '', $tablePrefix = '', array $options)
     public function __construct(array $options)
     {
         $this->setOptions($options);
-        $this->useDefaultQueryGrammar();
+        $this->useDefaultQueryCompiler();
 
+        $this->debug = (bool)$this->options['debug'];
         $this->database = $this->options['database'];
         $this->tablePrefix = $this->options['tablePrefix'];
     }
 
     /**
-     * Set the query grammar to the default implementation.
+     * Set the query compiler to the default implementation.
      * @return void
      */
-    public function useDefaultQueryGrammar()
+    public function useDefaultQueryCompiler()
     {
-        $this->queryCompiler = $this->getDefaultQueryGrammar();
+        $this->queryCompiler = $this->getDefaultQueryCompiler();
     }
 
     /**
-     * Get the default query grammar instance.
+     * Get the default query compiler instance.
      * @return QueryCompiler
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryCompiler()
     {
         return new QueryCompiler;
     }
@@ -198,11 +201,10 @@ abstract class Connection implements PDOInterface
      * @param array $context
      * @param string $category
      */
-    public function log(string $message, array $context = [], $category = 'select')
+    public function log(string $message, array $context = [], $category = 'query')
     {
         if ($this->debug) {
-            $context['category'] = 'db.' . $category;
-            $this->queryLog[] = [microtime(1), $message, $context];
+            $this->queryLog[] = [microtime(1), 'db.' . $category, $message, $context];
         }
     }
 

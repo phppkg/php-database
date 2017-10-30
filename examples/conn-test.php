@@ -16,10 +16,11 @@ $conn = new MySQLConnection([
     'host' => '127.0.0.1',
     'port' => '3306',
     'user' => 'root',
-    'password' => 'password',
-    'database' => 'y2_admin',
+    'password' => 'root',
+    'database' => 'mysql',
 ]);
 
-$rows = $conn->fetchOne('show tables');
+$rows = $conn->fetchAll('show tables');
+$row = $conn->fetchOne('show tables');
 
-var_dump($rows);
+var_dump($rows, $row, $conn->getQueryLog());

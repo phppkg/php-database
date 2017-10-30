@@ -232,10 +232,11 @@ class QueryBuilder
      * Get the SQL representation of the query.
      * @return string
      */
-    public function toSql()
+    public function toSql(): string
     {
         return $this->compiler->compileSelect($this);
     }
+
     public function queryString()
     {
         return $this->compiler->compileSelect($this);
@@ -385,7 +386,7 @@ class QueryBuilder
     protected function invalidOperator($operator)
     {
         return !in_array(strtolower($operator), $this->operators, true) &&
-            ! in_array(strtolower($operator), $this->compiler->getOperators(), true);
+            !in_array(strtolower($operator), $this->compiler->getOperators(), true);
     }
 
     /**

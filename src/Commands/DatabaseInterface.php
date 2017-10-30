@@ -29,6 +29,7 @@ interface DatabaseInterface
      * @return TableInterface
      */
     public function table(string $name);
+
     public function getTable(string $name);
 
     public function getTableNames($refresh = false);

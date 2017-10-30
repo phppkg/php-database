@@ -10,7 +10,6 @@ namespace Inhere\Database\Builders\Traits;
 
 use Closure;
 use Inhere\Database\Builders\Expression;
-use Inhere\Database\Builders\QueryBuilder;
 use Inhere\Library\Helpers\Str;
 
 /**
@@ -52,11 +51,10 @@ trait WhereClauseTrait
 
     /**
      * Add a "where" clause comparing two columns to the query.
-     *
-     * @param  string|array  $first
-     * @param  string|null  $operator
-     * @param  string|null  $second
-     * @param  string|null  $boolean
+     * @param  string|array $first
+     * @param  string|null $operator
+     * @param  string|null $second
+     * @param  string|null $boolean
      * @return $this
      */
     public function whereColumn($first, $operator = null, $second = null, $boolean = 'and')
@@ -89,10 +87,9 @@ trait WhereClauseTrait
 
     /**
      * Add an "or where" clause comparing two columns to the query.
-     *
-     * @param  string|array  $first
-     * @param  string|null  $operator
-     * @param  string|null  $second
+     * @param  string|array $first
+     * @param  string|null $operator
+     * @param  string|null $second
      * @return $this
      */
     public function orWhereColumn($first, $operator = null, $second = null)
@@ -159,7 +156,7 @@ trait WhereClauseTrait
         // in which case we will just skip over it since it will be the query as a raw
         // string and not as a parameterized place-holder to be replaced by the PDO.
         foreach ($values as $value) {
-            if (! $value instanceof Expression) {
+            if (!$value instanceof Expression) {
                 $this->addBinding($value, 'where');
             }
         }

@@ -65,8 +65,9 @@ class PDOConnection extends Connection
             return $this;
         }
 
-        $config = array_merge($this->options, static::$pdoOptions);
+        $this->options['options'] = array_merge($this->options['options'], static::$pdoOptions);
 
+        $config = $this->options;
         $retry = (int)$config['retry'];
         $retry = ($retry > 0 && $retry <= 5) ? $retry : 0;
         $options = is_array($config['options']) ? $config['options'] : [];
@@ -90,7 +91,7 @@ class PDOConnection extends Connection
         } while ($retry >= 0);
 
         $this->pdo = $pdo;
-        $this->log('connect to DB server', $config, 'connect');
+        $this->log('connect to DB server', ['config' => $config], 'connect');
         $this->fire(self::CONNECT, [$this]);
 
         return $this;
@@ -378,6 +379,8 @@ class PDOConnection extends Connection
         // prepare the statement
         $sth = $this->pdo->prepare($statement);
 
+        $this->log($statement, $params);
+
         // for the placeholders we found, bind the corresponding data values
         /** @var array $params */
         foreach ($params as $key => $val) {
@@ -578,6 +581,7 @@ class PDOConnection extends Connection
     public function prepare($statement, array $options = [])
     {
         $this->connect();
+        $this->log($statement, $options);
 
         return $this->pdo->prepare($statement, $options);
     }

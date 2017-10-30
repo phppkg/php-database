@@ -32,6 +32,16 @@ class QueryCompiler extends AbstractCompiler
     protected $operators = [];
 
     /**
+     * The components that make up a insert clause.
+     * @var array
+     */
+    const INSERT_COMPONENTS = [
+        'into',
+        'columns',
+        'values',
+    ];
+
+    /**
      * The components that make up a select clause.
      * @var array
      */
@@ -48,6 +58,16 @@ class QueryCompiler extends AbstractCompiler
         'offset',
         'unions',
         'lock',
+    ];
+
+    /**
+     * The components that make up a insert clause.
+     * @var array
+     */
+    const UPDATE_COMPONENTS = [
+        'from',
+        'columns',
+        'values',
     ];
 
     /********************************************************************************

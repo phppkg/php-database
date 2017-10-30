@@ -9,6 +9,7 @@
 namespace Inhere\Database\Builders;
 
 use Inhere\Database\Connection;
+use Inhere\Library\Helpers\Arr;
 
 /**
  * Class InsertQuery
@@ -54,7 +55,7 @@ class InsertQuery extends QueryBuilder
      * @param string $into
      * @return self
      */
-    public function into(string $into): InsertQuery
+    public function into(string $into): self
     {
         $this->table = $into;
 
@@ -71,7 +72,7 @@ class InsertQuery extends QueryBuilder
      * @param array|string $columns
      * @return self
      */
-    public function columns(...$columns): InsertQuery
+    public function columns(...$columns): self
     {
         $this->columns = $this->fetchIdentifiers($columns);
 
@@ -101,7 +102,7 @@ class InsertQuery extends QueryBuilder
      * @param mixed $values
      * @return self
      */
-    public function values($values): InsertQuery
+    public function values($values): self
     {
         if (!is_array($values)) {
             return $this->values(func_get_args());
@@ -133,9 +134,9 @@ class InsertQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function getParameters(): array
+    public function getBindings(): array
     {
-        return $this->flattenParameters($this->values);
+        return Arr::flatten($this->values);
     }
 
     /**
@@ -152,7 +153,7 @@ class InsertQuery extends QueryBuilder
     public function run()
     {
         //This must execute our query
-        $this->pdoStatement();
+        $this->connection->execute($this->toSql());
 
         return $this->connection->lastInsertId();
     }

@@ -96,8 +96,7 @@ class Manager
 
     /**
      * Get a connection instance from the global manager.
-     *
-     * @param  string  $connection
+     * @param  string $connection
      * @return Connection
      */
     public static function connection($connection = null)
@@ -117,9 +116,8 @@ class Manager
 
     /**
      * Get a fluent query builder instance.
-     *
-     * @param  string  $table
-     * @param  string  $connection
+     * @param  string $table
+     * @param  string $connection
      * @return Table
      */
     public static function table($table, $connection = null)
@@ -129,8 +127,7 @@ class Manager
 
     /**
      * Get a schema builder instance.
-     *
-     * @param  string  $connection
+     * @param  string $connection
      * @return SchemaBuilder
      */
     public static function schema($connection = null)
