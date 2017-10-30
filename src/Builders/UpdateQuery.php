@@ -8,9 +8,6 @@
 
 namespace Inhere\Database\Builders;
 
-use Inhere\Database\Builders\Traits\JoinClauseTrait;
-use Inhere\Database\Builders\Traits\LimitClauseTrait;
-use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Database\Connection;
 
 /**
@@ -19,11 +16,6 @@ use Inhere\Database\Connection;
  */
 class UpdateQuery extends QueryBuilder
 {
-    use JoinClauseTrait, WhereClauseTrait, LimitClauseTrait;
-
-    /** @var string */
-    public $table;
-
     /**
      * Column names associated with their values.
      * @var array
@@ -38,15 +30,7 @@ class UpdateQuery extends QueryBuilder
     {
         parent::__construct($connection, $compiler);
 
-        $this->table = $table;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function from($table)
-    {
-        return $this->table($table);
+        $this->from = $table;
     }
 
     /**
@@ -56,7 +40,7 @@ class UpdateQuery extends QueryBuilder
      */
     public function table(string $table): self
     {
-        $this->table = $table;
+        $this->from = $table;
 
         return $this;
     }

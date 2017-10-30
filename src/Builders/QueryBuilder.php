@@ -8,6 +8,10 @@
 
 namespace Inhere\Database\Builders;
 
+use Inhere\Database\Base\AbstractBuilder;
+use Inhere\Database\Builders\Traits\JoinClauseTrait;
+use Inhere\Database\Builders\Traits\WhereClauseTrait;
+use Inhere\Database\Builders\Traits\OrderLimitUnionClauseTrait;
 use Inhere\Database\Connection;
 use Inhere\Library\Helpers\Arr;
 
@@ -16,8 +20,10 @@ use Inhere\Library\Helpers\Arr;
  * @package Inhere\Database
  * @link https://github.com/illuminate/database/blob/master/Query/Builder.php
  */
-class QueryBuilder
+class QueryBuilder extends AbstractBuilder
 {
+    use JoinClauseTrait, WhereClauseTrait, OrderLimitUnionClauseTrait;
+
     /* The query types. */
     const INSERT = 1;
     const SELECT = 2;
@@ -59,14 +65,6 @@ class QueryBuilder
 
     const BETWEEN = 'BETWEEN';
     const NOT_BETWEEN = 'NOT BETWEEN';
-
-    /** @var Connection */
-    public $connection;
-
-    /**
-     * @var QueryCompiler
-     */
-    protected $compiler;
 
     /**
      * The current query value bindings.
@@ -130,17 +128,6 @@ class QueryBuilder
      */
     public $useWriter = false;
 
-    /**
-     * QueryBuilder constructor.
-     * @param Connection $connection
-     * @param QueryCompiler|null $compiler
-     */
-    public function __construct(Connection $connection, QueryCompiler $compiler = null)
-    {
-        $this->connection = $connection;
-        $this->compiler = $compiler ?: $connection->getQueryCompiler();;
-    }
-
     /********************************************************************************
      * select statement methods
      *******************************************************************************/
@@ -189,6 +176,11 @@ class QueryBuilder
 
         return $this;
     }
+
+    /********************************************************************************
+     * -- common nodes methods
+     *******************************************************************************/
+
 
     /********************************************************************************
      * -- other nodes methods
@@ -318,14 +310,6 @@ class QueryBuilder
     }
 
     /**
-     * @return Connection
-     */
-    public function getConnection(): Connection
-    {
-        return $this->connection;
-    }
-
-    /**
      * Get the current query value bindings in a flattened array.
      * @return array
      */
@@ -428,21 +412,4 @@ class QueryBuilder
             $text
         );
     }
-
-    /**
-     * @return QueryCompiler
-     */
-    public function getCompiler(): QueryCompiler
-    {
-        return $this->compiler;
-    }
-
-    /**
-     * @param QueryCompiler $compiler
-     */
-    public function setCompiler(QueryCompiler $compiler)
-    {
-        $this->compiler = $compiler;
-    }
-
 }

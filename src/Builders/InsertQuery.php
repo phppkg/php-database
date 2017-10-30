@@ -23,11 +23,6 @@ class InsertQuery extends QueryBuilder
     const QUERY_TYPE = QueryCompiler::INSERT_QUERY;
 
     /**
-     * @var string
-     */
-    protected $table = '';
-
-    /**
      * Column names associated with insert.
      * @var array
      */
@@ -47,7 +42,7 @@ class InsertQuery extends QueryBuilder
     {
         parent::__construct($connection, $compiler);
 
-        $this->table = $table;
+        $this->from = $table;
     }
 
     /**
@@ -57,7 +52,7 @@ class InsertQuery extends QueryBuilder
      */
     public function into(string $into): self
     {
-        $this->table = $into;
+        $this->from = $into;
 
         return $this;
     }

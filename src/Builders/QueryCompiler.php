@@ -210,11 +210,11 @@ class QueryCompiler extends AbstractCompiler
 
     /**
      * Compile an aggregated select clause.
-     * @param  QueryBuilder $query
+     * @param  SelectQuery $query
      * @param  array $aggregate
      * @return string
      */
-    protected function compileAggregate($aggregate, QueryBuilder $query)
+    protected function compileAggregate($aggregate, SelectQuery $query)
     {
         $column = $this->columnize($aggregate['columns']);
         // If the query has a "distinct" constraint and we're not asking for all columns
@@ -280,16 +280,10 @@ class QueryCompiler extends AbstractCompiler
      */
     protected function compileWheres(QueryBuilder $query)
     {
-        // Each type of where clauses has its own compiler function which is responsible
-        // for actually creating the where clauses SQL. This helps keep the code nice
-        // and maintainable since each clause has a very small method that it uses.
         if (!$query->wheres) {
             return '';
         }
 
-        // If we actually have some where clauses, we will strip off the first boolean
-        // operator, which is added by the query builders for convenience so we can
-        // avoid checking for the first clauses in each of the compilers methods.
         if (count($sql = $this->compileWheresToArray($query)) > 0) {
             return $this->concatenateWhereClauses($query, $sql);
         }
@@ -305,7 +299,6 @@ class QueryCompiler extends AbstractCompiler
     protected function compileWheresToArray($query)
     {
         return collect($query->wheres)->map(function ($where) use ($query) {
-            var_dump($where);
             return $where['boolean'] . ' ' . $this->{"where{$where['type']}"}($query, $where);
         })->all();
     }

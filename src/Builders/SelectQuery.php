@@ -9,10 +9,6 @@
 namespace Inhere\Database\Builders;
 
 use Inhere\Database\Builders\Traits\AggregateClauseTrait;
-use Inhere\Database\Builders\Traits\JoinClauseTrait;
-use Inhere\Database\Builders\Traits\LimitClauseTrait;
-use Inhere\Database\Builders\Traits\UnionClauseTrait;
-use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Library\Helpers\Arr;
 
 /**
@@ -21,7 +17,7 @@ use Inhere\Library\Helpers\Arr;
  */
 class SelectQuery extends QueryBuilder
 {
-    use AggregateClauseTrait, JoinClauseTrait, WhereClauseTrait, UnionClauseTrait, LimitClauseTrait;
+    use AggregateClauseTrait;
 
     /**
      * Indicates if the query returns distinct results.
@@ -40,13 +36,6 @@ class SelectQuery extends QueryBuilder
      * @var array
      */
     public $havings = [];
-
-    /**
-     * The orderings for the query.
-     * @var array
-     */
-    public $orders = [];
-
 
     public static function make()
     {
@@ -123,60 +112,6 @@ class SelectQuery extends QueryBuilder
     public function orHavingRaw($sql, array $bindings = [])
     {
         return $this->havingRaw($sql, $bindings, 'or');
-    }
-
-    /**
-     * Add an "order by" clause to the query.
-     * @param  string $column
-     * @param  string $direction
-     * @return $this
-     */
-    public function orderBy($column, $direction = 'asc')
-    {
-        $info = [
-            'column' => $column,
-            'direction' => strtolower($direction) === 'asc' ? 'asc' : 'desc',
-        ];
-
-        if ($this->unions) {
-            $this->unionOrders[] = $info;
-        } else {
-            $this->orders[] = $info;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add a descending "order by" clause to the query.
-     * @param  string $column
-     * @return $this
-     */
-    public function orderByDesc($column)
-    {
-        return $this->orderBy($column, 'desc');
-    }
-
-    /**
-     * Add a raw "order by" clause to the query.
-     * @param  string $sql
-     * @param  array $bindings
-     * @return $this
-     */
-    public function orderByRaw($sql, $bindings = null)
-    {
-        $type = 'Raw';
-        $info = [$type, $sql];
-
-        if ($this->unions) {
-            $this->unionOrders[] = $info;
-        } else {
-            $this->orders[] = $info;
-        }
-
-        $this->addBinding($bindings, 'order');
-
-        return $this;
     }
 
     /**
