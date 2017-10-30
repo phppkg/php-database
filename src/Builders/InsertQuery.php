@@ -43,7 +43,7 @@ class InsertQuery extends QueryBuilder
      * {@inheritdoc}
      * @param string $table Associated table name.
      */
-    public function __construct(Connection $connection, QueryCompiler $compiler, string $table = '')
+    public function __construct(Connection $connection, QueryCompiler $compiler = null, string $table = '')
     {
         parent::__construct($connection, $compiler);
 

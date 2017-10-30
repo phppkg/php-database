@@ -6,13 +6,13 @@
  * Time: 16:16
  */
 
-namespace Inhere\Database\Drivers\MySQL;
+namespace Inhere\Database\Drivers\SQLite;
 
 use Inhere\Database\Base\AbstractDatabase;
 
 /**
  * Class SQLiteDatabase
- * @package Inhere\Database\Drivers\MySQL
+ * @package Inhere\Database\Drivers\SQLite
  */
 class SQLiteDatabase extends AbstractDatabase
 {

@@ -8,7 +8,7 @@
 
 namespace Inhere\Database;
 
-use Inhere\Database\Base\PDOInterface;
+use Inhere\Database\Base\ConnectionInterface;
 use Inhere\Database\Builders\QueryCompiler;
 use Inhere\Database\Helpers\DetectConnectionLostTrait;
 use Inhere\Library\Traits\LiteEventTrait;
@@ -17,7 +17,7 @@ use Inhere\Library\Traits\LiteEventTrait;
  * Class Connection
  * @package Inhere\Database
  */
-abstract class Connection implements PDOInterface
+abstract class Connection implements ConnectionInterface
 {
     use LiteEventTrait, DetectConnectionLostTrait;
 
@@ -87,7 +87,7 @@ abstract class Connection implements PDOInterface
     protected $debug = false;
 
     /** @var string */
-    protected $database;
+    protected $databaseName;
 
     /** @var string */
     protected $tablePrefix;
@@ -114,11 +114,12 @@ abstract class Connection implements PDOInterface
     public function __construct(array $options)
     {
         $this->setOptions($options);
-        $this->useDefaultQueryCompiler();
 
         $this->debug = (bool)$this->options['debug'];
-        $this->database = $this->options['database'];
         $this->tablePrefix = $this->options['tablePrefix'];
+        $this->databaseName = $this->options['database'];
+
+        $this->useDefaultQueryCompiler();
     }
 
     /**
@@ -162,6 +163,57 @@ abstract class Connection implements PDOInterface
      * @return bool
      */
     abstract public function isConnected(): bool;
+
+    /**
+     * Get the name of the connected database.
+     * @return string
+     */
+    public function getDatabaseName()
+    {
+        return $this->databaseName;
+    }
+
+    /**
+     * Set the name of the connected database.
+     * @param  string $database
+     */
+    public function setDatabaseName($database)
+    {
+        $this->databaseName = $database;
+    }
+
+    /**
+     * Get the table prefix for the connection.
+     * @return string
+     */
+    public function getTablePrefix()
+    {
+        return $this->tablePrefix;
+    }
+
+    /**
+     * Set the table prefix in use by the connection.
+     * @param  string $prefix
+     * @return void
+     */
+    public function setTablePrefix($prefix)
+    {
+        $this->tablePrefix = $prefix;
+
+        $this->getQueryCompiler()->setTablePrefix($prefix);
+    }
+
+    /**
+     * Set the table prefix and return the grammar.
+     * @param  QueryCompiler $compiler
+     * @return QueryCompiler
+     */
+    public function withTablePrefix(QueryCompiler $compiler)
+    {
+        $compiler->setTablePrefix($this->tablePrefix);
+
+        return $compiler;
+    }
 
     /**
      * @param $sql

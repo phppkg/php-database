@@ -8,6 +8,7 @@
 
 namespace Inhere\Database\Builders;
 
+use Inhere\Database\Builders\Traits\JoinClauseTrait;
 use Inhere\Database\Builders\Traits\LimitClauseTrait;
 use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Database\Connection;
@@ -18,7 +19,7 @@ use Inhere\Database\Connection;
  */
 class UpdateQuery extends QueryBuilder
 {
-    use WhereClauseTrait, LimitClauseTrait;
+    use JoinClauseTrait, WhereClauseTrait, LimitClauseTrait;
 
     /** @var string */
     public $table;
@@ -33,11 +34,19 @@ class UpdateQuery extends QueryBuilder
      * {@inheritdoc}
      * @param string $table Associated table name.
      */
-    public function __construct(Connection $connection, QueryCompiler $compiler, string $table = '')
+    public function __construct(Connection $connection, QueryCompiler $compiler = null, string $table = '')
     {
         parent::__construct($connection, $compiler);
 
         $this->table = $table;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function from($table)
+    {
+        return $this->table($table);
     }
 
     /**
@@ -53,7 +62,7 @@ class UpdateQuery extends QueryBuilder
     }
 
     /**
-     * @param array $values
+     * @param array $values <column => value>
      * @return $this
      */
     public function values(array $values): self
@@ -74,6 +83,21 @@ class UpdateQuery extends QueryBuilder
         $this->values[$column] = $value;
 
         return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param int $step
+     * @param array $updates Update some other columns
+     */
+    public function increment(string $column, $step = 1, array $updates = [])
+    {
+
+    }
+
+    public function decrement(string $column, $step = -1, array $updates = [])
+    {
+
     }
 
     /**

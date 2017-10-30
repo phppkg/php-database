@@ -125,7 +125,7 @@ class DatabaseManager
      * @param null|mixed $default
      * @return string|array
      */
-    public function getConnectionConfig(string $name, string $key = null, $default = null): string
+    public function getConnectionConfig(string $name, string $key = null, $default = null)
     {
         if ($key === null) {
             return $this->config['connections'][$name] ?? $default;

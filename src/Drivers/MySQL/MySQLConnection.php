@@ -8,6 +8,7 @@
 
 namespace Inhere\Database\Drivers\MySQL;
 
+use Inhere\Database\Builders\QueryCompiler;
 use Inhere\Database\PDOConnection;
 use PDO;
 
@@ -28,6 +29,31 @@ class MySQLConnection extends PDOConnection
         PDO::ATTR_STRINGIFY_FETCHES => false,
         PDO::ATTR_EMULATE_PREPARES => false,
     ];
+
+    /**
+     * Get the default query grammar instance.
+     * @return QueryCompiler
+     */
+    protected function getDefaultQueryCompiler()
+    {
+        return $this->withTablePrefix(new MySQLCompiler());
+    }
+
+    /**
+     * Bind values to their parameters in the given statement.
+     * @param  \PDOStatement $statement
+     * @param  array $bindings
+     * @return void
+     */
+    public function bindValues($statement, $bindings)
+    {
+        foreach ($bindings as $key => $value) {
+            $statement->bindValue(
+                is_string($key) ? $key : $key + 1, $value,
+                is_int($value) || is_float($value) ? PDO::PARAM_INT : PDO::PARAM_STR
+            );
+        }
+    }
 
     /**
      * {@inheritdoc}

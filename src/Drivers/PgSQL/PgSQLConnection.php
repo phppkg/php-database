@@ -8,6 +8,7 @@
 
 namespace Inhere\Database\Drivers\PgSQL;
 
+use Inhere\Database\Builders\QueryCompiler;
 use Inhere\Database\PDOConnection;
 
 /**
@@ -16,6 +17,15 @@ use Inhere\Database\PDOConnection;
  */
 class PgSQLConnection extends PDOConnection
 {
+    /**
+     * Get the default query grammar instance.
+     * @return QueryCompiler
+     */
+    protected function getDefaultQueryCompiler()
+    {
+        return $this->withTablePrefix(new PgSQLCompiler());
+    }
+
     /**
      * Is this driver supported.
      * @return  boolean

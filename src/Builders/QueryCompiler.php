@@ -143,13 +143,13 @@ class QueryCompiler extends AbstractCompiler
 
     /**
      * Compile an update statement into SQL.
-     * @param  QueryBuilder $query
+     * @param  UpdateQuery $query
      * @param  array $values
      * @return string
      */
-    public function compileUpdate(QueryBuilder $query, $values)
+    public function compileUpdate(UpdateQuery $query, $values)
     {
-        $table = $this->wrapTable($query->from);
+        $table = $this->wrapTable($query->table);
 
         // Each one of the columns in the update statements needs to be wrapped in the
         // keyword identifiers, also a place-holder needs to be created for each of
@@ -158,18 +158,12 @@ class QueryCompiler extends AbstractCompiler
             return $this->wrap($key) . ' = ' . $this->parameter($value);
         })->implode(', ');
 
-        // If the query has any "join" clauses, we will setup the joins on the builder
-        // and compile them so we can attach them to this update, as update queries
-        // can get join statements to attach to other tables when they're needed.
         $joins = '';
 
-        if (!$query->joins) {
-            $joins = ' ' . $this->compileJoins($query->joins, $query);
+        if ($query->joins) {
+            $joins = ' ' . $this->compileJoins($query, $query->joins);
         }
 
-        // Of course, update queries may also be constrained by where clauses so we'll
-        // need to compile the where clauses and attach it to the query so only the
-        // intended records are updated by the SQL statements we generate to run.
         $wheres = $this->compileWheres($query);
 
         return trim("update {$table}{$joins} set $columns $wheres");
@@ -311,6 +305,7 @@ class QueryCompiler extends AbstractCompiler
     protected function compileWheresToArray($query)
     {
         return collect($query->wheres)->map(function ($where) use ($query) {
+            var_dump($where);
             return $where['boolean'] . ' ' . $this->{"where{$where['type']}"}($query, $where);
         })->all();
     }

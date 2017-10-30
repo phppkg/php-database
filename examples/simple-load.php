@@ -13,6 +13,7 @@ date_default_timezone_set('Asia/Shanghai');
 $inhereDir = dirname(__DIR__, 2);
 
 require $inhereDir . '/library/src/exceptions.php';
+require $inhereDir . '/library/src/functions.php';
 
 spl_autoload_register(function($class) use ($inhereDir)
 {

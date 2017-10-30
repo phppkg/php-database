@@ -7,7 +7,7 @@
  * @license https://opensource.org/licenses/MIT MIT
  */
 
-namespace Inhere\Database\Connections;
+namespace Inhere\Database\Base;
 
 /**
  * Interface ConnectionInterface
@@ -29,19 +29,19 @@ interface ConnectionInterface extends PDOInterface
     /**
      * Execute a statement and returns the number of affected rows.
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return int
      */
-    public function fetchAffected($statement, array $values = []);
+    public function fetchAffected($statement, array $bindings = []);
 
     /**
      * Fetches a sequential array of rows from the database; the rows
      * are represented as associative arrays.
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return array
      */
-    public function fetchAll($statement, array $values = []);
+    public function fetchAll($statement, array $bindings = []);
 
     /**
      * Fetches an associative array of rows from the database; the rows
@@ -50,31 +50,31 @@ interface ConnectionInterface extends PDOInterface
      * N.b.: if multiple rows have the same first column value, the last
      * row with that value will override earlier rows.
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return array
      */
-    public function fetchAssoc($statement, array $values = []);
+    public function fetchAssoc($statement, array $bindings = []);
 
     /**
      * Fetches the first column of rows as a sequential array.
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return array
      */
-    public function fetchCol($statement, array $values = []);
+    public function fetchColumn($statement, array $bindings = []);
 
     /**
      * Fetches multiple from the database as an associative array.
      * The first column will be the index
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @param int $style a fetch style defaults to PDO::FETCH_COLUMN for single
      * values, use PDO::FETCH_NAMED when fetching a multiple columns
      * @return array
      */
     public function fetchGroup(
         $statement,
-        array $values = [],
+        array $bindings = [],
         $style = \PDO::FETCH_COLUMN
     );
 
@@ -87,14 +87,14 @@ interface ConnectionInterface extends PDOInterface
      * fetchObject() !"
      * <http://www.php.net/manual/en/pdostatement.fetchobject.php#111744>
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @param string $class The name of the class to create.
      * @param array $args Arguments to pass to the object constructor.
      * @return object
      */
     public function fetchObject(
         $statement,
-        array $values = [],
+        array $bindings = [],
         $class = 'stdClass',
         array $args = []
     );
@@ -109,7 +109,7 @@ interface ConnectionInterface extends PDOInterface
      * fetchObject() !"
      * <http://www.php.net/manual/en/pdostatement.fetchobject.php#111744>
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @param string $class The name of the class to create from each
      * row.
      * @param array $args Arguments to pass to each object constructor.
@@ -117,7 +117,7 @@ interface ConnectionInterface extends PDOInterface
      */
     public function fetchObjects(
         $statement,
-        array $values = [],
+        array $bindings = [],
         $class = 'stdClass',
         array $args = []
     );
@@ -125,33 +125,33 @@ interface ConnectionInterface extends PDOInterface
     /**
      * Fetches one row from the database as an associative array.
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return array
      */
-    public function fetchOne($statement, array $values = []);
+    public function fetchOne($statement, array $bindings = []);
 
     /**
      * Fetches an associative array of rows as key-value pairs (first
      * column is the key, second column is the value).
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return array
      */
-    public function fetchPairs($statement, array $values = []);
+    public function fetchPairs($statement, array $bindings = []);
 
     /**
      * Fetches the very first value (i.e., first column of the first row).
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return mixed
      */
-    public function fetchValue($statement, array $values = []);
+    public function fetchValue($statement, array $bindings = []);
 
     /**
      * Returns the Parser instance.
      * @return ParserInterface
      */
-    public function getParser();
+//    public function getParser();
 
     /**
      * Return the inner PDO (if any)
@@ -163,21 +163,21 @@ interface ConnectionInterface extends PDOInterface
      * Returns the Profiler instance.
      * @return ProfilerInterface
      */
-    public function getProfiler();
+//    public function getProfiler();
 
     /**
      * Quotes a multi-part (dotted) identifier name.
      * @param string $name The multi-part identifier name.
      * @return string The multi-part identifier name, quoted.
      */
-    public function quoteName($name);
+    public function quoteName(string $name);
 
     /**
      * Quotes a single identifier name.
      * @param string $name The identifier name.
      * @return string The quoted identifier name.
      */
-    public function quoteSingleName($name);
+    public function quoteSingleName(string $name);
 
     /**
      * Is the PDO connection active?
@@ -189,37 +189,37 @@ interface ConnectionInterface extends PDOInterface
      * Sets the Parser instance.
      * @param ParserInterface $parser The Parser instance.
      */
-    public function setParser(ParserInterface $parser);
+//    public function setParser(ParserInterface $parser);
 
     /**
      * Sets the Profiler instance.
      * @param ProfilerInterface $profiler The Profiler instance.
      */
-    public function setProfiler(ProfilerInterface $profiler);
+//    public function setProfiler(ProfilerInterface $profiler);
 
     /**
      * Yields rows from the database
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return \Generator
      */
-    public function yieldAll($statement, array $values = []);
+    public function yieldAll($statement, array $bindings = []);
 
     /**
      * Yields rows from the database keyed on the first column of each row.
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return \Generator
      */
-    public function yieldAssoc($statement, array $values = []);
+    public function yieldAssoc($statement, array $bindings = []);
 
     /**
      * Yields the first column of all rows
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return \Generator
      */
-    public function yieldCol($statement, array $values = []);
+    public function yieldColumn($statement, array $bindings = []);
 
     /**
      * Yields objects where the column values are mapped to object properties.
@@ -229,7 +229,7 @@ interface ConnectionInterface extends PDOInterface
      * fetchObject() !"
      * <http://www.php.net/manual/en/pdostatement.fetchobject.php#111744>
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @param string $class The name of the class to create from each
      * row.
      * @param array $args Arguments to pass to each object constructor.
@@ -237,7 +237,7 @@ interface ConnectionInterface extends PDOInterface
      */
     public function yieldObjects(
         $statement,
-        array $values = [],
+        array $bindings = [],
         $class = 'stdClass',
         array $args = []
     );
@@ -246,19 +246,19 @@ interface ConnectionInterface extends PDOInterface
      * Yields key-value pairs (first column is the key, second column is the
      * value).
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return \Generator
      */
-    public function yieldPairs($statement, array $values = []);
+    public function yieldPairs($statement, array $bindings = []);
 
     /**
      * Execute a query after preparing the statement with bound values, then
      * returns the result as a PDOStatement.
      * @param string $statement The SQL statement to prepare and execute.
-     * @param array $values Values to bind to the query.
+     * @param array $bindings Values to bind to the query.
      * @return \PDOStatement
      */
-    public function execute($statement, array $values = []);
+    public function execute($statement, array $bindings = []);
 
     /**
      * Prepares an SQL statement with bound values.
@@ -270,9 +270,9 @@ interface ConnectionInterface extends PDOInterface
      * The quoted string is replaced directly into the statement instead of
      * using `PDOStatement::bindValue()` proper.
      * @param string $statement The SQL statement to prepare for execution.
-     * @param array $values The values to bind to the statement, if any.
+     * @param array $bindings The values to bind to the statement, if any.
      * @return \PDOStatement
      * @see http://php.net/manual/en/pdo.prepare.php
      */
-    public function prepareWithValues($statement, array $values = []);
+    public function prepareWithBindings($statement, array $bindings = []);
 }

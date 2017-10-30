@@ -54,7 +54,7 @@ class PDOConnection extends Connection
     /**
      * @var PDOStatement
      */
-    protected $cursor;
+//    protected $cursor;
 
     /**
      * @return static
@@ -103,7 +103,7 @@ class PDOConnection extends Connection
     public function reconnect()
     {
         $this->pdo = null;
-        $this->cursor = null;
+
         $this->connect();
     }
 
@@ -190,21 +190,30 @@ class PDOConnection extends Connection
     public function fetchAffected($statement, array $bindings = [])
     {
         $sth = $this->execute($statement, $bindings);
+        $affected = $sth->rowCount();
 
-        return $sth->rowCount();
+        $this->freeResource($sth);
+
+        return $affected;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchAll($statement, array $bindings = [])
     {
         $sth = $this->execute($statement, $bindings);
 
         $result = $sth->fetchAll(PDO::FETCH_ASSOC);
 
-        $this->releaseResource($sth);
+        $this->freeResource($sth);
 
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchAssoc($statement, array $bindings = [])
     {
         $data = [];
@@ -214,66 +223,114 @@ class PDOConnection extends Connection
             $data[current($row)] = $row;
         }
 
-        $this->releaseResource($sth);
+        $this->freeResource($sth);
 
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchColumn($statement, array $bindings = [])
     {
         $sth = $this->execute($statement, $bindings);
 
-        return $sth->fetchAll(PDO::FETCH_COLUMN, 0);
+        $column = $sth->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        $this->freeResource($sth);
+
+        return $column;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchGroup($statement, array $bindings = [], $style = PDO::FETCH_COLUMN)
     {
         $sth = $this->execute($statement, $bindings);
 
-        return $sth->fetchAll(PDO::FETCH_GROUP | $style);
+        $group = $sth->fetchAll(PDO::FETCH_GROUP | $style);
+        $this->freeResource($sth);
+
+        return $group;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchObject($statement, array $bindings = [], $class = 'stdClass', array $args = [])
     {
         $sth = $this->execute($statement, $bindings);
 
         if (!empty($args)) {
-            return $sth->fetchObject($class, $args);
+            $result = $sth->fetchObject($class, $args);
+        } else {
+            $result = $sth->fetchObject($class);
         }
 
-        return $sth->fetchObject($class);
+        $this->freeResource($sth);
+
+        return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchObjects($statement, array $bindings = [], $class = 'stdClass', array $args = [])
     {
         $sth = $this->execute($statement, $bindings);
 
         if (!empty($args)) {
-            return $sth->fetchAll(PDO::FETCH_CLASS, $class, $args);
+            $result = $sth->fetchAll(PDO::FETCH_CLASS, $class, $args);
+        } else {
+            $result = $sth->fetchAll(PDO::FETCH_CLASS, $class);
         }
 
-        return $sth->fetchAll(PDO::FETCH_CLASS, $class);
+        $this->freeResource($sth);
+
+        return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchOne($statement, array $bindings = [])
     {
         $sth = $this->execute($statement, $bindings);
 
-        return $sth->fetch(PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
+
+        $this->freeResource($sth);
+
+        return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchPairs($statement, array $bindings = [])
     {
         $sth = $this->execute($statement, $bindings);
 
-        return $sth->fetchAll(PDO::FETCH_KEY_PAIR);
+        $result = $sth->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        $this->freeResource($sth);
+
+        return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchValue($statement, array $bindings = [])
     {
         $sth = $this->execute($statement, $bindings);
 
-        return $sth->fetchColumn();
+        $result = $sth->fetchColumn();
+
+        $this->freeResource($sth);
+
+        return $result;
     }
 
     /********************************************************************************
@@ -294,20 +351,8 @@ class PDOConnection extends Connection
             $key = current($row);
             yield $key => $row;
         }
-    }
 
-    /**
-     * @param string $statement
-     * @param array $bindings
-     * @return \Generator
-     */
-    public function yieldAll($statement, array $bindings = [])
-    {
-        $sth = $this->execute($statement, $bindings);
-
-        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-            yield $row;
-        }
+        $this->freeResource($sth);
     }
 
     /**
@@ -323,6 +368,24 @@ class PDOConnection extends Connection
             $key = current($row);
             yield $key => $row;
         }
+
+        $this->freeResource($sth);
+    }
+
+    /**
+     * @param string $statement
+     * @param array $bindings
+     * @return \Generator
+     */
+    public function yieldAll($statement, array $bindings = [])
+    {
+        $sth = $this->execute($statement, $bindings);
+
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+            yield $row;
+        }
+
+        $this->freeResource($sth);
     }
 
     /**
@@ -337,6 +400,42 @@ class PDOConnection extends Connection
         while ($row = $sth->fetch(PDO::FETCH_NUM)) {
             yield $row[0];
         }
+
+        $this->freeResource($sth);
+    }
+
+    /**
+     * @param string $statement
+     * @param array $bindings
+     * @param string $class
+     * @param array $args
+     * @return \Generator
+     */
+    public function yieldObjects($statement, array $bindings = [], $class = 'stdClass', array $args = [])
+    {
+        $sth = $this->execute($statement, $bindings);
+
+        while ($row = $sth->fetchObject($class, $args)) {
+            yield $row;
+        }
+
+        $this->freeResource($sth);
+    }
+
+    /**
+     * @param string $statement
+     * @param array $bindings
+     * @return \Generator
+     */
+    public function yieldPairs($statement, array $bindings = [])
+    {
+        $sth = $this->execute($statement, $bindings);
+
+        while ($row = $sth->fetch(PDO::FETCH_KEY_PAIR)) {
+            yield $row;
+        }
+
+        $this->freeResource($sth);
     }
 
     /********************************************************************************
@@ -451,6 +550,9 @@ class PDOConnection extends Connection
         return $sth->bindValue($key, $val);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function qn(string $name)
     {
         return $this->quoteName($name);
@@ -469,6 +571,9 @@ class PDOConnection extends Connection
         return implode('.', array_map([$this, 'quoteSingleName'], explode('.', $name)));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function quoteSingleName(string $name)
     {
         $name = str_replace($this->quoteNameEscapeChar, $this->quoteNameEscapeReplace, $name);
@@ -476,6 +581,9 @@ class PDOConnection extends Connection
         return $this->quoteNamePrefix . $name . $this->quoteNameSuffix;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function initQuoteName($driver)
     {
         switch ($driver) {
@@ -705,11 +813,9 @@ class PDOConnection extends Connection
      * @param PDOStatement $sth
      * @return $this
      */
-    public function releaseResource($sth = null)
+    public function freeResource($sth = null)
     {
-        $sth = $sth ?: $this->cursor;
-
-        if ($sth instanceof PDOStatement) {
+        if ($sth && $sth instanceof PDOStatement) {
             $sth->closeCursor();
         }
 
@@ -734,14 +840,6 @@ class PDOConnection extends Connection
     public function setPdo(PDO $pdo)
     {
         $this->pdo = $pdo;
-    }
-
-    /**
-     * @return PDOStatement
-     */
-    public function getCursor()
-    {
-        return $this->cursor;
     }
 
     /**

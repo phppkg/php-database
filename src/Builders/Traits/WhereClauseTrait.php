@@ -39,7 +39,7 @@ trait WhereClauseTrait
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
         $type = 'Basic';
-        $this->wheres[] = [$type, $column, $operator, $value, $boolean];
+        $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         return $this;
     }
@@ -78,9 +78,7 @@ trait WhereClauseTrait
         // once the query is about to be executed and run against the database.
         $type = 'Column';
 
-        $this->wheres[] = compact(
-            'type', 'first', 'operator', 'second', 'boolean'
-        );
+        $this->wheres[] = compact('type', 'first', 'operator', 'second', 'boolean');
 
         return $this;
     }
@@ -108,7 +106,7 @@ trait WhereClauseTrait
     {
         $this->wheres[] = ['type' => 'raw', 'sql' => $sql, 'boolean' => $boolean];
 
-        $this->addBinding((array)$bindings, 'where');
+        $this->addBinding((array)$bindings);
 
         return $this;
     }
@@ -150,7 +148,7 @@ trait WhereClauseTrait
             $values = $values->toArray();
         }
 
-        $this->wheres[] = [$type, $column, $values, $boolean];
+        $this->wheres[] = compact('type', 'column', 'values', 'boolean');
 
         // Finally we'll add a binding for each values unless that value is an expression
         // in which case we will just skip over it since it will be the query as a raw
@@ -208,7 +206,7 @@ trait WhereClauseTrait
     public function whereNull($column, $boolean = 'and', $not = false)
     {
         $type = $not ? 'NotNull' : 'Null';
-        $this->wheres[] = [$type, $column, $boolean];
+        $this->wheres[] = compact('type', 'column', 'boolean');
 
         return $this;
     }
@@ -246,9 +244,8 @@ trait WhereClauseTrait
     public function whereBetween($column, array $values, $boolean = 'and', $not = false)
     {
         $type = 'between';
-//        $this->wheres[] = compact('column', 'type', 'boolean', 'not');
-        $this->wheres[] = [$column, $type, $values, $boolean, $not];
-        $this->addBinding($values, 'where');
+        $this->wheres[] = compact('column', 'type', 'boolean', 'not');
+        $this->addBinding($values);
 
         return $this;
     }
