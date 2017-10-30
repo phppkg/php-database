@@ -131,54 +131,6 @@ class PDOConnection extends Connection
     }
 
     /********************************************************************************
-     * basic command methods
-     *******************************************************************************/
-
-    /**
-     * Run a select statement
-     * @param  string $statement
-     * @param  array $bindings
-     * @return array
-     */
-    public function select($statement, array $bindings = [])
-    {
-        return $this->fetchAll($statement, $bindings);
-    }
-
-    /**
-     * Run a insert statement
-     * @param  string $statement
-     * @param  array $bindings
-     * @return int
-     */
-    public function insert($statement, array $bindings = [])
-    {
-        return $this->fetchAffected($statement, $bindings);
-    }
-
-    /**
-     * Run a update statement
-     * @param  string $statement
-     * @param  array $bindings
-     * @return int
-     */
-    public function update($statement, array $bindings = [])
-    {
-        return $this->fetchAffected($statement, $bindings);
-    }
-
-    /**
-     * Run a delete statement
-     * @param  string $statement
-     * @param  array $bindings
-     * @return int
-     */
-    public function delete($statement, array $bindings = [])
-    {
-        return $this->fetchAffected($statement, $bindings);
-    }
-
-    /********************************************************************************
      * fetch data methods
      *******************************************************************************/
 

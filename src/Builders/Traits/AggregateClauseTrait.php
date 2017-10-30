@@ -97,4 +97,51 @@ trait AggregateClauseTrait
             return array_change_key_case((array)$results[0])['aggregate'];
         }
     }
+
+    /**
+     * Execute a numeric aggregate function on the database.
+     * @param  string $function
+     * @param  array $columns
+     * @return float|int
+     */
+    public function numericAggregate($function, array $columns = ['*'])
+    {
+        $result = $this->aggregate($function, $columns);
+
+        // If there is no result, we can obviously just return 0 here. Next, we will check
+        // if the result is an integer or float. If it is already one of these two data
+        // types we can just return the result as-is, otherwise we will convert this.
+        if (!$result) {
+            return 0;
+        }
+
+        if (is_int($result) || is_float($result)) {
+            return $result;
+        }
+
+        // If the result doesn't contain a decimal place, we will assume it is an int then
+        // cast it to one. When it does we will cast it to a float since it needs to be
+        // cast to the expected data type for the developers out of pure convenience.
+        return strpos((string)$result, '.') === false
+            ? (int)$result : (float)$result;
+    }
+
+    /**
+     * Set the aggregate property without running the query.
+     * @param  string $function
+     * @param  array $columns
+     * @return $this
+     */
+    protected function setAggregate($function, $columns)
+    {
+        $this->aggregate = compact('function', 'columns');
+
+        if (empty($this->groups)) {
+            $this->orders = null;
+
+            $this->bindings['order'] = [];
+        }
+
+        return $this;
+    }
 }

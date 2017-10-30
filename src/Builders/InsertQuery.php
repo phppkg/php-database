@@ -15,24 +15,34 @@ use Inhere\Library\Helpers\Arr;
  * Class InsertQuery
  * @package Inhere\Database\Builders
  */
-class InsertQuery extends QueryBuilder
+class InsertQuery
 {
     /**
      * Query type.
      */
     const QUERY_TYPE = QueryCompiler::INSERT_QUERY;
 
+    /** @var Connection */
+    protected $connection;
+
+    /**
+     * @var QueryCompiler
+     */
+    protected $compiler;
+
+    public $from;
+
     /**
      * Column names associated with insert.
      * @var array
      */
-    protected $columns = [];
+    public $columns = [];
 
     /**
      * values to be inserted.
      * @var array
      */
-    protected $values = [];
+    public $values = [];
 
     /**
      * {@inheritdoc}
@@ -40,7 +50,8 @@ class InsertQuery extends QueryBuilder
      */
     public function __construct(Connection $connection, QueryCompiler $compiler = null, string $table = '')
     {
-        parent::__construct($connection, $compiler);
+        $this->connection = $connection;
+        $this->compiler = $compiler ?: $connection->getQueryCompiler();
 
         $this->from = $table;
     }
@@ -159,5 +170,22 @@ class InsertQuery extends QueryBuilder
     public function flushValues()
     {
         $this->values = [];
+    }
+
+
+    /**
+     * @return Connection
+     */
+    public function getConnection(): Connection
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @return QueryCompiler
+     */
+    public function getCompiler(): QueryCompiler
+    {
+        return $this->compiler;
     }
 }

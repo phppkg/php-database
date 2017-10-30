@@ -149,7 +149,7 @@ class QueryCompiler extends AbstractCompiler
      */
     public function compileUpdate(UpdateQuery $query, $values)
     {
-        $table = $this->wrapTable($query->table);
+        $table = $this->wrapTable($query->from);
 
         // Each one of the columns in the update statements needs to be wrapped in the
         // keyword identifiers, also a place-holder needs to be created for each of

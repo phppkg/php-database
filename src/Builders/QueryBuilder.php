@@ -8,11 +8,11 @@
 
 namespace Inhere\Database\Builders;
 
-use Inhere\Database\Base\AbstractBuilder;
 use Inhere\Database\Builders\Traits\JoinClauseTrait;
-use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Database\Builders\Traits\OrderLimitUnionClauseTrait;
+use Inhere\Database\Builders\Traits\WhereClauseTrait;
 use Inhere\Database\Connection;
+use Inhere\Library\Collections\LiteCollection;
 use Inhere\Library\Helpers\Arr;
 
 /**
@@ -20,7 +20,7 @@ use Inhere\Library\Helpers\Arr;
  * @package Inhere\Database
  * @link https://github.com/illuminate/database/blob/master/Query/Builder.php
  */
-class QueryBuilder extends AbstractBuilder
+class QueryBuilder
 {
     use JoinClauseTrait, WhereClauseTrait, OrderLimitUnionClauseTrait;
 
@@ -127,6 +127,25 @@ class QueryBuilder extends AbstractBuilder
      * @var bool
      */
     public $useWriter = false;
+
+    /** @var Connection */
+    protected $connection;
+
+    /**
+     * @var QueryCompiler
+     */
+    protected $compiler;
+
+    /**
+     * constructor.
+     * @param Connection $connection
+     * @param QueryCompiler|null $compiler
+     */
+    public function __construct(Connection $connection, QueryCompiler $compiler = null)
+    {
+        $this->connection = $connection;
+        $this->compiler = $compiler ?: $connection->getQueryCompiler();
+    }
 
     /********************************************************************************
      * select statement methods
@@ -286,17 +305,145 @@ class QueryBuilder extends AbstractBuilder
         return $this;
     }
 
+    /********************************************************************************
+     * execute statement methods
+     *******************************************************************************/
+
     /**
-     * Remove all of the expressions from a list of bindings.
-     * @param  array $bindings
-     * @return array
+     * Execute the query as a "select" statement.
+     *
+     * @param  array  $columns
+     * @return LiteCollection
      */
-    protected function cleanBindings(array $bindings)
+    public function get(array $columns = ['*'])
     {
-        return array_values(array_filter($bindings, function ($binding) {
-            return !$binding instanceof Expression;
-        }));
+        $original = $this->columns;
+
+        if (null === $original) {
+            $this->columns = $columns;
+        }
+
+        $results = $this->connection->select(
+            $this->toSql(), $this->getBindings(), !$this->useWriter
+        );
+
+        $this->columns = $original;
+
+        return collect($results);
     }
+
+    /**
+     * Insert a new record into the database.
+     * @param  array $values
+     * @return bool
+     */
+    public function insert(array $values)
+    {
+        // Since every insert gets treated like a batch insert, we will make sure the
+        // bindings are structured in a way that is convenient when building these
+        // inserts statements by verifying these elements are actually an array.
+        if (empty($values)) {
+            return true;
+        }
+
+        if (!is_array(reset($values))) {
+            $values = [$values];
+        }
+
+        // Here, we will sort the insert keys for every record so that each insert is
+        // in the same order for the record. We need to make sure this is the case
+        // so there are not any errors or problems when inserting these records.
+        else {
+            foreach ($values as $key => $value) {
+                ksort($value);
+
+                $values[$key] = $value;
+            }
+        }
+
+        // Finally, we will run this query against the database connection and return
+        // the results. We will need to also flatten these bindings before running
+        // the query so they are all in one huge, flattened array for execution.
+        return $this->connection->insert(
+            $this->compiler->compileInsert($this, $values),
+            $this->cleanBindings(Arr::flatten($values, 1))
+        );
+    }
+
+    /**
+     * Insert a new record and get the value of the primary key.
+     * @param  array $values
+     * @param  string|null $sequence
+     * @return int
+     */
+    public function insertGetId(array $values, $sequence = null)
+    {
+        $sql = $this->compiler->compileInsertGetId($this, $values, $sequence);
+
+        $values = $this->cleanBindings($values);
+
+        return $this->connection->insert($this, $sql, $values, $sequence);
+    }
+
+    /**
+     * Update a record in the database.
+     * @param  array $values
+     * @return int
+     */
+    public function update(array $values)
+    {
+        $sql = $this->compiler->compileUpdate($this, $values);
+
+        return $this->connection->update($sql, $this->cleanBindings(
+            $this->compiler->prepareBindingsForUpdate($this->bindings, $values)
+        ));
+    }
+
+    /**
+     * Insert or update a record matching the attributes, and fill it with values.
+     * @param  array $attributes
+     * @param  array $values
+     * @return bool
+     */
+    public function updateOrInsert(array $attributes, array $values = [])
+    {
+        if (!$this->where($attributes)->exists()) {
+            return $this->insert(array_merge($attributes, $values));
+        }
+
+        return (bool)$this->take(1)->update($values);
+    }
+
+    /**
+     * Delete a record from the database.
+     * @param  mixed $id
+     * @return int
+     */
+    public function delete($id = null)
+    {
+        // If an ID is passed to the method, we will set the where clause to check the
+        // ID to let developers to simply and quickly remove a single row from this
+        // database without manually specifying the "where" clauses on the query.
+        if (null !== $id) {
+            $this->where($this->from . '.id', '=', $id);
+        }
+
+        return $this->connection->delete(
+            $this->compiler->compileDelete($this), $this->getBindings()
+        );
+    }
+
+    /**
+     * Run a truncate statement on the table.
+     * @return void
+     */
+    public function truncate()
+    {
+        foreach ($this->compiler->compileTruncate($this) as $sql => $bindings) {
+            $this->connection->execute($sql, $bindings);
+        }
+    }
+
 
     /********************************************************************************
      * helper methods
@@ -307,24 +454,6 @@ class QueryBuilder extends AbstractBuilder
         $this->useWriter = true;
 
         return $this;
-    }
-
-    /**
-     * Get the current query value bindings in a flattened array.
-     * @return array
-     */
-    public function getBindings()
-    {
-        return Arr::flatten($this->bindings);
-    }
-
-    /**
-     * Get the raw array of bindings.
-     * @return array
-     */
-    public function getRawBindings()
-    {
-        return $this->bindings;
     }
 
     /**
@@ -348,18 +477,50 @@ class QueryBuilder extends AbstractBuilder
     }
 
     /**
+     * Create a new query instance for a sub-query.
+     * @return static
+     */
+    protected function forSubQuery()
+    {
+        return $this->newQuery();
+    }
+
+    /**
+     * Create a raw database expression.
+     *
+     * @param  mixed  $value
+     * @return Expression
+     */
+    public function raw($value)
+    {
+        return $this->connection->raw($value);
+    }
+
+    /**
      * @param array $props
      * @return QueryBuilder
      */
     public function cloneWithout(array $props = [])
     {
-        $new = clone $this;
+        return tap(clone $this, function ($clone) use ($props) {
+            foreach ($props as $property) {
+                $clone->{$property} = null;
+            }
+        });
+    }
 
-        foreach ($props as $prop) {
-            $new->$prop = null;
-        }
-
-        return $new;
+    /**
+     * Clone the query without the given bindings.
+     * @param  array $except
+     * @return static
+     */
+    public function cloneWithoutBindings(array $except)
+    {
+        return tap(clone $this, function ($clone) use ($except) {
+            foreach ($except as $type) {
+                $clone->bindings[$type] = [];
+            }
+        });
     }
 
     /**
@@ -412,4 +573,51 @@ class QueryBuilder extends AbstractBuilder
             $text
         );
     }
+
+    /**
+     * Remove all of the expressions from a list of bindings.
+     * @param  array $bindings
+     * @return array
+     */
+    protected function cleanBindings(array $bindings)
+    {
+        return array_values(array_filter($bindings, function ($binding) {
+            return !$binding instanceof Expression;
+        }));
+    }
+
+    /**
+     * @return Connection
+     */
+    public function getConnection(): Connection
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @return QueryCompiler
+     */
+    public function getCompiler(): QueryCompiler
+    {
+        return $this->compiler;
+    }
+
+    /**
+     * Get the current query value bindings in a flattened array.
+     * @return array
+     */
+    public function getBindings()
+    {
+        return Arr::flatten($this->bindings);
+    }
+
+    /**
+     * Get the raw array of bindings.
+     * @return array
+     */
+    public function getRawBindings()
+    {
+        return $this->bindings;
+    }
+
 }

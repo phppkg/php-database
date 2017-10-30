@@ -33,7 +33,6 @@ class SQLiteCompiler extends QueryCompiler
 
     /**
      * All of the available clause operators.
-     *
      * @var array
      */
     protected $operators = [

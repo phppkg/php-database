@@ -47,15 +47,8 @@ class MySQLCompiler extends QueryCompiler
     public function compileUpdate(UpdateQuery $query, $values)
     {
         $table = $this->wrapTable($query->from);
-
-        // Each one of the columns in the update statements needs to be wrapped in the
-        // keyword identifiers, also a place-holder needs to be created for each of
-        // the values in the list of bindings so we can make the sets statements.
         $columns = $this->compileUpdateColumns($values);
 
-        // If the query has any "join" clauses, we will setup the joins on the builder
-        // and compile them so we can attach them to this update, as update queries
-        // can get join statements to attach to other tables when they're needed.
         $joins = '';
 
         if ($query->joins) {
@@ -129,7 +122,8 @@ class MySQLCompiler extends QueryCompiler
     public function prepareBindingsForUpdate(array $bindings, array $values)
     {
         $values = collect($values)->reject(function ($value, $column) {
-            return $this->isJsonSelector($column) &&in_array(gettype($value), ['boolean', 'integer', 'double'], true);
+            return $this->isJsonSelector($column) &&
+                in_array(gettype($value), ['boolean', 'integer', 'double'], true);
         })->all();
 
         return parent::prepareBindingsForUpdate($bindings, $values);
@@ -237,7 +231,7 @@ class MySQLCompiler extends QueryCompiler
      */
     protected function isJsonSelector($value)
     {
-        return Str::contains('->', $value);
+        return Str::contains($value, '->');
     }
 
     /**

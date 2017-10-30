@@ -9,6 +9,7 @@
 namespace Inhere\Database\Builders;
 
 use Inhere\Database\Connection;
+use Inhere\Database\SQLCompileException;
 
 /**
  * Class UpdateQuery
@@ -69,19 +70,45 @@ class UpdateQuery extends QueryBuilder
         return $this;
     }
 
-    /**
-     * @param string $column
-     * @param int $step
-     * @param array $updates Update some other columns
-     */
-    public function increment(string $column, $step = 1, array $updates = [])
-    {
 
+    /**
+     * Increment a column's value by a given amount.
+     * @param  string $column
+     * @param  int $amount
+     * @param  array $extra
+     * @return int
+     */
+    public function increment($column, $amount = 1, array $extra = [])
+    {
+        if (!is_numeric($amount)) {
+            throw new \InvalidArgumentException('Non-numeric value passed to increment method.');
+        }
+
+        $wrapped = $this->compiler->wrap($column);
+
+        $columns = array_merge([$column => $this->raw("$wrapped + $amount")], $extra);
+
+        return $this->update($columns);
     }
 
-    public function decrement(string $column, $step = -1, array $updates = [])
+    /**
+     * Decrement a column's value by a given amount.
+     * @param  string $column
+     * @param  int $amount
+     * @param  array $extra
+     * @return int
+     */
+    public function decrement($column, $amount = 1, array $extra = [])
     {
+        if (!is_numeric($amount)) {
+            throw new \InvalidArgumentException('Non-numeric value passed to decrement method.');
+        }
 
+        $wrapped = $this->compiler->wrap($column);
+
+        $columns = array_merge([$column => $this->raw("$wrapped - $amount")], $extra);
+
+        return $this->update($columns);
     }
 
     /**
@@ -89,7 +116,15 @@ class UpdateQuery extends QueryBuilder
      */
     public function toSql(): string
     {
-        return $this->compiler->compileUpdate($this, $this->values);
+        if (!$values = $this->values) {
+            throw new SQLCompileException('Update values must be setting.');
+        }
+        var_dump($this->bindings);
+        $this->bindings = $this->cleanBindings(
+            $this->compiler->prepareBindingsForUpdate($this->bindings, $values)
+        );
+
+        return $this->compiler->compileUpdate($this, $values);
     }
 
     /**

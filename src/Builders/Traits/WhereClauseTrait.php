@@ -10,6 +10,7 @@ namespace Inhere\Database\Builders\Traits;
 
 use Closure;
 use Inhere\Database\Builders\Expression;
+use Inhere\Database\Builders\QueryBuilder;
 use Inhere\Library\Helpers\Str;
 
 /**
@@ -38,11 +39,130 @@ trait WhereClauseTrait
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
+        // If the column is an array, we will assume it is an array of key-value pairs
+        // and can add them each as a where clause. We will maintain the boolean we
+        // received when the method was called and pass it into the nested where.
+        if (is_array($column)) {
+            return $this->addArrayOfWheres($column, $boolean);
+        }
+
+        // Here we will make some assumptions about the operator. If only 2 values are
+        // passed to the method, we will assume that the operator is an equals sign
+        // and keep going. Otherwise, we'll require the operator to be passed in.
+        list($value, $operator) = $this->prepareValueAndOperator(
+            $value, $operator, func_num_args() === 2
+        );
+
+        // If the columns is actually a Closure instance, we will assume the developer
+        // wants to begin a nested where statement which is wrapped in parenthesis.
+        // We'll add that Closure to the query then return back out immediately.
+        if ($column instanceof Closure) {
+            return $this->whereNested($column, $boolean);
+        }
+
+        if ($this->invalidOperator($operator)) {
+            list($value, $operator) = [$operator, '='];
+        }
+
+        // If the value is a Closure, it means the developer is performing an entire
+        // sub-select within the query and we will need to compile the sub-select
+        // within the where clause to get the appropriate query record results.
+        if ($value instanceof Closure) {
+            return $this->whereSub($column, $operator, $value, $boolean);
+        }
+
+        // If the value is "null", we will just assume the developer wants to add a
+        // where null clause to the query. So, we will allow a short-cut here to
+        // that method for convenience so the developer doesn't have to check.
+        if (null === $value) {
+            return $this->whereNull($column, $boolean, $operator !== '=');
+        }
+
+        if (is_bool($value) && Str::contains($column, '->')) {
+            $value = new Expression($value ? 'true' : 'false');
+        }
+
+        // Now that we are working with just a simple query we can put the elements
+        // in our array and add the query binding to our array of bindings that
+        // will be bound to each SQL statements when it is finally executed.
         $type = 'Basic';
-        $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
+
+        $this->wheres[] = compact(
+            'type', 'column', 'operator', 'value', 'boolean'
+        );
+
+        if (!$value instanceof Expression) {
+            $this->addBinding($value);
+        }
 
         return $this;
     }
+
+    /**
+     * Add an array of where clauses to the query.
+     * @param  array $column
+     * @param  string $boolean
+     * @param  string $method
+     * @return $this
+     */
+    protected function addArrayOfWheres($column, $boolean, $method = 'where')
+    {
+        return $this->whereNested(function ($query) use ($column, $method, $boolean) {
+            foreach ($column as $key => $value) {
+                if (is_numeric($key) && is_array($value)) {
+                    $query->{$method}(...array_values($value));
+                } else {
+                    $query->$method($key, '=', $value, $boolean);
+                }
+            }
+        }, $boolean);
+    }
+
+    /**
+     * Prepare the value and operator for a where clause.
+     * @param  string $value
+     * @param  string $operator
+     * @param  bool $useDefault
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    protected function prepareValueAndOperator($value, $operator, $useDefault = false)
+    {
+        if ($useDefault) {
+            return [$operator, '='];
+        }
+
+        if ($this->invalidOperatorAndValue($operator, $value)) {
+            throw new \InvalidArgumentException('Illegal operator and value combination.');
+        }
+
+        return [$value, $operator];
+    }
+
+    /**
+     * Determine if the given operator and value combination is legal.
+     * Prevents using Null values with invalid operators.
+     * @param  string $operator
+     * @param  mixed $value
+     * @return bool
+     */
+    protected function invalidOperatorAndValue($operator, $value)
+    {
+        return null === $value &&
+            in_array($operator, $this->operators, true) &&
+            !in_array($operator, ['=', '<>', '!='], true);
+    }
+
+    /**
+     * Determine if the given operator is supported.
+     * @param  string $operator
+     * @return bool
+     */
+//    protected function invalidOperator($operator)
+//    {
+//        return ! in_array(strtolower($operator), $this->operators, true) &&
+//            ! in_array(strtolower($operator), $this->compiler->getOperators(), true);
+//    }
 
     public function orWhere($column, $operator = null, $value = null)
     {
@@ -292,6 +412,140 @@ trait WhereClauseTrait
     public function orWhereNotNull($column)
     {
         return $this->whereNotNull($column, 'or');
+    }
+
+    /**
+     * Add a nested where statement to the query.
+     * @param  \Closure $callback
+     * @param  string $boolean
+     * @return QueryBuilder|static
+     */
+    public function whereNested(Closure $callback, $boolean = 'and')
+    {
+        $callback($query = $this->forNestedWhere());
+
+        return $this->addNestedWhereQuery($query, $boolean);
+    }
+
+    /**
+     * Create a new query instance for nested where condition.
+     * @return QueryBuilder
+     */
+    public function forNestedWhere()
+    {
+        return $this->newQuery()->from($this->from);
+    }
+
+    /**
+     * Add another query builder as a nested where to the query builder.
+     * @param  QueryBuilder|static $query
+     * @param  string $boolean
+     * @return $this
+     */
+    public function addNestedWhereQuery($query, $boolean = 'and')
+    {
+        if (count($query->wheres)) {
+            $type = 'Nested';
+
+            $this->wheres[] = compact('type', 'query', 'boolean');
+
+            $this->addBinding($query->getBindings(), 'where');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a full sub-select to the query.
+     * @param  string $column
+     * @param  string $operator
+     * @param  \Closure $callback
+     * @param  string $boolean
+     * @return $this
+     */
+    protected function whereSub($column, $operator, Closure $callback, $boolean)
+    {
+        $type = 'Sub';
+
+        /** @var QueryBuilder $query */
+        $callback($query = $this->forSubQuery());
+
+        $this->wheres[] = compact(
+            'type', 'column', 'operator', 'query', 'boolean'
+        );
+
+        $this->addBinding($query->getBindings(), 'where');
+
+        return $this;
+    }
+
+    /**
+     * Add an exists clause to the query.
+     * @param  \Closure $callback
+     * @param  string $boolean
+     * @param  bool $not
+     * @return $this
+     */
+    public function whereExists(Closure $callback, $boolean = 'and', $not = false)
+    {
+        $query = $this->forSubQuery();
+
+        // Similar to the sub-select clause, we will create a new query instance so
+        // the developer may cleanly specify the entire exists query and we will
+        // compile the whole thing in the grammar and insert it into the SQL.
+        $callback($query);
+
+        return $this->addWhereExistsQuery($query, $boolean, $not);
+    }
+
+    /**
+     * Add an or exists clause to the query.
+     * @param  \Closure $callback
+     * @param  bool $not
+     * @return QueryBuilder|static
+     */
+    public function orWhereExists(Closure $callback, $not = false)
+    {
+        return $this->whereExists($callback, 'or', $not);
+    }
+
+    /**
+     * Add a where not exists clause to the query.
+     * @param  \Closure $callback
+     * @param  string $boolean
+     * @return QueryBuilder|static
+     */
+    public function whereNotExists(Closure $callback, $boolean = 'and')
+    {
+        return $this->whereExists($callback, $boolean, true);
+    }
+
+    /**
+     * Add a where not exists clause to the query.
+     * @param  \Closure $callback
+     * @return QueryBuilder|static
+     */
+    public function orWhereNotExists(Closure $callback)
+    {
+        return $this->orWhereExists($callback, true);
+    }
+
+    /**
+     * Add an exists clause to the query.
+     * @param  QueryBuilder $query
+     * @param  string $boolean
+     * @param  bool $not
+     * @return $this
+     */
+    public function addWhereExistsQuery(Builder $query, $boolean = 'and', $not = false)
+    {
+        $type = $not ? 'NotExists' : 'Exists';
+
+        $this->wheres[] = compact('type', 'operator', 'query', 'boolean');
+
+        $this->addBinding($query->getBindings(), 'where');
+
+        return $this;
     }
 
     /**
