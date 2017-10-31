@@ -102,22 +102,21 @@ class QueryCompiler extends AbstractCompiler
 
     /**
      * Compile an insert statement into SQL.
-     * @param  QueryBuilder $query
-     * @param  array $values
+     * @param InsertQuery $query
+     * @param array $values
+     * @param array $columns
      * @return string
      */
-    public function compileInsert(QueryBuilder $query, array $values)
+    public function compileInsert(InsertQuery $query, array $values, array $columns = [])
     {
         // Essentially we will force every insert to be treated as a batch insert which
         // simply makes creating the SQL easier for us since we can utilize the same
         // basic routine regardless of an amount of records given to us to insert.
         $table = $this->wrapTable($query->from);
 
-        if (!is_array(reset($values))) {
-            $values = [$values];
+        if (!$columns) {
+            $columns = $this->columnize(array_keys(reset($values)));
         }
-
-        $columns = $this->columnize(array_keys(reset($values)));
 
         // We need to build a list of parameter place-holders of values that are bound
         // to the query. Each insert should have the exact same amount of parameter
@@ -131,12 +130,12 @@ class QueryCompiler extends AbstractCompiler
 
     /**
      * Compile an insert and get ID statement into SQL.
-     * @param  QueryBuilder $query
+     * @param  InsertQuery $query
      * @param  array $values
      * @param  string $sequence
      * @return string
      */
-    public function compileInsertGetId(QueryBuilder $query, $values, $sequence)
+    public function compileInsertGetId(InsertQuery $query, $values, $sequence)
     {
         return $this->compileInsert($query, $values);
     }
@@ -661,7 +660,7 @@ class QueryCompiler extends AbstractCompiler
      */
     protected function compileLimit(QueryBuilder $query, $limit)
     {
-        return 'limit ' . (int)$limit;
+        return 'limit ' . ((int)$limit ?: '18446744073709551615');
     }
 
     /**

@@ -70,7 +70,6 @@ class UpdateQuery extends QueryBuilder
         return $this;
     }
 
-
     /**
      * Increment a column's value by a given amount.
      * @param  string $column
@@ -119,7 +118,7 @@ class UpdateQuery extends QueryBuilder
         if (!$values = $this->values) {
             throw new SQLCompileException('Update values must be setting.');
         }
-        var_dump($this->bindings);
+
         $this->bindings = $this->cleanBindings(
             $this->compiler->prepareBindingsForUpdate($this->bindings, $values)
         );

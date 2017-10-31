@@ -6,6 +6,7 @@
  * Time: 10:02
  */
 
+use Inhere\Database\Builders\InsertQuery;
 use Inhere\Database\Builders\UpdateQuery;
 use Inhere\Database\DatabaseManager;
 use Inhere\Database\Drivers\MySQL\MySQLConnection;
@@ -31,8 +32,16 @@ $dm = new DatabaseManager([
 
 $conn = $dm->getConnection('mydb');
 
-$ub = new UpdateQuery($conn);
+$iq = new InsertQuery($conn);
+$iq->into('user')->values([
+    'username' => 'new-name',
+    'nickname' => 'my-nick',
+    'createdAt' => time(),
+]);
+pr('- insert SQL:', $iq->toSql(), $iq->getBindings());
 
-$ub->table('user')->values(['username' => 'new-name'])->where('id', '=', 2);
+$uq = new UpdateQuery($conn);
 
-var_dump($ub->toSql(), $ub->getBindings());
+$uq->table('user')->values(['username' => 'new-name'])->where('id', '=', 2);
+
+pr('- update SQL:', $uq->toSql(), $uq->getBindings());

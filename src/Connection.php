@@ -185,11 +185,14 @@ abstract class Connection implements ConnectionInterface
      * Run a insert statement
      * @param  string $statement
      * @param  array $bindings
+     * @param null|string $sequence For special driver, like PgSQL
      * @return int
      */
-    public function insert($statement, array $bindings = [])
+    public function insert($statement, array $bindings = [], $sequence = null)
     {
-        return $this->fetchAffected($statement, $bindings);
+        $this->fetchAffected($statement, $bindings);
+
+        return $this->lastInsertId($sequence);
     }
 
     /**
@@ -226,6 +229,21 @@ abstract class Connection implements ConnectionInterface
     public function raw($value)
     {
         return new Expression($value);
+    }
+
+    public function database()
+    {
+        //
+    }
+
+    public function table($name)
+    {
+        //
+    }
+
+    public function tableSchema()
+    {
+        //
     }
 
     /********************************************************************************

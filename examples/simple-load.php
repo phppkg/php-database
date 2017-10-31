@@ -40,3 +40,12 @@ spl_autoload_register(function($class) use ($inhereDir)
 function include_file($file) {
     include $file;
 }
+
+function pr(...$vars) {
+    $str = '';
+    foreach ($vars as $var) {
+        $str .= print_r($var, 1) . PHP_EOL;
+    }
+
+    echo $str;
+}

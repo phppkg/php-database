@@ -9,6 +9,7 @@
 namespace Inhere\Database\Builders;
 
 use Inhere\Database\Builders\Traits\AggregateClauseTrait;
+use Inhere\Library\Collections\LiteCollection;
 use Inhere\Library\Helpers\Arr;
 
 /**
@@ -37,9 +38,35 @@ class SelectQuery extends QueryBuilder
      */
     public $havings = [];
 
+    /** @var  array */
+    private $columns;
+
     public static function make()
     {
 
+    }
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array  $columns
+     * @return LiteCollection
+     */
+    public function get(array $columns = ['*'])
+    {
+        $original = $this->columns;
+
+        if (null === $original) {
+            $this->columns = $columns;
+        }
+
+        $results = $this->connection->select(
+            $this->toSql(), $this->getBindings(), !$this->useWriter
+        );
+
+        $this->columns = $original;
+
+        return collect($results);
     }
 
     /**
