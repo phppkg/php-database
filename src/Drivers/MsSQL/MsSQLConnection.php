@@ -9,7 +9,7 @@
 namespace Inhere\Database\Drivers\MsSQL;
 
 use Inhere\Database\Builders\QueryCompiler;
-use Inhere\Database\PDOConnection;
+use Inhere\Database\Base\PDOConnection;
 
 /**
  * Class MsSQLConnection - The Microsoft SQL Server Connection

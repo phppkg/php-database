@@ -46,6 +46,7 @@ abstract class Connection implements ConnectionInterface
         'database' => 'test',
         'charset' => 'utf8',
 
+        'timeout' => 0,
         'timezone' => null,
         'collation' => 'utf8_unicode_ci',
 
@@ -308,30 +309,6 @@ abstract class Connection implements ConnectionInterface
     public function replaceTablePrefix($sql)
     {
         return str_replace($this->prefixPlaceholder, $this->tablePrefix, (string)$sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function transactional($func)
-    {
-        if (!is_callable($func)) {
-            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . gettype($func) . '"');
-        }
-
-        $this->conn->beginTransaction();
-
-        try {
-            $return = $func($this);
-            $this->flush();
-            $this->conn->commit();
-
-            return $return ?: true;
-        } catch (\Throwable $e) {
-            $this->close();
-            $this->conn->rollBack();
-            throw $e;
-        }
     }
 
     /**

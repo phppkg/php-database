@@ -9,7 +9,7 @@
 namespace Inhere\Database\Drivers\PgSQL;
 
 use Inhere\Database\Builders\QueryCompiler;
-use Inhere\Database\PDOConnection;
+use Inhere\Database\Base\PDOConnection;
 
 /**
  * Class PgSQLConnection - The Postgres db connection

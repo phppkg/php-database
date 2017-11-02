@@ -9,7 +9,7 @@
 namespace Inhere\Database\Drivers\MySQL;
 
 use Inhere\Database\Builders\QueryCompiler;
-use Inhere\Database\PDOConnection;
+use Inhere\Database\Base\PDOConnection;
 use PDO;
 
 /**

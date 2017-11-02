@@ -6,8 +6,9 @@
  * Time: 上午10:36
  */
 
-namespace Inhere\Database;
+namespace Inhere\Database\Base;
 
+use Inhere\Database\Connection;
 use Inhere\Database\Helpers\DsnHelper;
 use Inhere\Exceptions\UnknownMethodException;
 use PDO;
@@ -15,7 +16,7 @@ use PDOStatement;
 
 /**
  * Class Connection
- * @package Inhere\Database
+ * @package Inhere\Database\Base
  */
 class PDOConnection extends Connection
 {
@@ -440,6 +441,32 @@ class PDOConnection extends Connection
 
         // done
         return $sth;
+    }
+
+    /**
+     * 事务
+     * {@inheritDoc}
+     */
+    public function transactional(callable $func)
+    {
+        if (!is_callable($func)) {
+            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . gettype($func) . '"');
+        }
+
+        $this->connect();
+        $this->pdo->beginTransaction();
+
+        try {
+            $return = $func($this);
+//            $this->flush();
+            $this->pdo->commit();
+
+            return $return ?: true;
+        } catch (\Throwable $e) {
+//            $this->close();
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 
     /**
