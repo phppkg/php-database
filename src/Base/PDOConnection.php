@@ -434,10 +434,10 @@ class PDOConnection extends Connection
         $this->log($statement, $params);
 
         // for the placeholders we found, bind the corresponding data values
-        /** @var array $params */
-        foreach ($params as $key => $val) {
-            $this->bindValue($sth, $key, $val);
-        }
+//        foreach ($params as $key => $val) {
+//            $this->bindValue($sth, $key, $val);
+//        }
+        $this->bindValues($sth, $params);
 
         // done
         return $sth;
@@ -488,13 +488,13 @@ class PDOConnection extends Connection
     }
 
     /**
-     * @param PDOStatement $statement
+     * @param PDOStatement $sth
      * @param array|\ArrayIterator $bindings
      */
-    public function bindValues($statement, $bindings)
+    public function bindValues(PDOStatement $sth, $bindings)
     {
         foreach ($bindings as $key => $value) {
-            $statement->bindValue(
+            $sth->bindValue(
                 is_string($key) ? $key : $key + 1, $value,
                 is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR
             );
