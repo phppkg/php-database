@@ -95,8 +95,8 @@ class MySQLCoroConnection extends SwooleConnection
      */
     public function transactional(callable $func)
     {
-        if (!is_callable($func)) {
-            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . gettype($func) . '"');
+        if (!\is_callable($func)) {
+            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . \gettype($func) . '"');
         }
 
         $this->connect();
@@ -169,7 +169,7 @@ class MySQLCoroConnection extends SwooleConnection
      */
     protected function escape($text)
     {
-        if (is_int($text) || is_float($text)) {
+        if (\is_int($text) || \is_float($text)) {
             return $text;
         }
 
@@ -186,7 +186,7 @@ class MySQLCoroConnection extends SwooleConnection
      */
     protected function escapeWithNoConnection($text)
     {
-        if (is_int($text) || is_float($text)) {
+        if (\is_int($text) || \is_float($text)) {
             return $text;
         }
 

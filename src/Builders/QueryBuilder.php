@@ -284,7 +284,7 @@ class QueryBuilder
             throw new \InvalidArgumentException("Invalid binding type: {$type}.");
         }
 
-        if (is_array($value)) {
+        if (\is_array($value)) {
             $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
         } else {
             $this->bindings[$type][] = $value;
@@ -454,8 +454,8 @@ class QueryBuilder
      */
     protected function invalidOperator($operator)
     {
-        return !in_array(strtolower($operator), $this->operators, true) &&
-            !in_array(strtolower($operator), $this->compiler->getOperators(), true);
+        return !\in_array(strtolower($operator), $this->operators, true) &&
+            !\in_array(strtolower($operator), $this->compiler->getOperators(), true);
     }
 
     /**
@@ -465,7 +465,7 @@ class QueryBuilder
      */
     public function escape($text, $extra = false)
     {
-        if (is_int($text) || is_float($text)) {
+        if (\is_int($text) || \is_float($text)) {
             return $text;
         }
 

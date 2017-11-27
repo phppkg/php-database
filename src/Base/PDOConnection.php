@@ -71,7 +71,7 @@ class PDOConnection extends Connection
         $config = $this->options;
         $retry = (int)$config['retry'];
         $retry = ($retry > 0 && $retry <= 5) ? $retry : 0;
-        $options = is_array($config['options']) ? $config['options'] : [];
+        $options = \is_array($config['options']) ? $config['options'] : [];
         $dsn = DsnHelper::getDsn($config);
 
         do {
@@ -449,8 +449,8 @@ class PDOConnection extends Connection
      */
     public function transactional(callable $func)
     {
-        if (!is_callable($func)) {
-            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . gettype($func) . '"');
+        if (!\is_callable($func)) {
+            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . \gettype($func) . '"');
         }
 
         $this->connect();
@@ -480,7 +480,7 @@ class PDOConnection extends Connection
         $this->connect();
 
         if (!method_exists($this->pdo, $name)) {
-            $class = get_class($this);
+            $class = \get_class($this);
             throw new UnknownMethodException("Class '{$class}' does not have a method '{$name}'");
         }
 
@@ -495,8 +495,8 @@ class PDOConnection extends Connection
     {
         foreach ($bindings as $key => $value) {
             $sth->bindValue(
-                is_string($key) ? $key : $key + 1, $value,
-                is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR
+                \is_string($key) ? $key : $key + 1, $value,
+                \is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR
             );
         }
     }
@@ -509,11 +509,11 @@ class PDOConnection extends Connection
      */
     protected function bindValue(PDOStatement $sth, $key, $val)
     {
-        if (is_int($val)) {
+        if (\is_int($val)) {
             return $sth->bindValue($key, $val, PDO::PARAM_INT);
         }
 
-        if (is_bool($val)) {
+        if (\is_bool($val)) {
             return $sth->bindValue($key, $val, PDO::PARAM_BOOL);
         }
 
@@ -522,7 +522,7 @@ class PDOConnection extends Connection
         }
 
         if (!is_scalar($val)) {
-            $type = gettype($val);
+            $type = \gettype($val);
             throw new \RuntimeException("Cannot bind value of type '{$type}' to placeholder '{$key}'");
         }
 
@@ -605,7 +605,7 @@ class PDOConnection extends Connection
         $this->connect();
 
         // non-array quoting
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             return $this->pdo->quote($value, $type);
         }
 

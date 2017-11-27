@@ -175,7 +175,7 @@ class QueryCompiler extends AbstractCompiler
      */
     public function compileDelete(QueryBuilder $query)
     {
-        $wheres = is_array($query->wheres) ? $this->compileWheres($query) : '';
+        $wheres = \is_array($query->wheres) ? $this->compileWheres($query) : '';
 
         return trim("delete from {$this->wrapTable($query->from)} $wheres");
     }
@@ -283,7 +283,7 @@ class QueryCompiler extends AbstractCompiler
             return '';
         }
 
-        if (count($sql = $this->compileWheresToArray($query)) > 0) {
+        if (\count($sql = $this->compileWheresToArray($query)) > 0) {
             return $this->concatenateWhereClauses($query, $sql);
         }
 
@@ -759,7 +759,7 @@ class QueryCompiler extends AbstractCompiler
      */
     protected function compileLock(QueryBuilder $query, $value)
     {
-        return is_string($value) ? $value : '';
+        return \is_string($value) ? $value : '';
     }
 
     /**

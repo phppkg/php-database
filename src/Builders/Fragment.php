@@ -75,7 +75,7 @@ class Fragment
      */
     public function append($data)
     {
-        if (is_array($data)) {
+        if (\is_array($data)) {
             $this->data = array_merge($this->data, $data);
         } else {
             $this->data = array_merge($this->data, [$data]);
@@ -98,7 +98,7 @@ class Fragment
     public function __clone()
     {
         foreach (get_object_vars($this) as $k => $v) {
-            if (is_object($v) || is_array($v)) {
+            if (\is_object($v) || \is_array($v)) {
                 $this->{$k} = unserialize(serialize($v), []);
             }
         }

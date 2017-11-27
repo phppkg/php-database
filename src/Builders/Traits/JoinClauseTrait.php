@@ -30,7 +30,7 @@ trait JoinClauseTrait
      */
     public function join($table, $conditions = null, $type = 'left')
     {
-        if (is_string($table)) {
+        if (\is_string($table)) {
             $table .= $conditions ? ' ON ' . implode(' AND ', (array)$conditions) : '';
         }
 

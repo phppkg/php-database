@@ -33,6 +33,6 @@ class MsSQLConnection extends PDOConnection
      */
     public static function isSupported()
     {
-        return in_array('mssql', \PDO::getAvailableDrivers(), true);
+        return \in_array('mssql', \PDO::getAvailableDrivers(), true);
     }
 }

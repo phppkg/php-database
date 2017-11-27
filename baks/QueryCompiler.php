@@ -40,7 +40,7 @@ class QueryCompilerB extends AbstractCompiler
      */
     protected function qn($name)
     {
-        if (is_string($name)) {
+        if (\is_string($name)) {
             return $this->connection->quoteName($name);
         }
 

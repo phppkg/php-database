@@ -49,8 +49,8 @@ class MySQLConnection extends PDOConnection
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
-                is_string($key) ? $key : $key + 1, $value,
-                is_int($value) || is_float($value) ? PDO::PARAM_INT : PDO::PARAM_STR
+                \is_string($key) ? $key : $key + 1, $value,
+                \is_int($value) || \is_float($value) ? PDO::PARAM_INT : PDO::PARAM_STR
             );
         }
     }
@@ -85,6 +85,6 @@ class MySQLConnection extends PDOConnection
      */
     public static function isSupported()
     {
-        return in_array('mysql', \PDO::getAvailableDrivers(), true);
+        return \in_array('mysql', \PDO::getAvailableDrivers(), true);
     }
 }

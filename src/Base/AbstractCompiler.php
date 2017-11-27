@@ -95,7 +95,7 @@ abstract class AbstractCompiler
     protected function wrapSegments($segments)
     {
         return collect($segments)->map(function ($segment, $key) use ($segments) {
-            return $key === 0 && count($segments) > 1
+            return $key === 0 && \count($segments) > 1
                 ? $this->wrapTable($segment)
                 : $this->wrapValue($segment);
         })->implode('.');
@@ -159,7 +159,7 @@ abstract class AbstractCompiler
 
     protected function escapeWithNoConnection($text)
     {
-        if (is_int($text) || is_float($text)) {
+        if (\is_int($text) || \is_float($text)) {
             return $text;
         }
 

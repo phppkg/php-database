@@ -141,8 +141,8 @@ class MySQLAsyncConnection extends SwooleConnection
      */
     public function transactional(callable $callback)
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . gettype($callback) . '"');
+        if (!\is_callable($callback)) {
+            throw new \InvalidArgumentException('Expected argument of type "callable", got "' . \gettype($callback) . '"');
         }
 
         $this->connect();
@@ -218,7 +218,7 @@ class MySQLAsyncConnection extends SwooleConnection
      */
     protected function escape($text)
     {
-        if (is_int($text) || is_float($text)) {
+        if (\is_int($text) || \is_float($text)) {
             return $text;
         }
 
@@ -235,7 +235,7 @@ class MySQLAsyncConnection extends SwooleConnection
      */
     protected function escapeWithNoConnection($text)
     {
-        if (is_int($text) || is_float($text)) {
+        if (\is_int($text) || \is_float($text)) {
             return $text;
         }
 

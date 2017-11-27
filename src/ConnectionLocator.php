@@ -178,7 +178,7 @@ class ConnectionLocator
     protected function getConnection($type, $name)
     {
         // no reader/writer, return default
-        if (!in_array($type, [self::WRITER, self::READER], true)) {
+        if (!\in_array($type, [self::WRITER, self::READER], true)) {
             return $this->getDefault();
         }
 

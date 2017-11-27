@@ -48,7 +48,7 @@ class SimpleDb
      */
     public static function isSupportedMode($mode)
     {
-        return in_array($mode, [self::MODE_SINGLETON, self::MODE_MASTER_SLAVE, self::MODE_CLUSTER], true);
+        return \in_array($mode, [self::MODE_SINGLETON, self::MODE_MASTER_SLAVE, self::MODE_CLUSTER], true);
     }
 
 }

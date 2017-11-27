@@ -213,7 +213,7 @@ abstract class Connections
         ]]);
 
         $role = self::ROLE_READER;
-        if (isset($options['role']) && in_array($options['role'], [self::ROLE_READER, self::ROLE_WRITER], true)) {
+        if (isset($options['role']) && \in_array($options['role'], [self::ROLE_READER, self::ROLE_WRITER], true)) {
             $role = $options['role'];
         }
 
@@ -265,7 +265,7 @@ abstract class Connections
         }
 
         $role = self::ROLE_READER;
-        if (isset($options['role']) && in_array($options['role'], [self::ROLE_READER, self::ROLE_WRITER], true)) {
+        if (isset($options['role']) && \in_array($options['role'], [self::ROLE_READER, self::ROLE_WRITER], true)) {
             $role = $options['role'];
         }
 
@@ -284,7 +284,7 @@ abstract class Connections
             // $rows = $st->fetchAll();
         }
 
-        $rows = call_user_func_array([$st, 'fetchAll'], $options);
+        $rows = \call_user_func_array([$st, 'fetchAll'], $options);
 
         $st->closeCursor();
 
@@ -305,7 +305,7 @@ abstract class Connections
     public function executeBySql($sql, array $params = [], array $options = [])
     {
         $role = self::ROLE_READER;
-        if (isset($options['role']) && in_array($options['role'], [self::ROLE_READER, self::ROLE_WRITER], true)) {
+        if (isset($options['role']) && \in_array($options['role'], [self::ROLE_READER, self::ROLE_WRITER], true)) {
             $role = $options['role'];
         }
 
@@ -365,7 +365,7 @@ abstract class Connections
         // Get the first row from the result set as an array.
         $row = $this->fetchArray();
 
-        if ($row && is_array($row) && isset($row[0])) {
+        if ($row && \is_array($row) && isset($row[0])) {
             $row = $row[0];
         }
 
@@ -386,7 +386,7 @@ abstract class Connections
 
         // Get all of the rows from the result set as arrays.
         while ($row = $this->fetchArray()) {
-            if ($row && is_array($row) && isset($row[$offset])) {
+            if ($row && \is_array($row) && isset($row[$offset])) {
                 $array[] = $row[$offset];
             }
         }
@@ -417,7 +417,7 @@ abstract class Connections
 
         // Get all of the rows from the result set as arrays.
         while ($row = $this->fetchArray()) {
-            if ($key !== null && is_array($row)) {
+            if ($key !== null && \is_array($row)) {
                 $array[$row[$key]] = $row;
             } else {
                 $array[] = $row;
@@ -706,14 +706,14 @@ abstract class Connections
 
         foreach ($data as $field => $value) {
             // 'dtStart = dtStart + 3600'
-            if (is_int($field) && $value) {
+            if (\is_int($field) && $value) {
                 $str .= $value;
                 continue;
             }
 
             if (null === $value) {
                 $value = 'NULL';
-            } else if (is_string($value)) {
+            } else if (\is_string($value)) {
                 $value = "'$value'";
             }
 
@@ -738,12 +738,12 @@ abstract class Connections
         $whereArr = $params = [];
 
         // is string, like 'id = 23'
-        if (is_string($wheres)) {
+        if (\is_string($wheres)) {
             return [$wheres, $params];
         }
 
         foreach ((array)$wheres as $key => $value) {
-            if (is_int($key)) {
+            if (\is_int($key)) {
                 // concat(CURDATE(),' 10:00:00')
 
                 $whereArr[] = $value;
@@ -753,7 +753,7 @@ abstract class Connections
             $key = trim($key);
 
             // is a 'in|not in' statement. eg: $value like [2,3,5] ['foo', 'bar', 'baz']
-            if (is_array($value) || is_object($value)) {
+            if (\is_array($value) || \is_object($value)) {
                 $value = array_map(function ($val) {
                     return "'$val'";
                 }, (array)$value);

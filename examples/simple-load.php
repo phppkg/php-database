@@ -10,20 +10,20 @@ ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
 date_default_timezone_set('Asia/Shanghai');
 
+$vendorDir = dirname(__DIR__, 3);
 $inhereDir = dirname(__DIR__, 2);
+$map = [
+    'Inhere\Database\Tests\\' => dirname(__DIR__) . '/tests',
+    'Inhere\Database\\' => dirname(__DIR__) . '/src',
+    'Inhere\Library\\' => $inhereDir . '/library/src',
+    'Psr\Log\\' => $vendorDir . '/psr/log/Psr/Log',
+];
 
 require $inhereDir . '/library/src/exceptions.php';
 require $inhereDir . '/library/src/functions.php';
 
-spl_autoload_register(function($class) use ($inhereDir)
+spl_autoload_register(function($class) use ($map)
 {
-
-    $vendorDir = dirname(__DIR__, 3);
-    $map = [
-        'Inhere\Database\\' => dirname(__DIR__) . '/src',
-        'Inhere\Library\\' => $inhereDir . '/library/src',
-        'Psr\Log\\' => $vendorDir . '/psr/log/Psr/Log',
-    ];
 
     foreach ($map as $np => $dir) {
         if (0 === strpos($class, $np)) {

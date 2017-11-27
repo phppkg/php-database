@@ -42,7 +42,7 @@ trait WhereClauseTrait
         // If the column is an array, we will assume it is an array of key-value pairs
         // and can add them each as a where clause. We will maintain the boolean we
         // received when the method was called and pass it into the nested where.
-        if (is_array($column)) {
+        if (\is_array($column)) {
             return $this->addArrayOfWheres($column, $boolean);
         }
 
@@ -50,7 +50,7 @@ trait WhereClauseTrait
         // passed to the method, we will assume that the operator is an equals sign
         // and keep going. Otherwise, we'll require the operator to be passed in.
         list($value, $operator) = $this->prepareValueAndOperator(
-            $value, $operator, func_num_args() === 2
+            $value, $operator, \func_num_args() === 2
         );
 
         // If the columns is actually a Closure instance, we will assume the developer
@@ -78,7 +78,7 @@ trait WhereClauseTrait
             return $this->whereNull($column, $boolean, $operator !== '=');
         }
 
-        if (is_bool($value) && Str::contains($column, '->')) {
+        if (\is_bool($value) && Str::contains($column, '->')) {
             $value = new Expression($value ? 'true' : 'false');
         }
 
@@ -109,7 +109,7 @@ trait WhereClauseTrait
     {
         return $this->whereNested(function ($query) use ($column, $method, $boolean) {
             foreach ($column as $key => $value) {
-                if (is_numeric($key) && is_array($value)) {
+                if (is_numeric($key) && \is_array($value)) {
                     $query->{$method}(...array_values($value));
                 } else {
                     $query->$method($key, '=', $value, $boolean);
@@ -149,8 +149,8 @@ trait WhereClauseTrait
     protected function invalidOperatorAndValue($operator, $value)
     {
         return null === $value &&
-            in_array($operator, $this->operators, true) &&
-            !in_array($operator, ['=', '<>', '!='], true);
+            \in_array($operator, $this->operators, true) &&
+            !\in_array($operator, ['=', '<>', '!='], true);
     }
 
     /**
@@ -182,7 +182,7 @@ trait WhereClauseTrait
         // If the column is an array, we will assume it is an array of key-value pairs
         // and can add them each as a where clause. We will maintain the boolean we
         // received when the method was called and pass it into the nested where.
-        if (is_array($first)) {
+        if (\is_array($first)) {
             return $this->addArrayOfWheres($first, $boolean, 'whereColumn');
         }
 
@@ -444,7 +444,7 @@ trait WhereClauseTrait
      */
     public function addNestedWhereQuery($query, $boolean = 'and')
     {
-        if (count($query->wheres)) {
+        if (\count($query->wheres)) {
             $type = 'Nested';
 
             $this->wheres[] = compact('type', 'query', 'boolean');
@@ -537,7 +537,7 @@ trait WhereClauseTrait
      * @param  bool $not
      * @return $this
      */
-    public function addWhereExistsQuery(Builder $query, $boolean = 'and', $not = false)
+    public function addWhereExistsQuery(QueryBuilder $query, $boolean = 'and', $not = false)
     {
         $type = $not ? 'NotExists' : 'Exists';
 

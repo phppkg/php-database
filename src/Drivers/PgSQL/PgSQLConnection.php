@@ -32,6 +32,6 @@ class PgSQLConnection extends PDOConnection
      */
     public static function isSupported()
     {
-        return in_array('pgsql', \PDO::getAvailableDrivers(), true);
+        return \in_array('pgsql', \PDO::getAvailableDrivers(), true);
     }
 }

@@ -66,7 +66,7 @@ class Singleton extends Connections
 
         // exists and enabled
         if (method_exists($conn, $method)) {
-            return call_user_func_array([$conn, $method], $args);
+            return \call_user_func_array([$conn, $method], $args);
         }
 
         throw new UnknownCalledException("Call the method [$method] don't exists!");

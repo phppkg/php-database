@@ -116,8 +116,8 @@ class InsertQuery
      */
     public function values($values): self
     {
-        if (!is_array($values)) {
-            return $this->values(func_get_args());
+        if (!\is_array($values)) {
+            return $this->values(\func_get_args());
         }
 
         if (empty($values)) {
@@ -127,7 +127,7 @@ class InsertQuery
         //Checking if provided set is array of multiple
         reset($values);
 
-        if (!is_array($values[key($values)])) {
+        if (!\is_array($values[key($values)])) {
             if (empty($this->columns)) {
                 $this->columns = array_keys($values);
             }
@@ -177,7 +177,7 @@ class InsertQuery
             return true;
         }
 
-        if (!is_array(reset($values))) {
+        if (!\is_array(reset($values))) {
             $values = [$values];
         }
 

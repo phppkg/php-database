@@ -115,7 +115,7 @@ trait AggregateClauseTrait
             return 0;
         }
 
-        if (is_int($result) || is_float($result)) {
+        if (\is_int($result) || \is_float($result)) {
             return $result;
         }
 

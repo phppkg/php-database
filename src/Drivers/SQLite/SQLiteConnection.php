@@ -32,6 +32,6 @@ class SQLiteConnection extends PDOConnection
      */
     public static function isSupported()
     {
-        return in_array('sqlite', \PDO::getAvailableDrivers(), true);
+        return \in_array('sqlite', \PDO::getAvailableDrivers(), true);
     }
 }

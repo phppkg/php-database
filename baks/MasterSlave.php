@@ -102,7 +102,7 @@ class MasterSlave extends Connections
                 $this->config['writer.master'] = $config['master'];
             }
 
-            if (isset($config['writers']) && is_array($config['writers'])) {
+            if (isset($config['writers']) && \is_array($config['writers'])) {
                 foreach ($config['writers'] as $name => $conf) {
                     $this->config['writer.' . $name] = $conf;
                 }
